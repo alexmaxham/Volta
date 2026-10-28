@@ -4,6 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -60,6 +62,7 @@ private val historyTabs = listOf("Level", "Charging", "Nights", "Cycles")
  * On big screens History is a list and a detail side by side: picking a charging session or a
  * night opens it in the second pane instead of on its own screen.
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun HistoryScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String) -> Unit) {
     var tab by rememberSaveable { mutableStateOf(0) }
@@ -70,7 +73,8 @@ fun HistoryScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (Str
     AdaptiveScreen(
         start = {
             TabTitle("History") {}
-            Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            // Wraps in a narrow pane so every tab stays in view.
+            FlowRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 historyTabs.forEachIndexed { i, t -> SelectChip(t, tab == i, { tab = i }) }
             }
             val twoPane = LocalTwoPane.current

@@ -13,6 +13,7 @@ PKG = "com.alexmaxham.volta"
 OUT = "out"
 os.makedirs(OUT, exist_ok=True)
 steps = []
+SIZE = (1080, 2400)
 
 
 def adb(*args, check=False):
@@ -31,10 +32,20 @@ def log(msg):
     steps.append(msg)
 
 
+def screen_size():
+    # "Physical size: WxH", then "Override size: WxH" if one is set; the last line wins.
+    lines = sh("wm size").strip().splitlines()
+    m = re.search(r"(\d+)x(\d+)", lines[-1]) if lines else None
+    return (int(m.group(1)), int(m.group(2))) if m else (1080, 2400)
+
+
 def shot(name, wait=1.5):
     time.sleep(wait)
+    png = subprocess.run(["adb", "exec-out", "screencap", "-p"], capture_output=True).stdout
+    # Devices with two displays (foldables) print a warning before the image.
+    png = png[png.find(b"\x89PNG"):] if b"\x89PNG" in png else png
     with open(f"{OUT}/{name}.png", "wb") as f:
-        f.write(subprocess.run(["adb", "exec-out", "screencap", "-p"], capture_output=True).stdout)
+        f.write(png)
     log(f"screenshot {name}")
 
 
@@ -79,10 +90,13 @@ def tap(label, exact=True, required=True, scrolls=3):
 
 
 def scroll(up=False):
+    # Swipe in the left part of the screen, which is the first pane on big screens.
+    w, h = SIZE
+    x, top, bottom = int(w * 0.4), int(h * 0.3), int(h * 0.8)
     if up:
-        sh("input swipe 540 700 540 1900 300")
+        sh(f"input swipe {x} {top} {x} {bottom} 300")
     else:
-        sh("input swipe 540 1900 540 700 300")
+        sh(f"input swipe {x} {bottom} {x} {top} 300")
     time.sleep(0.8)
 
 
@@ -117,6 +131,9 @@ def scroll_shots(prefix, n=3):
 
 
 def main():
+    global SIZE
+    SIZE = screen_size()
+    log(f"screen {SIZE[0]}x{SIZE[1]}")
     adb("logcat", "-c")
     sh(f"pm grant {PKG} android.permission.POST_NOTIFICATIONS")
     sh(f"appops set {PKG} GET_USAGE_STATS allow")
@@ -130,7 +147,7 @@ def main():
     # Discharge with the app open; readings are saved at most once a minute.
     for level in (90, 88, 86, 84, 83, 81):
         battery(level=level)
-        sh("input swipe 540 1500 540 1400 100")  # Keep the screen awake.
+        sh(f"input swipe {SIZE[0] // 2} {SIZE[1] // 2} {SIZE[0] // 2} {SIZE[1] // 2 - 100} 100")  # Keep the screen awake.
         time.sleep(62)
     shot("03-today-after-drain")
     scroll_shots("04-today-scroll", 4)
