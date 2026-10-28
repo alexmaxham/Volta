@@ -19,7 +19,15 @@ import com.alexmaxham.volta.core.Format
 import com.alexmaxham.volta.data.VoltaSettings
 import com.alexmaxham.volta.ui.Snapshot
 import com.alexmaxham.volta.ui.components.AxisLabels
-import com.alexmaxham.volta.ui.components.DualLineChart
+import com.alexmaxham.volta.ui.components.ChargeChart
+import com.alexmaxham.volta.ui.components.ChargeChartData
+import com.alexmaxham.volta.ui.components.CircleIconButton
+import com.alexmaxham.volta.ui.components.VIcons
+import com.alexmaxham.volta.ui.share.SessionImageDialog
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import com.alexmaxham.volta.ui.components.RowsCard
 import com.alexmaxham.volta.ui.components.TimeLineChart
 import com.alexmaxham.volta.ui.components.TimePoint
@@ -29,8 +37,11 @@ import com.alexmaxham.volta.ui.components.VCard
 fun ChargingScreen(snap: Snapshot, s: VoltaSettings, start: Long?, onBack: () -> Unit) {
     val c = MaterialTheme.colorScheme
     val cs = snap.sessions.firstOrNull { it.start == start }
+    var exporting by remember { mutableStateOf(false) }
     ScreenColumn(bottom = 32.dp) {
-        DetailBar("Charging session", onBack)
+        DetailBar("Charging session", onBack) {
+            if (cs != null) CircleIconButton(VIcons.Share, "Export session image", { exporting = true })
+        }
         if (cs == null) {
             Muted("Couldn't load this session. It may be older than 30 days.")
             return@ScreenColumn
@@ -57,22 +68,20 @@ fun ChargingScreen(snap: Snapshot, s: VoltaSettings, start: Long?, onBack: () ->
             Milestone("to 100%", cs.to100, Modifier.weight(1f), RoundedCornerShape(8.dp, 24.dp, 24.dp, 8.dp), c.surfaceContainerLow, c.onSurface)
         }
 
-        // The unplugged reading that closes a session isn't charging power.
-        val power = cs.readings.filter { it.plugged }.mapNotNull { r -> r.powerW?.let { TimePoint(r.time, it.coerceAtLeast(0f)) } }
-        val temp = cs.readings.mapNotNull { r -> r.tempC?.let { TimePoint(r.time, if (s.fahrenheit) it * 9 / 5 + 32 else it) } }
+        val chart = remember(cs, s.fahrenheit) { ChargeChartData(cs, s.fahrenheit) }
         VCard {
             Text("Charging speed & temperature", style = MaterialTheme.typography.titleMedium)
             Row(Modifier.padding(top = 8.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Legend(c.primary, "Net power (W)")
-                Legend(c.tertiary, "Battery temp (${if (s.fahrenheit) "°F" else "°C"})")
+                Legend(c.tertiary, "Battery temp (${chart.tempUnit})")
             }
-            if (power.size >= 2 || temp.size >= 2) {
-                DualLineChart(power, temp, cs.start, cs.end, "Charging power and battery temperature over the session", Modifier.padding(top = 12.dp))
+            if (chart.hasPower || chart.hasTemp) {
+                ChargeChart(chart, Modifier.padding(top = 12.dp))
             } else {
                 TimeLineChart(cs.readings.map { TimePoint(it.time, it.level.toFloat()) }, cs.start, cs.end, "Battery level during the session", Modifier.padding(top = 12.dp))
+                AxisLabels(listOf(Fmt.time(cs.start, snap.zone), Fmt.time(cs.end, snap.zone)), Modifier.padding(top = 4.dp))
                 Muted("This phone isn't reporting usable current and voltage together, so only the level is shown.")
             }
-            AxisLabels(listOf(Fmt.time(cs.start, snap.zone), Fmt.time(cs.end, snap.zone)), Modifier.padding(top = 4.dp))
         }
         RowsCard(
             listOf(
@@ -84,6 +93,7 @@ fun ChargingScreen(snap: Snapshot, s: VoltaSettings, start: Long?, onBack: () ->
         )
         Muted("Estimated net battery power, not charger output. Current and voltage are battery-side readings; use an external meter for charger wattage.")
     }
+    if (exporting && cs != null) SessionImageDialog(cs, s, onDismiss = { exporting = false })
 }
 
 @Composable

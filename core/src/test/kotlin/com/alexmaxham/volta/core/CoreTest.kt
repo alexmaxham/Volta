@@ -303,3 +303,31 @@ class FormatTest {
         assertEquals("1:42:18", Format.clock(H + 42 * M + 18 * Time.SECOND))
     }
 }
+
+class AxisTest {
+    @Test fun niceSteps() {
+        assertEquals(5.0, Axis.niceStep(4.2), 1e-9)
+        assertEquals(2.5, Axis.niceStep(2.3), 1e-9)
+        assertEquals(10.0, Axis.niceStep(7.0), 1e-9)
+        assertEquals(0.2, Axis.niceStep(0.17), 1e-9)
+    }
+
+    @Test fun powerScaleStartsAtZero() {
+        val s = Axis.scale(3f, 20f, fromZero = true)
+        assertEquals(0f, s.min, 0f)
+        assertEquals(5f, s.step, 0f)
+        assertEquals(20f, s.max, 0f)
+        assertEquals(listOf(0f, 5f, 10f, 15f, 20f), s.ticks)
+    }
+
+    @Test fun pairedScalesShareGridlines() {
+        val (p, t) = Axis.paired(Axis.scale(0f, 20f, fromZero = true), Axis.scale(29.4f, 33.1f))
+        assertEquals(p.intervals, t.intervals)
+        assertTrue(t.min <= 29.4f && t.max >= 33.1f)
+    }
+
+    @Test fun flatRangeStillHasSpan() {
+        val s = Axis.scale(31f, 31f)
+        assertTrue(s.max > s.min)
+    }
+}

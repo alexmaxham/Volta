@@ -42,7 +42,7 @@ import com.alexmaxham.volta.ui.components.RowsCard
 import com.alexmaxham.volta.ui.components.SectionTitle
 import com.alexmaxham.volta.ui.components.SegmentStrip
 import com.alexmaxham.volta.ui.components.StatTile
-import com.alexmaxham.volta.ui.components.TimeLineChart
+import com.alexmaxham.volta.ui.components.LevelChart
 import com.alexmaxham.volta.ui.components.TimePoint
 import com.alexmaxham.volta.ui.components.VCard
 import com.alexmaxham.volta.ui.components.VIcons
@@ -146,30 +146,25 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
         SectionTitle(if (s.range == Range.SINCE_FULL) "Current cycle" else "Today so far")
         VCard {
             val from = w.from
-            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
+                Text("−${w.usage.used}", style = MaterialTheme.typography.headlineMedium)
                 Text(
-                    if (s.range == Range.SINCE_FULL && snap.lastFull != null) "Full at ${Fmt.time(from, snap.zone)}" else Fmt.time(from, snap.zone),
-                    style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant,
+                    " pts " + if (s.range == Range.SINCE_FULL && snap.lastFull != null) "since 100% at ${Fmt.time(from, snap.zone)}" else "since ${Fmt.time(from, snap.zone)}",
+                    style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant, modifier = Modifier.padding(bottom = 3.dp),
                 )
-                Text("Now", style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant)
             }
-            val points = snap.readings.filter { it.time >= from }.map { TimePoint(it.time, it.level.toFloat()) }
-            TimeLineChart(points, from, snap.now, "Battery level since ${Fmt.time(from, snap.zone)}", Modifier.padding(top = 8.dp), height = 110.dp)
-            if (access && w.screen.total > 0) {
-                val segs = buildList {
-                    var cursor = from
-                    for (iv in w.screen.onIntervals) {
-                        if (iv.start > cursor) add((iv.start - cursor).toFloat() to c.surfaceContainerHigh)
-                        add(iv.length.toFloat() to c.primary)
-                        cursor = iv.end
-                    }
-                    if (snap.now > cursor) add((snap.now - cursor).toFloat() to c.surfaceContainerHigh)
-                }
-                SegmentStrip(segs, Modifier.padding(top = 10.dp), gap = 2.dp)
-                Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                    LegendDot(c.primary, "Screen on")
-                    LegendDot(c.surfaceContainerHigh, "Screen off")
-                }
+            val points = snap.readings.filter { it.time >= from }.map { TimePoint(it.time, it.level.toFloat()) } +
+                listOfNotNull(current?.takeIf { it.time > (snap.readings.lastOrNull()?.time ?: 0L) }?.let { TimePoint(snap.now, it.level.toFloat()) })
+            val showScreen = access && w.screen.total > 0
+            LevelChart(
+                points, from, snap.now, if (showScreen) w.screen.onIntervals else null,
+                { Fmt.time(it, snap.zone) },
+                "Battery level from ${points.firstOrNull()?.value?.toInt() ?: 0}% to ${points.lastOrNull()?.value?.toInt() ?: 0}% since ${Fmt.time(from, snap.zone)}",
+                Modifier.padding(top = 10.dp),
+            )
+            Row(Modifier.padding(top = 10.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                LegendDot(c.primary, "Battery %")
+                if (showScreen) LegendDot(c.tertiary, "Screen on")
             }
         }
 

@@ -149,6 +149,11 @@ def main():
         shot("08-history-charging")
         if tap("82% → 100%", exact=False, required=False) or tap("% → 100%", exact=False, required=False):
             scroll_shots("09-charging-detail", 2)
+            if tap("Export session image", required=False):
+                shot("09-export-square", wait=2)
+                tap("16:9")
+                shot("09-export-wide", wait=2)
+                back()
             back()
     if tap("Nights"):
         shot("10-history-nights")
@@ -182,7 +187,11 @@ def main():
 
     tap("Today")
     tap("Share battery stats")
-    shot("21-stats-image")
+    shot("21-stats-image", wait=2)
+    tap("16:9")
+    shot("21-stats-image-wide", wait=2)
+    tap("Portrait")
+    shot("21-stats-image-portrait", wait=2)
     back()
 
     tap("Settings")
