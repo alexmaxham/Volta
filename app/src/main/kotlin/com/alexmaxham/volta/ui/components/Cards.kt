@@ -8,6 +8,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -107,10 +109,13 @@ fun RowsCard(rows: List<Pair<String, String>>, modifier: Modifier = Modifier) {
     Column(modifier.fillMaxWidth().clip(CardShape).background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         rows.forEachIndexed { i, (k, v) ->
             if (i > 0) Box(Modifier.fillMaxWidth().height(2.dp).background(MaterialTheme.colorScheme.background))
-            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                Text(k, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                // Long values wrap within their own half instead of squeezing the label.
-                Text(v, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.End, modifier = Modifier.weight(1f, fill = false))
+            BoxWithConstraints(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp)) {
+                val valueMax = maxWidth * 0.6f
+                Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Text(k, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
+                    // Short values sit at the end; long ones wrap within 60% of the row.
+                    Text(v, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.End, modifier = Modifier.widthIn(max = valueMax))
+                }
             }
         }
     }
