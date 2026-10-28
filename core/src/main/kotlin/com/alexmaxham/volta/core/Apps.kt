@@ -9,9 +9,41 @@ object Apps {
      * if its first event in the window is it leaving.
      */
     fun usage(events: List<AppEvent>, from: Long, to: Long): List<AppTime> {
+        val (spans, opens) = foreground(events, from, to)
+        return spans.mapValues { (_, list) -> list.sumOf { it.length } }
+            .filterValues { it > 0 }
+            .map { (pkg, t) -> AppTime(pkg, t, opens[pkg] ?: 0) }
+            .sortedByDescending { it.foreground }
+    }
+
+    /**
+     * Estimated battery points each app used in [from, to). Android doesn't share per-app battery
+     * use with other apps, so this splits each drop between two readings across the apps that
+     * were in front during it, by how long each was in front. Drain while no app was in front
+     * (screen off, background work) isn't given to any app, and two apps open for the same time
+     * get the same share however hard they worked the phone.
+     */
+    fun drain(events: List<AppEvent>, readings: List<Reading>, from: Long, to: Long): Map<String, Double> {
+        val spans = foreground(events, from, to).first
+        val out = HashMap<String, Double>()
+        for ((a, b) in readings.sortedBy { it.time }.zipWithNext()) {
+            val dt = b.time - a.time
+            val drop = a.level - b.level
+            if (dt <= 0 || dt > Limits.GAP || drop <= 0 || a.plugged || b.plugged) continue
+            if (b.time <= from || a.time >= to) continue
+            for ((pkg, list) in spans) {
+                val inFront = list.sumOf { it.overlap(a.time, b.time) }
+                if (inFront > 0) out.merge(pkg, drop * inFront.toDouble() / dt, Double::plus)
+            }
+        }
+        return out
+    }
+
+    /** Each app's stretches in front within [from, to), and how many times it was opened. */
+    private fun foreground(events: List<AppEvent>, from: Long, to: Long): Pair<Map<String, List<Interval>>, Map<String, Int>> {
         val sorted = events.filter { it.time < to }.sortedBy { it.time }
         val openSince = HashMap<String, Long>()
-        val total = HashMap<String, Long>()
+        val spans = HashMap<String, MutableList<Interval>>()
         val opens = HashMap<String, Int>()
         val seen = HashSet<String>()
 
@@ -28,14 +60,12 @@ object Apps {
                 }
             } else {
                 val since = openSince.remove(e.pkg) ?: if (e.pkg !in seen) from else null
-                if (since != null) total.merge(e.pkg, e.time - since, Long::plus)
+                if (since != null) spans.getOrPut(e.pkg) { mutableListOf() } += Interval(since, e.time)
             }
             seen += e.pkg
         }
-        for ((pkg, since) in openSince) total.merge(pkg, to - since, Long::plus)
-        return total.filterValues { it > 0 }
-            .map { (pkg, t) -> AppTime(pkg, t, opens[pkg] ?: 0) }
-            .sortedByDescending { it.foreground }
+        for ((pkg, since) in openSince) spans.getOrPut(pkg) { mutableListOf() } += Interval(since, to)
+        return spans to opens
     }
 
     fun csv(rows: List<Pair<String, AppTime>>): String = buildString {
