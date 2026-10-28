@@ -12,6 +12,7 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.ServiceCompat
 import androidx.core.content.ContextCompat
 import com.alexmaxham.volta.R
+import com.alexmaxham.volta.bench.Bench
 import com.alexmaxham.volta.core.Format
 import com.alexmaxham.volta.core.Review
 import com.alexmaxham.volta.core.Source
@@ -72,7 +73,7 @@ class ReviewService : Service() {
                         @Suppress("MissingPermission")
                         if (Notifier.canPost(this@ReviewService)) {
                             NotificationManagerCompat.from(this@ReviewService)
-                                .notify(Notifier.ID_REVIEW, notification(current.conditions.protocol, now - current.started, r.level))
+                                .notify(Notifier.ID_REVIEW, notification(current.conditions.protocol, now - current.started, r.level, db.get(Bench.NOW)))
                         }
                     }
                     delay(Review.INTERVAL)
@@ -83,7 +84,8 @@ class ReviewService : Service() {
         return START_STICKY
     }
 
-    private fun notification(protocol: String, elapsed: Long, level: Int?): Notification {
+    /** [step] is the benchmark app in front, when a benchmark is running. */
+    private fun notification(protocol: String, elapsed: Long, level: Int?, step: String? = null): Notification {
         val finish = PendingIntent.getService(
             this, 1, Intent(this, ReviewService::class.java).setAction(ACTION_FINISH),
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT,
@@ -91,7 +93,7 @@ class ReviewService : Service() {
         return NotificationCompat.Builder(this, Notifier.CH_REVIEW)
             .setSmallIcon(R.drawable.ic_stat_volta)
             .setContentTitle(protocol.ifBlank { "Lab test" } + " · recording")
-            .setContentText(listOfNotNull(Format.clock(elapsed), level?.let { "$it%" }, "Review mode · 15-second target").joinToString(" · "))
+            .setContentText(listOfNotNull(Format.clock(elapsed), level?.let { "$it%" }, step ?: "Review mode · 15-second target").joinToString(" · "))
             .setOngoing(true)
             .setOnlyAlertOnce(true)
             .setContentIntent(Notifier.openApp(this, "lab"))

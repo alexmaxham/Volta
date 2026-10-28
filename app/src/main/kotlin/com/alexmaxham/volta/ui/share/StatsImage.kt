@@ -39,9 +39,11 @@ import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.core.content.res.ResourcesCompat
 import com.alexmaxham.volta.R
+import com.alexmaxham.volta.core.BenchReport
 import com.alexmaxham.volta.core.ChargingSession
 import com.alexmaxham.volta.core.Format
 import com.alexmaxham.volta.core.Reading
+import com.alexmaxham.volta.core.ReviewRun
 import com.alexmaxham.volta.data.Range
 import com.alexmaxham.volta.data.VoltaSettings
 import com.alexmaxham.volta.ui.Snapshot
@@ -287,6 +289,68 @@ object ExportImages {
         return bmp
     }
 
+    /** An app benchmark: how long the battery lasted and the drain for each app, as bars. */
+    fun bench(context: Context, run: ReviewRun, rep: BenchReport, s: VoltaSettings, colors: ColorScheme, format: ExportFormat): Bitmap {
+        val bmp = Bitmap.createBitmap(format.width, format.height, Bitmap.Config.ARGB_8888)
+        val c = Canvas(bmp)
+        val ink = Ink(context, colors, c, 1f)
+        c.drawColor(colors.background.toArgb())
+        val zone = java.time.ZoneId.systemDefault()
+        val m = 64f
+        val tx = colors.onSurface.toArgb()
+        val mu = colors.onSurfaceVariant.toArgb()
+        val s1 = colors.surfaceContainerLow.toArgb()
+
+        ink.text("VOLTA · APP BENCHMARK", m, m + 20f, 22f, mu, ink.bold, spacing = 0.16f)
+        ink.text(deviceLine(), m, m + 58f, 26f, tx, ink.headline)
+        ink.text(listOf(Fmt.longDay(run.started, zone), run.conditions.brightness).filter { it.isNotBlank() }.joinToString(" · "), m, m + 92f, 22f, mu)
+
+        val heroY = m + 210f
+        ink.text(Format.duration(rep.elapsed), m - 4f, heroY, 104f, tx, ink.display)
+        val levels = if (rep.startLevel != null) "${rep.startLevel}% → ${rep.endLevel}%" else ""
+        ink.text(listOf(if (run.active) "so far" else "until stopped", levels, "1 h per app on repeat").filter { it.isNotBlank() }.joinToString(" · "), m, heroY + 46f, 24f, mu)
+
+        // Tiles along the bottom, bars in a card between.
+        val tiles = listOf(
+            "Average temp" to (rep.avgTempC?.let { Format.temp(it, s.fahrenheit) } ?: "—"),
+            "Peak temp" to (rep.peakTempC?.let { Format.temp(it, s.fahrenheit) } ?: "—"),
+            "Rounds" to "${rep.rounds}",
+        )
+        val tilesH = if (format == ExportFormat.PORTRAIT) 150f else 130f
+        val area = RectF(m, format.height - m - 40f - tilesH, format.width - m, format.height - m - 40f)
+        grid(area, tiles.size, 3, 12f).forEachIndexed { i, r -> ink.tile(r, tiles[i].first, tiles[i].second, s1, tx) }
+
+        val card = RectF(m, heroY + 84f, format.width - m, area.top - 18f)
+        ink.box(card, 36f, s1)
+        val pad = 32f
+        ink.text("Drain by app", card.left + pad, card.top + pad + 26f, 28f, tx, ink.headline)
+        ink.text("battery points per hour", card.right - pad, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
+        val apps = rep.apps
+        if (apps.isNotEmpty()) {
+            val top = card.top + pad + 56f
+            val rowH = (card.bottom - pad - top) / apps.size
+            val max = apps.mapNotNull { it.perHour }.maxOrNull()?.takeIf { it > 0 } ?: 1.0
+            val labelW = 250f
+            val valueW = 150f
+            val barL = card.left + pad + labelW
+            val barR = card.right - pad - valueW
+            val barH = minOf(22f, rowH * 0.32f)
+            apps.forEachIndexed { i, a ->
+                val cy = top + rowH * i + rowH / 2f
+                ink.text(a.name, card.left + pad, cy + 8f, 23f, tx, ink.bold)
+                ink.box(RectF(barL, cy - barH / 2f, barR, cy + barH / 2f), barH / 2f, colors.surfaceContainerHighest.toArgb())
+                val f = ((a.perHour ?: 0.0) / max).toFloat().coerceIn(0f, 1f)
+                if (f > 0f) ink.box(RectF(barL, cy - barH / 2f, barL + maxOf(barH, (barR - barL) * f), cy + barH / 2f), barH / 2f, colors.primary.toArgb())
+                ink.text(a.perHour?.let { "%.1f".format(java.util.Locale.getDefault(), it) } ?: "—", card.right - pad, cy + 9f, 26f, tx, ink.display, Paint.Align.RIGHT)
+                val sub = listOfNotNull(a.mahPerHour?.let { Format.mah(it.toFloat()) + "/h" }, a.peakTempC?.let { "peak " + Format.temp(it, s.fahrenheit) }).joinToString(" · ")
+                if (sub.isNotEmpty() && rowH >= 64f) ink.text(sub, barL, cy + barH / 2f + 24f, 17f, mu)
+            }
+        }
+
+        ink.text("Recorded with Volta · battery-side readings, run by Volta's app benchmark", m, format.height - m + 6f, 18f, colors.primary.toArgb())
+        return bmp
+    }
+
     fun share(context: Context, bmp: Bitmap): Boolean = runCatching {
         val dir = File(context.cacheDir, "shared").apply { mkdirs() }
         val file = File(dir, "volta-${System.currentTimeMillis()}.png")
@@ -362,5 +426,13 @@ fun StatsImageDialog(snap: Snapshot, live: Reading?, s: VoltaSettings, onDismiss
 fun SessionImageDialog(cs: ChargingSession, s: VoltaSettings, onDismiss: () -> Unit) {
     ExportDialog("Export charging session", listOf(ExportFormat.SQUARE, ExportFormat.WIDE), onDismiss) { ctx, colors, f ->
         ExportImages.session(ctx, cs, s, colors, f)
+    }
+}
+
+/** The app benchmark results image. */
+@Composable
+fun BenchImageDialog(run: ReviewRun, rep: BenchReport, s: VoltaSettings, onDismiss: () -> Unit) {
+    ExportDialog("Share benchmark results", listOf(ExportFormat.PORTRAIT, ExportFormat.SQUARE), onDismiss) { ctx, colors, f ->
+        ExportImages.bench(ctx, run, rep, s, colors, f)
     }
 }

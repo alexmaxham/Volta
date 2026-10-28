@@ -112,6 +112,20 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
                 }
             }
 
+            VCard(onClick = { go("bench") }) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                    IconBadge(VIcons.Play, c.secondaryContainer, c.onSecondaryContainer, RoundedCornerShape(16.dp))
+                    Column(Modifier.weight(1f)) {
+                        Text("App benchmark", style = MaterialTheme.typography.titleMedium)
+                        Text(
+                            "Chrome, YouTube, Instagram, camera, TikTok, X, YouTube Music and Subway Surfers for an hour each, on repeat, run by Volta",
+                            style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
+                        )
+                    }
+                    Icon(VIcons.Chevron, null, tint = c.onSurfaceVariant, modifier = Modifier.size(20.dp))
+                }
+            }
+
             if (snap.runs.none { !it.active } && active == null) {
                 VCard {
                     IconBadge(VIcons.Lab, c.tertiaryContainer, c.onTertiaryContainer, RoundedCornerShape(16.dp))

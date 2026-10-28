@@ -365,3 +365,88 @@ class AxisTest {
         assertTrue(s.max > s.min)
     }
 }
+
+class BenchmarkTest {
+    private val steps = listOf(BenchStep("a", "A"), BenchStep("b", "B"), BenchStep("c", "C", minutes = 30))
+
+    @Test fun positionWalksStepsThenRepeats() {
+        val p0 = Benchmark.position(steps, 0)!!
+        assertEquals("a", p0.step.id)
+        assertEquals(0, p0.index)
+        assertEquals(H, p0.end)
+
+        val p1 = Benchmark.position(steps, 90 * M)!!
+        assertEquals("b", p1.step.id)
+        assertEquals(1, p1.index)
+        assertEquals(H, p1.start)
+
+        val p2 = Benchmark.position(steps, 2 * H + 29 * M)!!
+        assertEquals("c", p2.step.id)
+        assertEquals(2 * H + 30 * M, p2.end)
+
+        // The loop is 2.5 h long, so 2.5 h in starts round two with the first app again.
+        val again = Benchmark.position(steps, 2 * H + 30 * M)!!
+        assertEquals("a", again.step.id)
+        assertEquals(1, again.round)
+        assertEquals(3, again.index)
+        assertEquals(2 * H + 30 * M, again.start)
+    }
+
+    @Test fun positionNeedsSteps() {
+        assertNull(Benchmark.position(emptyList(), 0))
+    }
+
+    @Test fun reportSplitsDrainByApp() {
+        // Ten minutes a step at 15-second-ish spacing is plenty; use one reading a minute.
+        val samples = (0..120L).map { m ->
+            val level = if (m <= 60) 100 - (m / 6).toInt() else 90 - ((m - 60) / 4).toInt()
+            r(m, level, tempC = 30f + m / 60f, currentMa = if (m <= 60) -500 else -900, voltage = 4f)
+        }
+        val run = ReviewRun("x", 0, 120 * M, Conditions(phone = "Test"), samples)
+        val segs = listOf(BenchSegment(0, 0, "chrome", 0, 60 * M), BenchSegment(1, 0, "youtube", 60 * M, 120 * M, relaunches = 2))
+        val rep = Benchmark.report(run, segs, 120 * M)
+
+        assertEquals(2, rep.apps.size)
+        val chrome = rep.apps.first { it.stepId == "chrome" }
+        assertEquals(10, chrome.used)
+        assertEquals(10.0, chrome.perHour!!, 0.01)
+        assertEquals(500.0, chrome.mahPerHour!!, 1.0)
+        assertEquals(2f, chrome.avgPowerW!!, 0.01f)
+
+        val yt = rep.apps.first { it.stepId == "youtube" }
+        assertEquals(15, yt.used)
+        // The first minute averages the two currents at the boundary.
+        assertEquals(900.0, yt.mahPerHour!!, 5.0)
+        assertEquals(2, yt.relaunches)
+        assertEquals(1, rep.rounds)
+        assertEquals(100, rep.startLevel)
+        assertEquals(75, rep.endLevel)
+    }
+
+    @Test fun reportPrefersTheChargeCounter() {
+        val samples = (0..60L).map { m -> r(m, 100 - (m / 10).toInt(), currentMa = -100, counter = 4000f - m * 10) }
+        val run = ReviewRun("x", 0, 60 * M, Conditions(), samples)
+        val rep = Benchmark.report(run, listOf(BenchSegment(0, 0, "chrome", 0, 60 * M)), 60 * M)
+        assertEquals(600f, rep.apps.single().mah!!, 0.1f)
+    }
+
+    @Test fun shortOrGappySlotsHaveNoRate() {
+        val samples = listOf(r(0, 100, currentMa = -500), r(5, 99, currentMa = -500), r(40, 95, currentMa = -500))
+        val run = ReviewRun("x", 0, 40 * M, Conditions(), samples)
+        val rep = Benchmark.report(run, listOf(BenchSegment(0, 0, "chrome", 0, 5 * M), BenchSegment(1, 0, "youtube", 5 * M, 40 * M)), 40 * M)
+        assertNull(rep.segments[0].perHour)
+        // 35 minutes with a 35-minute gap between readings: no current-based charge.
+        assertNull(rep.segments[1].mah)
+        assertEquals(4, rep.segments[1].used)
+    }
+
+    @Test fun csvHasOneRowPerSlot() {
+        val samples = (0..60L).map { m -> r(m, 100 - (m / 10).toInt()) }
+        val run = ReviewRun("x", 0, 60 * M, Conditions(phone = "Pixel, 9"), samples)
+        val rep = Benchmark.report(run, listOf(BenchSegment(0, 0, "chrome", 0, 30 * M), BenchSegment(1, 0, "youtube", 30 * M, 60 * M)), 60 * M)
+        val lines = Benchmark.csv(run, rep).lines().filter { it.isNotBlank() }
+        assertTrue(lines.any { it == "# phone,\"Pixel, 9\"" })
+        assertEquals(2, lines.count { !it.startsWith("#") && !it.startsWith("slot,") })
+        assertTrue(Benchmark.text(run, rep, false).contains("Chrome: 6.0 pts/h"))
+    }
+}

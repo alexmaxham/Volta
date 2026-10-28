@@ -14,16 +14,17 @@ Get the latest APK from **[Releases](https://github.com/alexmaxham/Volta/release
 - **Overnight reports:** drain and rate while you slept, deep sleep, screen wakes and coverage for any night, with adjustable hours and an optional morning summary notification.
 - **Apps:** foreground time and an estimated battery share per app for the current charge, today or past cycles (saved before Android's week of history runs out), with CSV export.
 - **Lab** (Settings → Advanced, for reviewing phones): timed drain and charging tests with recorded conditions, presets, 15-second review recording with a notification, comparison of matching runs, CSV export and run backup and import.
+- **App benchmark** (in Lab): Volta runs Chrome, YouTube, Instagram, 4K60 camera recording, TikTok, X, YouTube Music and Subway Surfers for an hour each, in order and on repeat, until the battery reaches 3%. It drives each app with scrolls, swipes and taps through an accessibility service, keeps the screen on and brings an app back if something else takes over. A checklist before the start makes sure auto brightness is off, brightness is set to 200 nits with a lux meter and the phone is at 100% and unplugged. Results show drain per app (points and mAh per hour), power and temperature, and share as an image, text or CSV.
 - **Battery health:** full-capacity estimates learned from 30+ point charges, compared with the design capacity you enter.
 - **Reminders:** low battery, charge level and warm battery alerts.
 - **Widget** and a shareable **stats image**.
 - **Make it yours:** Dynamic color plus Bloom, Sage, Ocean, Ember and Iris palettes, each with light and true-black dark themes, and °C or °F.
 
-Everything stays on the phone. No root required; screen time and apps need Usage Access.
+Everything stays on the phone. No root required; screen time and apps need Usage Access, and the app benchmark needs Volta's accessibility service turned on.
 
 ## Project layout
 
-- `core/` holds the platform-free battery logic (estimates, sessions, capacity, nights, cycles, app usage, review runs, CSV), with unit tests. It's its own Gradle build so it can be compiled and tested without the Android SDK: `./gradlew -p core test`.
+- `core/` holds the platform-free battery logic (estimates, sessions, capacity, nights, cycles, app usage, review runs, the app benchmark's schedule and per-app results, CSV), with unit tests. It's its own Gradle build so it can be compiled and tested without the Android SDK: `./gradlew -p core test`.
 - `app/` is the Android app (Kotlin, Jetpack Compose, Material 3, graphics-shapes, WorkManager, Glance).
 
 ## Building

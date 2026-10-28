@@ -43,6 +43,7 @@ import com.alexmaxham.volta.ui.components.FloatingNavRail
 import com.alexmaxham.volta.ui.components.NavItem
 import com.alexmaxham.volta.ui.components.VIcons
 import com.alexmaxham.volta.ui.screens.AppsScreen
+import com.alexmaxham.volta.ui.screens.BenchScreen
 import com.alexmaxham.volta.ui.screens.ChargingScreen
 import com.alexmaxham.volta.ui.screens.CompareScreen
 import com.alexmaxham.volta.ui.screens.HistoryScreen
@@ -157,6 +158,7 @@ private fun Main(vm: VoltaViewModel, s: VoltaSettings, pendingRoute: MutableStat
                 "history" -> HistoryScreen(snap, s, vm, nav::go)
                 "apps" -> AppsScreen(snap, vm)
                 "lab" -> LabScreen(snap, s, vm, nav::go, nav::back)
+                "bench" -> BenchScreen(snap, live, vm, nav::go, nav::back)
                 "settings" -> SettingsScreen(snap, s, vm, nav::go)
                 "charge" -> ChargingScreen(snap, s, parts.getOrNull(1)?.toLongOrNull(), nav::back)
                 "night" -> NightScreen(snap, s, vm, parts.getOrNull(1), nav::back)

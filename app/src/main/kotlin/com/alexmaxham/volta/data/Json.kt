@@ -1,6 +1,10 @@
 package com.alexmaxham.volta.data
 
 import com.alexmaxham.volta.core.AppTime
+import com.alexmaxham.volta.core.BenchPlan
+import com.alexmaxham.volta.core.BenchSegment
+import com.alexmaxham.volta.core.BenchStep
+import com.alexmaxham.volta.core.Benchmark
 import com.alexmaxham.volta.core.Conditions
 import com.alexmaxham.volta.core.Reading
 import com.alexmaxham.volta.core.ReviewRun
@@ -9,7 +13,7 @@ import com.alexmaxham.volta.core.TestType
 import org.json.JSONArray
 import org.json.JSONObject
 
-/** JSON for stored conditions, app-usage snapshots and review-run backups. */
+/** JSON for stored conditions, app-usage snapshots, benchmark plans and review-run backups. */
 object Json {
     const val BACKUP_FORMAT = "volta-review-run"
     const val MAX_BACKUP_BYTES = 20 * 1024 * 1024
@@ -59,9 +63,29 @@ object Json {
         }
     }
 
-    fun backup(run: ReviewRun): String = JSONObject().apply {
+    fun plan(p: BenchPlan): String = JSONObject().apply {
+        put("runId", p.runId)
+        put("stopLevel", p.stopLevel)
+        put("steps", steps(p.steps))
+    }.toString()
+
+    fun plan(s: String): BenchPlan {
+        val o = JSONObject(s)
+        return BenchPlan(o.getString("runId"), steps(o.getJSONArray("steps")), o.optInt("stopLevel", Benchmark.STOP_LEVEL))
+    }
+
+    fun steps(list: List<BenchStep>): JSONArray = JSONArray().apply {
+        for (st in list) put(JSONObject().put("id", st.id).put("name", st.name).put("minutes", st.minutes).put("link", st.link))
+    }
+
+    fun steps(a: JSONArray): List<BenchStep> = (0 until a.length()).map { i ->
+        val o = a.getJSONObject(i)
+        BenchStep(o.getString("id"), o.optString("name", Benchmark.name(o.getString("id"))), o.optInt("minutes", 60), o.optString("link"))
+    }
+
+    fun backup(run: ReviewRun, segments: List<BenchSegment> = emptyList()): String = JSONObject().apply {
         put("format", BACKUP_FORMAT)
-        put("version", 1)
+        put("version", 2)
         put("id", run.id)
         put("started", run.started)
         put("ended", run.ended)
@@ -78,15 +102,29 @@ object Json {
                             put(r.tempC?.toDouble() ?: JSONObject.NULL)
                             put(r.voltageV?.toDouble() ?: JSONObject.NULL)
                             put(r.currentMa ?: JSONObject.NULL)
+                            put(r.chargeCounterMah?.toDouble() ?: JSONObject.NULL)
                         },
                     )
                 }
             },
         )
+        if (segments.isNotEmpty()) {
+            put(
+                "segments",
+                JSONArray().apply {
+                    for (sg in segments) {
+                        put(
+                            JSONObject().put("index", sg.index).put("round", sg.round).put("step", sg.stepId)
+                                .put("start", sg.start).put("end", sg.end ?: JSONObject.NULL).put("relaunches", sg.relaunches),
+                        )
+                    }
+                },
+            )
+        }
     }.toString()
 
-    /** Parses a run backup, or throws [IllegalArgumentException] with a message for the user. */
-    fun restore(text: String): ReviewRun {
+    /** Parses a run backup and any benchmark slots, or throws [IllegalArgumentException] with a message for the user. */
+    fun restore(text: String): Pair<ReviewRun, List<BenchSegment>> {
         require(text.length <= MAX_BACKUP_BYTES) { "Backup is larger than 20 MB." }
         val o = runCatching { JSONObject(text) }.getOrElse { throw IllegalArgumentException("Couldn't read the selected backup.") }
         require(o.optString("format") == BACKUP_FORMAT) { "This file isn't a Volta review run." }
@@ -102,16 +140,32 @@ object Json {
                 tempC = if (s.isNull(3)) null else s.getDouble(3).toFloat(),
                 voltageV = if (s.isNull(4)) null else s.getDouble(4).toFloat(),
                 currentMa = if (s.isNull(5)) null else s.getInt(5),
+                chargeCounterMah = if (s.length() < 7 || s.isNull(6)) null else s.getDouble(6).toFloat(),
                 source = Source.REVIEW,
             )
         }
         require(samples.zipWithNext().all { (a, b) -> b.time > a.time }) { "Duplicate sample timestamps." }
-        return ReviewRun(
+        val segs = o.optJSONArray("segments")?.let { a ->
+            require(a.length() <= 10_000) { "Too many benchmark slots in this backup." }
+            (0 until a.length()).map { i ->
+                val g = a.getJSONObject(i)
+                BenchSegment(
+                    index = g.getInt("index"),
+                    round = g.getInt("round"),
+                    stepId = g.getString("step").take(40),
+                    start = g.getLong("start"),
+                    end = if (g.isNull("end")) null else g.getLong("end"),
+                    relaunches = g.optInt("relaunches"),
+                )
+            }
+        }.orEmpty()
+        val run = ReviewRun(
             id = o.getString("id"),
             started = o.getLong("started"),
             ended = o.getLong("ended"),
             conditions = conditions(o.getJSONObject("conditions")),
             samples = samples,
         )
+        return run to segs
     }
 }
