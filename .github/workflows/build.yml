@@ -22,9 +22,21 @@ jobs:
       - name: Test battery logic
         run: ./gradlew -p core test
 
+      # The release APK is signed with the same key as Releases, so a branch build installs over
+      # the Volta on your phone and keeps its data. Without the secrets (pull requests from forks),
+      # it falls back to the debug key.
       - name: Build APKs
+        env:
+          KEYSTORE_BASE64: ${{ secrets.VOLTA_KEYSTORE_BASE64 }}
+          VOLTA_KEYSTORE_PASSWORD: ${{ secrets.VOLTA_KEYSTORE_PASSWORD }}
         run: |
           set -o pipefail
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/volta.jks"
+            export VOLTA_KEYSTORE="$RUNNER_TEMP/volta.jks"
+          else
+            echo "::warning::VOLTA_KEYSTORE_BASE64 isn't set, so the release APK is signed with a throwaway debug key and won't install over other versions."
+          fi
           ./gradlew assembleDebug assembleRelease 2>&1 | tee build.log
 
       - name: Show build errors
