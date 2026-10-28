@@ -52,86 +52,78 @@ import java.util.Locale
 
 @Composable
 fun NightScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, arg: String?, onBack: () -> Unit) {
-    val c = MaterialTheme.colorScheme
-    val context = LocalContext.current
+    val morning = arg?.toLongOrNull()?.let { LocalDate.ofEpochDay(it) } ?: latestMorning(snap, s)
+    AdaptiveScreen(
+        bottom = 32.dp,
+        start = {
+            DetailBar("Overnight report", onBack)
+            NightSummary(snap, s, vm, morning)
+        },
+        end = { NightDetails(snap, s, vm, morning) },
+    )
+}
+
+/** An overnight report shown beside the History list on big screens. */
+@Composable
+fun NightDetail(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, morning: LocalDate) {
+    PaneTitle("Overnight report")
+    NightSummary(snap, s, vm, morning)
+    NightDetails(snap, s, vm, morning)
+}
+
+/** The morning of the most recent night that has started. */
+internal fun latestMorning(snap: Snapshot, s: VoltaSettings): LocalDate {
     val today = History.dateOf(snap.now, snap.zone)
-    val latest = Night.window(today, s.nightStart, s.nightEnd, snap.zone).let { if (snap.now >= it.end) today else today.minusDays(1) }
-    val morning = arg?.toLongOrNull()?.let { LocalDate.ofEpochDay(it) } ?: latest
+    return Night.window(today, s.nightStart, s.nightEnd, snap.zone).let { if (snap.now >= it.end) today else today.minusDays(1) }
+}
+
+/** The night's hours, which can be changed, and the headline drop. */
+@Composable
+private fun NightSummary(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, morning: LocalDate) {
+    val c = MaterialTheme.colorScheme
+    val latest = latestMorning(snap, s)
     val window = Night.window(morning, s.nightStart, s.nightEnd, snap.zone)
-    val r = Night.report(window, snap.readings, snap.screenEvents, snap.now)
+    val r = remember(snap, window) { Night.report(window, snap.readings, snap.screenEvents, snap.now) }
     var editing by remember { mutableStateOf<Boolean?>(null) }
-    val askNotify = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
-        if (ok) vm.update { it.copy(morningSummary = true) } else vm.say("Notification permission is needed for the morning summary. You can enable it in Android Settings.")
+
+    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+        PillButton("From ${Fmt.time(window.start, snap.zone)}", { editing = true }, tonal = true, modifier = Modifier.weight(1f))
+        PillButton("To ${Fmt.time(window.end, snap.zone)}", { editing = false }, tonal = true, modifier = Modifier.weight(1f))
     }
 
-    ScreenColumn(bottom = 32.dp) {
-        DetailBar("Overnight report", onBack)
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            PillButton("From ${Fmt.time(window.start, snap.zone)}", { editing = true }, tonal = true, modifier = Modifier.weight(1f))
-            PillButton("To ${Fmt.time(window.end, snap.zone)}", { editing = false }, tonal = true, modifier = Modifier.weight(1f))
-        }
-
-        val drop = r.drop
-        VCard(color = c.primaryContainer, shape = androidx.compose.foundation.shape.RoundedCornerShape(32.dp), padding = 22.dp) {
-            Box {
-                Icon(VIcons.Moon, null, tint = c.onPrimaryContainer.copy(alpha = 0.18f), modifier = Modifier.size(120.dp).align(Alignment.TopEnd).padding(start = 40.dp))
-                androidx.compose.foundation.layout.Column {
-                    Text(
-                        (if (morning == latest) "Last night · " else "") +
-                            Fmt.day(window.start, snap.zone) + " → " + morning.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
-                        style = MaterialTheme.typography.bodyMedium, color = c.onPrimaryContainer,
-                    )
-                    Text(
-                        when {
-                            !r.hasData -> "No data"
-                            r.chargingSeen -> "Charged"
-                            drop != null -> Fmt.signedPts(drop)
-                            else -> "Partial"
-                        },
-                        style = MaterialTheme.typography.displayMedium, color = c.onPrimaryContainer, modifier = Modifier.padding(top = 6.dp),
-                    )
-                    Text(
-                        when {
-                            r.inProgress -> "Night in progress · refresh for newer readings"
-                            !r.hasData -> "No recorded battery readings in this window."
-                            r.chargingSeen -> "Charging was observed overnight. No discharge rate is shown."
-                            else -> listOfNotNull(
-                                r.ratePerHour?.let { Format.rate(it) },
-                                if (r.startLevel != null && r.endLevel != null) "${r.startLevel}% → ${r.endLevel}%" else null,
-                            ).joinToString(" · ").ifEmpty { "Partial coverage" }
-                        },
-                        style = MaterialTheme.typography.bodyLarge, color = c.onPrimaryContainer,
-                    )
-                }
+    val drop = r.drop
+    VCard(color = c.primaryContainer, shape = androidx.compose.foundation.shape.RoundedCornerShape(32.dp), padding = 22.dp) {
+        Box {
+            Icon(VIcons.Moon, null, tint = c.onPrimaryContainer.copy(alpha = 0.18f), modifier = Modifier.size(120.dp).align(Alignment.TopEnd).padding(start = 40.dp))
+            androidx.compose.foundation.layout.Column {
+                Text(
+                    (if (morning == latest) "Last night · " else "") +
+                        Fmt.day(window.start, snap.zone) + " → " + morning.dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault()),
+                    style = MaterialTheme.typography.bodyMedium, color = c.onPrimaryContainer,
+                )
+                Text(
+                    when {
+                        !r.hasData -> "No data"
+                        r.chargingSeen -> "Charged"
+                        drop != null -> Fmt.signedPts(drop)
+                        else -> "Partial"
+                    },
+                    style = MaterialTheme.typography.displayMedium, color = c.onPrimaryContainer, modifier = Modifier.padding(top = 6.dp),
+                )
+                Text(
+                    when {
+                        r.inProgress -> "Night in progress · refresh for newer readings"
+                        !r.hasData -> "No recorded battery readings in this window."
+                        r.chargingSeen -> "Charging was observed overnight. No discharge rate is shown."
+                        else -> listOfNotNull(
+                            r.ratePerHour?.let { Format.rate(it) },
+                            if (r.startLevel != null && r.endLevel != null) "${r.startLevel}% → ${r.endLevel}%" else null,
+                        ).joinToString(" · ").ifEmpty { "Partial coverage" }
+                    },
+                    style = MaterialTheme.typography.bodyLarge, color = c.onPrimaryContainer,
+                )
             }
         }
-
-        if (r.hasData) {
-            VCard {
-                Text("How the night went", style = MaterialTheme.typography.titleMedium)
-                SegmentStrip(nightSegments(snap, window.start, minOf(window.end, snap.now), c.primary, c.surfaceContainerHigh, c.tertiary, c.outlineVariant.copy(alpha = 0.4f)), Modifier.padding(top = 14.dp), height = 40.dp, gap = 2.dp, radius = 6.dp)
-                AxisLabels(listOf(Fmt.time(window.start, snap.zone), Fmt.time(window.end, snap.zone)), Modifier.padding(top = 6.dp))
-                Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
-                    LegendDot(c.primary, "Deep sleep")
-                    LegendDot(c.surfaceContainerHigh, "Awake, screen off")
-                    LegendDot(c.tertiary, "Screen on")
-                }
-            }
-            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                val ds = r.deepSleep
-                StatTile("Deep sleep", if (ds.coverage >= 0.2) Format.duration(ds.asleep) else "—", if (ds.coverage >= 0.9) Format.percent(ds.fraction) + " of the night" else "Partial clocks", Modifier.weight(1f))
-                StatTile("Screen woke", if (snap.usageAccess) "${r.screen.wakes}×" else "—", if (snap.usageAccess) Format.duration(r.screen.on) + " on" else "Needs usage access", Modifier.weight(1f))
-                StatTile("Coverage", Format.percent(r.coverage), r.lowest?.let { "Lowest $it%" }, Modifier.weight(1f))
-            }
-        }
-
-        GroupCard {
-            SwitchRow("Morning summary", "A notification with this report when you wake up", s.morningSummary) { on ->
-                if (on && !Notifier.canPost(context) && Build.VERSION.SDK_INT >= 33) askNotify.launch(Manifest.permission.POST_NOTIFICATIONS)
-                else vm.update { it.copy(morningSummary = on) }
-            }
-        }
-        Muted("Deep sleep is time Android's clock shows the phone suspended. It's part of the night, not extra time on top of screen-off, and it isn't the same as Doze. Comparisons need at least 90% clock coverage.")
     }
 
     editing?.let { isStart ->
@@ -141,6 +133,45 @@ fun NightScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, arg: Strin
             editing = null
         }
     }
+}
+
+/** How the night went, its numbers and the morning summary switch. */
+@Composable
+private fun NightDetails(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, morning: LocalDate) {
+    val c = MaterialTheme.colorScheme
+    val context = LocalContext.current
+    val window = Night.window(morning, s.nightStart, s.nightEnd, snap.zone)
+    val r = remember(snap, window) { Night.report(window, snap.readings, snap.screenEvents, snap.now) }
+    val askNotify = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { ok ->
+        if (ok) vm.update { it.copy(morningSummary = true) } else vm.say("Notification permission is needed for the morning summary. You can enable it in Android Settings.")
+    }
+
+    if (r.hasData) {
+        VCard {
+            Text("How the night went", style = MaterialTheme.typography.titleMedium)
+            SegmentStrip(nightSegments(snap, window.start, minOf(window.end, snap.now), c.primary, c.surfaceContainerHigh, c.tertiary, c.outlineVariant.copy(alpha = 0.4f)), Modifier.padding(top = 14.dp), height = 40.dp, gap = 2.dp, radius = 6.dp)
+            AxisLabels(listOf(Fmt.time(window.start, snap.zone), Fmt.time(window.end, snap.zone)), Modifier.padding(top = 6.dp))
+            Row(Modifier.padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(14.dp)) {
+                LegendDot(c.primary, "Deep sleep")
+                LegendDot(c.surfaceContainerHigh, "Awake, screen off")
+                LegendDot(c.tertiary, "Screen on")
+            }
+        }
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+            val ds = r.deepSleep
+            StatTile("Deep sleep", if (ds.coverage >= 0.2) Format.duration(ds.asleep) else "—", if (ds.coverage >= 0.9) Format.percent(ds.fraction) + " of the night" else "Partial clocks", Modifier.weight(1f))
+            StatTile("Screen woke", if (snap.usageAccess) "${r.screen.wakes}×" else "—", if (snap.usageAccess) Format.duration(r.screen.on) + " on" else "Needs usage access", Modifier.weight(1f))
+            StatTile("Coverage", Format.percent(r.coverage), r.lowest?.let { "Lowest $it%" }, Modifier.weight(1f))
+        }
+    }
+
+    GroupCard {
+        SwitchRow("Morning summary", "A notification with this report when you wake up", s.morningSummary) { on ->
+            if (on && !Notifier.canPost(context) && Build.VERSION.SDK_INT >= 33) askNotify.launch(Manifest.permission.POST_NOTIFICATIONS)
+            else vm.update { it.copy(morningSummary = on) }
+        }
+    }
+    Muted("Deep sleep is time Android's clock shows the phone suspended. It's part of the night, not extra time on top of screen-off, and it isn't the same as Doze. Comparisons need at least 90% clock coverage.")
 }
 
 /** Splits the night into deep sleep, awake and screen-on segments from consecutive readings. */

@@ -2,6 +2,13 @@
 
 What's new in each version of Volta. Download any version from [Releases](https://github.com/alexmaxham/Volta/releases).
 
+## Unreleased
+
+### New
+- **Tablets and foldables:** on wide screens the bottom bar becomes a floating side rail, and screens split into two panes that scroll on their own. History opens charging sessions and nights beside the list instead of on a new screen, and shows cycle averages next to the cycle list. Apps puts the list of apps beside its total, and Settings, Lab and the detail screens use both halves.
+- **Fold aware:** when a foldable is held like a book the two panes split along the hinge, and when it stands half-open like a laptop Today puts the battery level above the fold and scrolls the rest below.
+- Phones in landscape get the side rail and two panes too.
+
 ## 1.1.1 — 2026-10-28
 
 ### Fixed

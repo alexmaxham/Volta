@@ -107,7 +107,7 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, onBack:
         }
     }
 
-    ScreenColumn(bottom = 40.dp) {
+    AdaptiveScreen(bottom = 40.dp, start = {
         DetailBar("", onBack)
         TabTitle("Settings")
 
@@ -176,7 +176,7 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, onBack:
                 s.reviewRecordingDefault,
             ) { on -> if (on) withNotify { it.copy(reviewRecordingDefault = true) } else vm.update { it.copy(reviewRecordingDefault = false) } }
         }
-
+    }, end = {
         Header("Battery")
         GroupCard {
             ValueRow(
@@ -250,7 +250,7 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, onBack:
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             textAlign = androidx.compose.ui.text.style.TextAlign.Center,
         )
-    }
+    })
 
     when (editing) {
         Editing.Design -> NumberDialog(

@@ -1,9 +1,18 @@
 name: Emulator tour
 
 # Boots an emulator, walks through every screen and pushes the screenshots to the
-# emulator-screens branch.
+# emulator-screens branch. Pick a foldable or tablet profile to check the large-screen layouts.
 on:
   workflow_dispatch:
+    inputs:
+      profile:
+        description: Device to emulate
+        type: choice
+        default: pixel_7
+        options:
+          - pixel_7
+          - pixel_fold
+          - pixel_tablet
 
 permissions:
   contents: write
@@ -37,7 +46,7 @@ jobs:
           api-level: 35
           target: google_apis
           arch: x86_64
-          profile: pixel_7
+          profile: ${{ inputs.profile }}
           disable-animations: false
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim -camera-back none
           script: |

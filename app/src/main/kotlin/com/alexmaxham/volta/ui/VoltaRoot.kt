@@ -11,11 +11,13 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.windowInsetsTopHeight
+import androidx.compose.foundation.layout.displayCutoutPadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
@@ -23,6 +25,7 @@ import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -36,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.alexmaxham.volta.data.VoltaSettings
 import com.alexmaxham.volta.ui.components.FloatingNavBar
+import com.alexmaxham.volta.ui.components.FloatingNavRail
 import com.alexmaxham.volta.ui.components.NavItem
 import com.alexmaxham.volta.ui.components.VIcons
 import com.alexmaxham.volta.ui.screens.AppsScreen
@@ -51,6 +55,7 @@ import com.alexmaxham.volta.ui.screens.WelcomeScreen
 import com.alexmaxham.volta.ui.theme.VoltaTheme
 import com.alexmaxham.volta.ui.theme.isDark
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 private val tabs = listOf(
     NavItem("today", "Today", VIcons.Battery),
@@ -62,6 +67,9 @@ private val tabs = listOf(
 /** Navigation within the app. Routes are plain strings like "today" or "run/<id>". */
 class Nav(private val stack: SnapshotStateList<String>) {
     val current: String get() = stack.last()
+
+    /** The tab this stack of screens started from. */
+    val tab: String get() = stack.first()
     val canGoBack: Boolean get() = stack.size > 1
 
     fun go(route: String) {
@@ -80,16 +88,19 @@ class Nav(private val stack: SnapshotStateList<String>) {
 }
 
 @Composable
-fun VoltaRoot(vm: VoltaViewModel, pendingRoute: MutableStateFlow<String?>, onDarkChanged: (Boolean) -> Unit) {
+fun VoltaRoot(vm: VoltaViewModel, pendingRoute: MutableStateFlow<String?>, fold: StateFlow<Fold?>, onDarkChanged: (Boolean) -> Unit) {
     val settings by vm.settings.collectAsStateWithLifecycle()
+    val currentFold by fold.collectAsStateWithLifecycle()
     val s = settings ?: return
     VoltaTheme(s.scheme, s.themeMode) {
         val dark = isDark(s.themeMode)
         LaunchedEffect(dark) { onDarkChanged(dark) }
         // Surface sets the default content colour, so plain Text follows the theme in light and dark.
         Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background, contentColor = MaterialTheme.colorScheme.onBackground) {
-            Box(Modifier.fillMaxSize()) {
-                if (!s.onboarded) WelcomeScreen(vm) else Main(vm, s, pendingRoute)
+            BoxWithConstraints(Modifier.fillMaxSize()) {
+                CompositionLocalProvider(LocalVoltaLayout provides VoltaLayout(maxWidth, currentFold)) {
+                    if (!s.onboarded) WelcomeScreen(vm) else Main(vm, s, pendingRoute)
+                }
                 // Keeps scrolled content from running under the status bar icons.
                 Box(
                     Modifier
@@ -123,10 +134,13 @@ private fun Main(vm: VoltaViewModel, s: VoltaSettings, pendingRoute: MutableStat
     BackHandler(nav.canGoBack) { nav.back() }
 
     val route = nav.current
+    val rail = LocalVoltaLayout.current.rail
     val onTab = tabs.any { it.key == route }
     Box(Modifier.fillMaxSize()) {
         AnimatedContent(
             targetState = route,
+            // With the side rail the screens sit to its right; the rail stays put on every screen.
+            modifier = if (rail) Modifier.padding(start = RAIL_WIDTH) else Modifier,
             transitionSpec = {
                 (fadeIn(tween(220)) + slideInVertically(tween(260)) { it / 24 }) togetherWith fadeOut(tween(120))
             },
@@ -140,7 +154,7 @@ private fun Main(vm: VoltaViewModel, s: VoltaSettings, pendingRoute: MutableStat
             val parts = r.split("/", limit = 2)
             when (parts[0]) {
                 "today" -> TodayScreen(snap, live, s, vm, nav::go)
-                "history" -> HistoryScreen(snap, s, nav::go)
+                "history" -> HistoryScreen(snap, s, vm, nav::go)
                 "apps" -> AppsScreen(snap, vm)
                 "lab" -> LabScreen(snap, s, vm, nav::go)
                 "settings" -> SettingsScreen(snap, s, vm, nav::back)
@@ -152,13 +166,24 @@ private fun Main(vm: VoltaViewModel, s: VoltaSettings, pendingRoute: MutableStat
             }
         }
         AnimatedVisibility(
-            visible = onTab,
+            visible = rail,
+            enter = fadeIn(),
+            exit = fadeOut(),
+            modifier = Modifier.align(Alignment.CenterStart).navigationBarsPadding().displayCutoutPadding().padding(start = 12.dp),
+        ) {
+            FloatingNavRail(tabs, nav.tab, nav::go)
+        }
+        AnimatedVisibility(
+            visible = onTab && !rail,
             enter = fadeIn() + slideInVertically { it },
             exit = fadeOut() + slideOutVertically { it },
             modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = 16.dp),
         ) {
             FloatingNavBar(tabs, route, nav::go)
         }
-        SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (onTab) 96.dp else 16.dp))
+        SnackbarHost(snackbar, Modifier.align(Alignment.BottomCenter).navigationBarsPadding().padding(bottom = if (onTab && !rail) 96.dp else 16.dp))
     }
 }
+
+/** Room the side rail takes at the start of the window. */
+private val RAIL_WIDTH = 96.dp

@@ -28,7 +28,11 @@ import com.alexmaxham.volta.core.History
 import com.alexmaxham.volta.core.Night
 import com.alexmaxham.volta.core.Time
 import com.alexmaxham.volta.data.VoltaSettings
+import com.alexmaxham.volta.ui.LocalTwoPane
 import com.alexmaxham.volta.ui.Snapshot
+import com.alexmaxham.volta.ui.VoltaViewModel
+import com.alexmaxham.volta.ui.components.RowsCard
+import com.alexmaxham.volta.ui.components.StatTile
 import com.alexmaxham.volta.ui.components.AxisLabels
 import com.alexmaxham.volta.ui.components.BarChart
 import com.alexmaxham.volta.ui.components.GroupCard
@@ -43,31 +47,58 @@ import com.alexmaxham.volta.ui.components.VCard
 import com.alexmaxham.volta.ui.components.VIcons
 import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
+import java.time.LocalDate
 import java.time.format.TextStyle
 import java.util.Locale
 import kotlin.math.roundToInt
 
 private val historyTabs = listOf("Level", "Charging", "Nights", "Cycles")
 
+/**
+ * On big screens History is a list and a detail side by side: picking a charging session or a
+ * night opens it in the second pane instead of on its own screen.
+ */
 @Composable
-fun HistoryScreen(snap: Snapshot, s: VoltaSettings, go: (String) -> Unit) {
+fun HistoryScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String) -> Unit) {
     var tab by rememberSaveable { mutableStateOf(0) }
-    ScreenColumn {
-        TabTitle("History") {}
-        Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-            historyTabs.forEachIndexed { i, t -> SelectChip(t, tab == i, { tab = i }) }
-        }
-        when (tab) {
-            0 -> LevelTab(snap, s)
-            1 -> ChargingTab(snap, s, go)
-            2 -> NightsTab(snap, s, go)
-            else -> CyclesTab(snap)
-        }
-    }
+    var session by rememberSaveable { mutableStateOf<Long?>(null) }
+    var night by rememberSaveable { mutableStateOf<Long?>(null) }
+    val shownSession = snap.sessions.firstOrNull { it.start == session } ?: snap.sessions.firstOrNull()
+    val shownNight = night ?: latestMorning(snap, s).toEpochDay()
+    AdaptiveScreen(
+        start = {
+            TabTitle("History") {}
+            Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                historyTabs.forEachIndexed { i, t -> SelectChip(t, tab == i, { tab = i }) }
+            }
+            val twoPane = LocalTwoPane.current
+            when (tab) {
+                0 -> LevelTab(snap)
+                1 -> ChargingTab(snap, shownSession?.start?.takeIf { twoPane }) { start ->
+                    if (twoPane) session = start else go("charge/$start")
+                }
+                2 -> NightsTab(snap, s, shownNight.takeIf { twoPane }) { day ->
+                    if (twoPane) night = day else go("night/$day")
+                }
+                else -> CyclesTab(snap)
+            }
+        },
+        end = {
+            val twoPane = LocalTwoPane.current
+            when (tab) {
+                0 -> RecentReadings(snap, s, if (twoPane) 12 else 5)
+                1 -> if (twoPane && shownSession != null) ChargingDetail(snap, s, shownSession)
+                2 -> if (twoPane) NightDetail(snap, s, vm, LocalDate.ofEpochDay(shownNight))
+                else -> if (twoPane) CyclesSummary(snap)
+            }
+        },
+    )
 }
 
 @Composable
-private fun LevelTab(snap: Snapshot, s: VoltaSettings) {
+private fun LevelTab(snap: Snapshot) {
     val c = MaterialTheme.colorScheme
     val from = snap.now - 7 * Time.DAY
     VCard {
@@ -114,10 +145,13 @@ private fun LevelTab(snap: Snapshot, s: VoltaSettings) {
             Modifier.padding(top = 12.dp),
         )
     }
+}
 
+@Composable
+private fun RecentReadings(snap: Snapshot, s: VoltaSettings, count: Int) {
     SectionTitle("Recent readings")
     GroupCard {
-        val recent = snap.readings.takeLast(5).reversed()
+        val recent = snap.readings.takeLast(count).reversed()
         if (recent.isEmpty()) ListRow("No readings yet.")
         recent.forEachIndexed { i, r ->
             if (i > 0) GroupDivider()
@@ -130,7 +164,7 @@ private fun LevelTab(snap: Snapshot, s: VoltaSettings) {
 }
 
 @Composable
-private fun ChargingTab(snap: Snapshot, s: VoltaSettings, go: (String) -> Unit) {
+private fun ChargingTab(snap: Snapshot, selected: Long?, open: (Long) -> Unit) {
     val c = MaterialTheme.colorScheme
     val sessions = snap.sessions.take(50)
     if (sessions.isEmpty()) {
@@ -154,8 +188,9 @@ private fun ChargingTab(snap: Snapshot, s: VoltaSettings, go: (String) -> Unit) 
                     cs.peakPowerW?.let { "${Format.watts(it)} peak" },
                 ).joinToString(" · "),
                 leading = { IconBadge(VIcons.Bolt, c.primaryContainer, c.onPrimaryContainer, RoundedCornerShape(16.dp), 48.dp) },
+                modifier = selectedRow(cs.start == selected),
                 trailing = { Icon(VIcons.Chevron, null, tint = c.onSurfaceVariant, modifier = Modifier.size(20.dp)) },
-                onClick = { go("charge/${cs.start}") },
+                onClick = { open(cs.start) },
             )
         }
     }
@@ -166,7 +201,7 @@ private fun ChargingTab(snap: Snapshot, s: VoltaSettings, go: (String) -> Unit) 
 }
 
 @Composable
-private fun NightsTab(snap: Snapshot, s: VoltaSettings, go: (String) -> Unit) {
+private fun NightsTab(snap: Snapshot, s: VoltaSettings, selected: Long?, open: (Long) -> Unit) {
     val c = MaterialTheme.colorScheme
     val today = History.dateOf(snap.now, snap.zone)
     val nights = (0L..6L).map { back ->
@@ -188,8 +223,9 @@ private fun NightsTab(snap: Snapshot, s: VoltaSettings, go: (String) -> Unit) {
                     else -> "Partial / unavailable"
                 },
                 leading = { IconBadge(VIcons.Moon, c.secondaryContainer, c.onSecondaryContainer, CircleShape) },
+                modifier = selectedRow(morning.toEpochDay() == selected),
                 trailing = { Icon(VIcons.Chevron, null, tint = c.onSurfaceVariant, modifier = Modifier.size(20.dp)) },
-                onClick = { go("night/${morning.toEpochDay()}") },
+                onClick = { open(morning.toEpochDay()) },
             )
         }
     }
@@ -224,6 +260,38 @@ private fun CyclesTab(snap: Snapshot) {
     }
     Muted("Each window runs from one observed 100% charge to the next. These windows are separate from the phone's lifetime cycle count.")
 }
+
+/** Totals across the charge cycles, shown beside the list on big screens. */
+@Composable
+private fun CyclesSummary(snap: Snapshot) {
+    val c = MaterialTheme.colorScheme
+    val done = snap.cycles.filter { !it.ongoing && !it.partial }
+    SectionTitle("Across your cycles")
+    if (done.isEmpty()) {
+        Muted("Averages appear once a full cycle, from one 100% charge to the next, has been recorded.")
+        return
+    }
+    Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+        StatTile(
+            "Average cycle", Format.duration(done.sumOf { it.end - it.start } / done.size), "from 100% to the next 100%",
+            Modifier.weight(1f), c.primaryContainer, c.onPrimaryContainer,
+        )
+        StatTile("Average use", Fmt.pts(done.sumOf { it.used } / done.size), "per cycle", Modifier.weight(1f))
+    }
+    val longest = done.maxBy { it.end - it.start }
+    RowsCard(
+        listOf(
+            "Complete cycles" to "${done.size}",
+            "Longest" to Format.duration(longest.end - longest.start),
+            "Started" to Fmt.day(longest.start, snap.zone),
+        ),
+    )
+}
+
+/** Marks the row whose detail is open in the second pane. */
+@Composable
+private fun selectedRow(selected: Boolean): Modifier =
+    if (selected) Modifier.background(MaterialTheme.colorScheme.secondaryContainer).semantics { this.selected = true } else Modifier
 
 internal fun chargerName(c: Charger): String = when (c) {
     Charger.AC -> "Wall charger"
