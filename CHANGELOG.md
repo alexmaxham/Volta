@@ -2,6 +2,15 @@
 
 What's new in each version of Volta. Download any version from [Releases](https://github.com/alexmaxham/Volta/releases).
 
+## Unreleased
+
+### New
+- **App benchmark** in Lab (Settings → Advanced → Lab → App benchmark). Volta opens Chrome, YouTube, Instagram, your camera app recording 4K 60 fps video, TikTok, X, YouTube Music and Subway Surfers for an hour each, in that order, then starts again until the battery reaches 3% or a charger is connected. It scrolls feeds, opens a fixed set of web pages, swipes videos, starts and stops recording and plays the game, keeps the screen on, and brings an app back if a popup or another app stays in front for 15 seconds. It needs Volta's accessibility service, which only acts while a benchmark you started is running.
+- **Checklist before each benchmark:** auto brightness off and charged to 100% (and unplugged) are checked live by Volta; you confirm brightness is set to 200 nits with a lux meter, using a full white screen Volta shows for measuring, and that the camera is set to 4K 60 fps.
+- **Results by app:** points and mAh per hour, average power, average and peak battery temperature and relaunches for each app, the full run time, and a live view while it runs. Share them as a portrait or square image, as text, or as a per-app CSV with one row per hour-long slot.
+- YouTube and YouTube Music can play a link you choose, so every phone plays the same thing.
+- Lab runs now save the battery's charge counter, so charge used is measured in mAh where the phone reports it. Run backups include it, along with benchmark slots.
+
 ## 1.3.0 — 2026-10-28
 
 ### Changed

@@ -4,9 +4,15 @@ import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.alexmaxham.volta.bench.Bench
+import com.alexmaxham.volta.bench.BenchService
 import com.alexmaxham.volta.core.AppEvent
 import com.alexmaxham.volta.core.AppTime
 import com.alexmaxham.volta.core.Apps
+import com.alexmaxham.volta.core.BenchPlan
+import com.alexmaxham.volta.core.BenchSegment
+import com.alexmaxham.volta.core.BenchStep
+import com.alexmaxham.volta.core.Benchmark
 import com.alexmaxham.volta.core.Capacity
 import com.alexmaxham.volta.core.ChargingSession
 import com.alexmaxham.volta.core.Charging
@@ -29,6 +35,7 @@ import com.alexmaxham.volta.core.ScreenTime
 import com.alexmaxham.volta.core.ScreenTimeline
 import com.alexmaxham.volta.core.SleepClock
 import com.alexmaxham.volta.core.Source
+import com.alexmaxham.volta.core.TestType
 import com.alexmaxham.volta.core.Time
 import com.alexmaxham.volta.core.Usage
 import com.alexmaxham.volta.core.WeekComparison
@@ -299,7 +306,7 @@ class VoltaViewModel(app: Application) : AndroidViewModel(app) {
     fun backupRun(id: String, uri: Uri) = io {
         val run = db.run(id) ?: return@io say("This review no longer exists.")
         if (run.active) return@io say("Finish the run before backing it up.")
-        write(uri, Json.backup(run), "Export saved.")
+        write(uri, Json.backup(run, db.segments(id)), "Export saved.")
     }
 
     fun importRun(uri: Uri) = io {
@@ -315,11 +322,65 @@ class VoltaViewModel(app: Application) : AndroidViewModel(app) {
                 out.toString(Charsets.UTF_8.name())
             }
         }.getOrNull() ?: return@io say("Couldn't read the selected backup.")
-        val run = runCatching { Json.restore(text) }.getOrElse { return@io say(it.message ?: "Couldn't read the selected backup.") }
+        val (run, segments) = runCatching { Json.restore(text) }.getOrElse { return@io say(it.message ?: "Couldn't read the selected backup.") }
         if (db.run(run.id) != null) return@io say("This run is already saved.")
         db.insertRun(run.copy(samples = emptyList()))
         db.insertRunSamples(run.id, run.samples)
+        for (sg in segments) db.saveSegment(run.id, sg)
         say("Review imported.")
+    }
+
+    // App benchmark
+
+    fun loadSegments(id: String, into: (List<BenchSegment>) -> Unit) {
+        viewModelScope.launch {
+            into(withContext(Dispatchers.IO) { db.segments(id) })
+        }
+    }
+
+    fun loadBenchSteps(into: (List<BenchStep>) -> Unit) {
+        viewModelScope.launch {
+            into(withContext(Dispatchers.IO) { Bench.steps(context) })
+        }
+    }
+
+    fun setBenchLink(stepId: String, link: String, then: () -> Unit) {
+        viewModelScope.launch {
+            withContext(Dispatchers.IO) { Bench.setLink(context, stepId, link) }
+            then()
+        }
+    }
+
+    /** Starts a benchmark through [steps], the installed apps in order. Assumes the checklist was confirmed. */
+    fun startBenchmark(steps: List<BenchStep>) = io {
+        when {
+            db.activeRunId() != null -> return@io say("Finish the current run first.")
+            steps.isEmpty() -> return@io say("None of the benchmark apps are installed.")
+            !Bench.enabled(context) || BenchService.instance == null -> return@io say("Turn on Volta app benchmark in Accessibility settings first.")
+            !Notifier.canPost(context) -> return@io say("Allow Volta notifications first. The benchmark records with a visible notification.")
+        }
+        val now = System.currentTimeMillis()
+        val conditions = Conditions(
+            phone = "${android.os.Build.MANUFACTURER.replaceFirstChar { it.uppercase() }} ${android.os.Build.MODEL}",
+            software = "Android ${android.os.Build.VERSION.RELEASE} · ${android.os.Build.DISPLAY}",
+            protocol = Benchmark.PROTOCOL,
+            type = TestType.DRAIN,
+            brightness = "200 nits (lux meter)",
+            notes = "Auto brightness off, started at 100%. " + steps.joinToString(", ") { "${it.name} ${it.minutes} min" + it.link.takeIf { l -> l.isNotBlank() }?.let { l -> " ($l)" }.orEmpty() } +
+                ", then repeat until ${Benchmark.STOP_LEVEL}%.",
+            reviewRecording = true,
+        )
+        val run = ReviewRun(UUID.randomUUID().toString(), now, null, conditions, emptyList())
+        db.insertRun(run)
+        BatteryReader.read(context, Source.REVIEW, now)?.let { db.insertRunSamples(run.id, listOf(it)) }
+        Bench.save(context, BenchPlan(run.id, steps))
+        runCatching { ReviewService.start(context) }.onFailure { say("Recording could not start. Open the run and tap Resume recording.") }
+        withContext(Dispatchers.Main) { BenchService.instance?.resume() }
+    }
+
+    fun exportBenchCsv(id: String, uri: Uri) = io {
+        val run = db.run(id) ?: return@io say("This review no longer exists.")
+        write(uri, Benchmark.csv(run, Benchmark.report(run, db.segments(id), System.currentTimeMillis())), "Export saved.")
     }
 
     fun exportApps(uri: Uri, rows: List<AppTime>) = io {

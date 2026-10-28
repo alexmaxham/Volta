@@ -1,11 +1,18 @@
 package com.alexmaxham.volta.ui.screens
 
+import android.content.Intent
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -16,8 +23,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.alexmaxham.volta.core.BenchReport
+import com.alexmaxham.volta.core.BenchSegment
+import com.alexmaxham.volta.core.Benchmark
 import com.alexmaxham.volta.core.Format
 import com.alexmaxham.volta.core.Review
 import com.alexmaxham.volta.core.ReviewRun
@@ -38,6 +51,7 @@ import com.alexmaxham.volta.ui.components.SectionTitle
 import com.alexmaxham.volta.ui.components.StatTile
 import com.alexmaxham.volta.ui.components.VCard
 import com.alexmaxham.volta.ui.components.VIcons
+import com.alexmaxham.volta.ui.share.BenchImageDialog
 import kotlinx.coroutines.delay
 
 @Composable
@@ -47,21 +61,27 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
     var loaded by remember { mutableStateOf(false) }
     var now by remember { mutableStateOf(System.currentTimeMillis()) }
     var confirmDelete by remember { mutableStateOf(false) }
+    var segments by remember { mutableStateOf<List<BenchSegment>>(emptyList()) }
+    var shareImage by remember { mutableStateOf(false) }
+    val context = LocalContext.current
 
     LaunchedEffect(id) {
         while (true) {
             vm.loadRun(id) { run = it; loaded = true }
+            vm.loadSegments(id) { segments = it }
             now = System.currentTimeMillis()
             delay(if (run?.active == true) Review.INTERVAL else 60_000)
         }
     }
     val csv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri -> if (uri != null) vm.exportRunCsv(id, uri) }
     val backup = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri -> if (uri != null) vm.backupRun(id, uri) }
+    val benchCsv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri -> if (uri != null) vm.exportBenchCsv(id, uri) }
 
     val r = run
     val sum = r?.let { Review.summary(it, now) }
+    val report = if (r != null && segments.isNotEmpty()) Benchmark.report(r, segments, now) else null
     AdaptiveScreen(bottom = 32.dp, start = start@{
-        DetailBar("Review run", onBack) {
+        DetailBar(if (report != null) "App benchmark" else "Review run", onBack) {
             if (run?.active == false) CircleIconButton(VIcons.Trash, "Delete this run", { confirmDelete = true })
         }
         if (r == null || sum == null) {
@@ -87,6 +107,8 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
             }
             Muted(if (cond.reviewRecording) "Review recording · Android may delay readings while the phone sleeps." else "App-open recording · readings are saved while Volta is open.")
         }
+
+        if (report != null) BenchApps(report, s.fahrenheit, segments.lastOrNull()?.takeIf { r.active && it.end == null })
 
         VCard {
             Text("Battery level", style = MaterialTheme.typography.titleMedium)
@@ -134,6 +156,19 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
         }
         Muted("Battery temperature is not surface or chipset temperature. Conditions are entered by the reviewer.")
 
+        if (r != null && report != null) {
+            GroupCard {
+                ChevronRow("Share results image", "Drain for each app, run time and temperature") { shareImage = true }
+                GroupDivider()
+                ChevronRow("Share as text", "A summary to paste into a post or message") {
+                    val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, Benchmark.text(r, report, s.fahrenheit))
+                    runCatching { context.startActivity(Intent.createChooser(send, "Share results")) }
+                }
+                GroupDivider()
+                ChevronRow("Export per-app CSV", "One row for each hour-long app slot") { benchCsv.launch("volta-benchmark-${r.started}.csv") }
+            }
+        }
+
         if (!r.active) {
             GroupCard {
                 ChevronRow("Compare matching tests", "Curves aligned by elapsed time") { go("compare/${r.id}") }
@@ -144,6 +179,8 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
             }
         }
     })
+
+    if (shareImage && r != null && report != null) BenchImageDialog(r, report, s) { shareImage = false }
 
     if (confirmDelete) {
         AlertDialog(
@@ -159,6 +196,47 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
             },
             dismissButton = { TextButton({ confirmDelete = false }) { Text("Cancel") } },
         )
+    }
+}
+
+/** Drain for each benchmark app, as bars of points per hour. */
+@Composable
+private fun BenchApps(rep: BenchReport, fahrenheit: Boolean, current: BenchSegment?) {
+    val c = MaterialTheme.colorScheme
+    val max = rep.apps.mapNotNull { it.perHour }.maxOrNull()?.takeIf { it > 0 } ?: 1.0
+    VCard {
+        Text("Drain by app", style = MaterialTheme.typography.titleMedium)
+        Text(
+            if (current != null) "Now: ${Benchmark.name(current.stepId)} · round ${current.round + 1}" else "Round ${rep.rounds} reached · ${rep.segments.size} app slots",
+            style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant,
+        )
+        for (a in rep.apps) {
+            Column(Modifier.padding(top = 14.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(a.name, style = MaterialTheme.typography.titleSmall, modifier = Modifier.weight(1f))
+                    Text(a.perHour?.let { Format.rate(it) } ?: "—", style = MaterialTheme.typography.titleSmall)
+                }
+                Box(Modifier.padding(top = 6.dp).fillMaxWidth().height(10.dp).clip(RoundedCornerShape(5.dp)).background(c.surfaceContainerHighest)) {
+                    Box(
+                        Modifier
+                            .fillMaxWidth(((a.perHour ?: 0.0) / max).toFloat().coerceIn(0f, 1f))
+                            .fillMaxHeight()
+                            .clip(RoundedCornerShape(5.dp))
+                            .background(if (a.stepId == current?.stepId) c.tertiary else c.primary),
+                    )
+                }
+                Text(
+                    listOfNotNull(
+                        a.mahPerHour?.let { Format.mah(it.toFloat()) + "/h" },
+                        a.avgPowerW?.let { "avg " + Format.watts(it) },
+                        a.peakTempC?.let { "peak " + Format.temp(it, fahrenheit) },
+                        Format.duration(a.duration),
+                        a.relaunches.takeIf { it > 0 }?.let { if (it == 1) "1 relaunch" else "$it relaunches" },
+                    ).joinToString(" · "),
+                    style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant, modifier = Modifier.padding(top = 4.dp),
+                )
+            }
+        }
     }
 }
 

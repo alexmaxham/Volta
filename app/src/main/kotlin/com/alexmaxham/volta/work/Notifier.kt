@@ -23,6 +23,7 @@ object Notifier {
     const val ID_WARM = 3
     const val ID_MORNING = 4
     const val ID_REVIEW = 10
+    const val ID_BENCH = 11
 
     fun createChannels(context: Context) {
         val nm = context.getSystemService(NotificationManager::class.java) ?: return

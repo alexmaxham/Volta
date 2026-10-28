@@ -2,4 +2,6 @@
 <resources>
     <string name="app_name">Volta</string>
     <string name="widget_description">Battery level, time left and temperature</string>
+    <string name="bench_service_label">Volta app benchmark</string>
+    <string name="bench_service_description">Runs Volta\'s Lab app benchmark: opens each test app in turn, scrolls, swipes and taps in it, and keeps the screen on. It only acts while a benchmark you started is running, and reads nothing but which app is in front and the labels of buttons it needs to press. Nothing leaves your phone.</string>
 </resources>

@@ -5,6 +5,7 @@ import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
+import com.alexmaxham.volta.core.BenchSegment
 import com.alexmaxham.volta.core.CapacityReading
 import com.alexmaxham.volta.core.Charger
 import com.alexmaxham.volta.core.Conditions
@@ -14,7 +15,7 @@ import com.alexmaxham.volta.core.ReviewRun
 import com.alexmaxham.volta.core.Source
 
 /** Everything Volta stores, kept on this device only. */
-class Db private constructor(context: Context) : SQLiteOpenHelper(context, "volta.db", null, 1) {
+class Db private constructor(context: Context) : SQLiteOpenHelper(context, "volta.db", null, 2) {
 
     override fun onConfigure(db: SQLiteDatabase) {
         db.setForeignKeyConstraintsEnabled(true)
@@ -28,15 +29,29 @@ class Db private constructor(context: Context) : SQLiteOpenHelper(context, "volt
         db.execSQL("CREATE TABLE runs (id TEXT PRIMARY KEY, started INTEGER NOT NULL, ended INTEGER, conditions TEXT NOT NULL)")
         db.execSQL(
             "CREATE TABLE run_samples (run_id TEXT NOT NULL REFERENCES runs(id) ON DELETE CASCADE, time INTEGER NOT NULL, " +
-                "level INTEGER NOT NULL, plugged INTEGER NOT NULL, temp REAL, voltage REAL, current_ma INTEGER, PRIMARY KEY(run_id, time))",
+                "level INTEGER NOT NULL, plugged INTEGER NOT NULL, temp REAL, voltage REAL, current_ma INTEGER, counter_mah REAL, PRIMARY KEY(run_id, time))",
         )
+        createBench(db)
         db.execSQL("CREATE TABLE presets (name TEXT PRIMARY KEY, conditions TEXT NOT NULL, updated INTEGER NOT NULL)")
         db.execSQL("CREATE TABLE capacity (time INTEGER PRIMARY KEY, full_mah REAL NOT NULL, gained INTEGER NOT NULL)")
         db.execSQL("CREATE TABLE cycle_apps (start INTEGER PRIMARY KEY, end INTEGER NOT NULL, payload TEXT NOT NULL)")
         db.execSQL("CREATE TABLE kv (key TEXT PRIMARY KEY, value TEXT)")
     }
 
-    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) = Unit
+    override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
+        if (oldVersion < 2) {
+            db.execSQL("ALTER TABLE run_samples ADD COLUMN counter_mah REAL")
+            createBench(db)
+        }
+    }
+
+    /** App slots of benchmark runs. */
+    private fun createBench(db: SQLiteDatabase) {
+        db.execSQL(
+            "CREATE TABLE bench_segments (run_id TEXT NOT NULL REFERENCES runs(id) ON DELETE CASCADE, idx INTEGER NOT NULL, " +
+                "round INTEGER NOT NULL, step TEXT NOT NULL, start INTEGER NOT NULL, end INTEGER, relaunches INTEGER NOT NULL DEFAULT 0, PRIMARY KEY(run_id, idx))",
+        )
+    }
 
     // Readings
 
@@ -121,6 +136,7 @@ class Db private constructor(context: Context) : SQLiteOpenHelper(context, "volt
                     put("temp", r.tempC)
                     put("voltage", r.voltageV)
                     put("current_ma", r.currentMa)
+                    put("counter_mah", r.chargeCounterMah)
                 }
                 db.insertWithOnConflict("run_samples", null, v, SQLiteDatabase.CONFLICT_REPLACE)
             }
@@ -176,12 +192,53 @@ class Db private constructor(context: Context) : SQLiteOpenHelper(context, "volt
                             tempC = c.optFloat("temp"),
                             voltageV = c.optFloat("voltage"),
                             currentMa = c.optInt("current_ma"),
+                            chargeCounterMah = c.optFloat("counter_mah"),
                             source = Source.REVIEW,
                         ),
                     )
                 }
             }
         }
+
+    /** When the run ended, or null while it's active. Throws [NoSuchElementException] if the run is gone. */
+    fun runEnded(id: String): Long? =
+        readableDatabase.rawQuery("SELECT ended FROM runs WHERE id = ?", arrayOf(id)).use { c ->
+            if (!c.moveToFirst()) throw NoSuchElementException(id)
+            if (c.isNull(0)) null else c.getLong(0)
+        }
+
+    // Benchmark slots
+
+    fun segments(runId: String): List<BenchSegment> =
+        readableDatabase.rawQuery("SELECT * FROM bench_segments WHERE run_id = ? ORDER BY idx", arrayOf(runId)).use { c ->
+            buildList {
+                while (c.moveToNext()) {
+                    add(
+                        BenchSegment(
+                            index = c.getInt(c.getColumnIndexOrThrow("idx")),
+                            round = c.getInt(c.getColumnIndexOrThrow("round")),
+                            stepId = c.getString(c.getColumnIndexOrThrow("step")),
+                            start = c.getLong(c.getColumnIndexOrThrow("start")),
+                            end = c.optLong("end"),
+                            relaunches = c.getInt(c.getColumnIndexOrThrow("relaunches")),
+                        ),
+                    )
+                }
+            }
+        }
+
+    fun saveSegment(runId: String, s: BenchSegment) {
+        val v = ContentValues().apply {
+            put("run_id", runId)
+            put("idx", s.index)
+            put("round", s.round)
+            put("step", s.stepId)
+            put("start", s.start)
+            put("end", s.end)
+            put("relaunches", s.relaunches)
+        }
+        writableDatabase.insertWithOnConflict("bench_segments", null, v, SQLiteDatabase.CONFLICT_REPLACE)
+    }
 
     // Presets
 

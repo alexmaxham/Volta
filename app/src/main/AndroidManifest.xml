@@ -9,11 +9,18 @@
         android:name="android.permission.PACKAGE_USAGE_STATS"
         tools:ignore="ProtectedPermissions" />
 
-    <!-- Lets the Apps tab show names and icons for launcher apps. -->
+    <!-- Lets the Apps tab show names and icons for launcher apps, and the benchmark find the
+         camera and music apps it opens. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.VIDEO_CAMERA" />
+        </intent>
+        <intent>
+            <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
         </intent>
     </queries>
 
@@ -43,6 +50,21 @@
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
                 android:value="Records battery level, temperature and power every 15 seconds during a battery test the user started." />
+        </service>
+
+        <!-- Opens, scrolls and taps through the apps in a Lab app benchmark. Only acts while a
+             benchmark the user started is running. -->
+        <service
+            android:name=".bench.BenchService"
+            android:exported="true"
+            android:label="@string/bench_service_label"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/bench_service" />
         </service>
 
         <receiver
