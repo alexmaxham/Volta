@@ -61,7 +61,7 @@ private val tabs = listOf(
     NavItem("today", "Today", VIcons.Battery),
     NavItem("history", "History", VIcons.History),
     NavItem("apps", "Apps", VIcons.Apps),
-    NavItem("lab", "Lab", VIcons.Lab),
+    NavItem("settings", "Settings", VIcons.Tune),
 )
 
 /** Navigation within the app. Routes are plain strings like "today" or "run/<id>". */
@@ -156,8 +156,8 @@ private fun Main(vm: VoltaViewModel, s: VoltaSettings, pendingRoute: MutableStat
                 "today" -> TodayScreen(snap, live, s, vm, nav::go)
                 "history" -> HistoryScreen(snap, s, vm, nav::go)
                 "apps" -> AppsScreen(snap, vm)
-                "lab" -> LabScreen(snap, s, vm, nav::go)
-                "settings" -> SettingsScreen(snap, s, vm, nav::back)
+                "lab" -> LabScreen(snap, s, vm, nav::go, nav::back)
+                "settings" -> SettingsScreen(snap, s, vm, nav::go)
                 "charge" -> ChargingScreen(snap, s, parts.getOrNull(1)?.toLongOrNull(), nav::back)
                 "night" -> NightScreen(snap, s, vm, parts.getOrNull(1), nav::back)
                 "run" -> RunScreen(vm, s, parts.getOrNull(1) ?: "", nav::back, nav::go)

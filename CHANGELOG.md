@@ -2,6 +2,12 @@
 
 What's new in each version of Volta. Download any version from [Releases](https://github.com/alexmaxham/Volta/releases).
 
+## Unreleased
+
+### Changed
+- **Settings is now a tab** in place of Lab, so it's one tap away instead of behind a button on Today.
+- **Lab moved to Settings → Advanced.** It's meant for people reviewing phones, so it no longer takes a spot in the nav bar. Your saved runs, presets and any run in progress are untouched, and the recording notification still opens Lab. "Review recording by default" moved to Advanced with it.
+
 ## 1.2.0 — 2026-10-28
 
 ### New

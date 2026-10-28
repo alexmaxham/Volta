@@ -62,7 +62,6 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
     val title: @Composable () -> Unit = {
         TabTitle("Today", Fmt.longDay(snap.now, snap.zone)) {
             CircleIconButton(VIcons.Share, "Share battery stats", { sharing = true })
-            CircleIconButton(VIcons.Tune, "Settings", { go("settings") })
         }
     }
     val hero: @Composable (Dp) -> Unit = { size ->
