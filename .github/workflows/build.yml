@@ -23,7 +23,14 @@ jobs:
         run: ./gradlew -p core test
 
       - name: Build APKs
-        run: ./gradlew assembleDebug assembleRelease
+        run: |
+          set -o pipefail
+          ./gradlew assembleDebug assembleRelease 2>&1 | tee build.log
+
+      - name: Show build errors
+        if: failure()
+        run: |
+          grep -E "^e: |error:|What went wrong" -A12 build.log | grep -v "Required by\|debugRuntimeClasspath\|releaseRuntimeClasspath" | head -150
 
       - uses: actions/upload-artifact@v4
         with:
