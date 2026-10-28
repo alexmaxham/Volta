@@ -2,6 +2,10 @@
 
 A little battery clarity for Android. Volta shows where your charge goes, how you charge, and how your battery is ageing, in a Material 3 Expressive design with six color schemes.
 
+## Download
+
+Get the latest APK from **[Releases](https://github.com/alexmaxham/Volta/releases/latest)** and open it on your phone (Android 10 or later). See **[CHANGELOG.md](CHANGELOG.md)** for what changed in each version.
+
 ## Features
 
 - **Today:** live level in an expressive hero with a wavy progress ring, an estimate of time left (or time to full), temperature, net battery power and health. Screen-on, screen-off, deep sleep and points used since the last 100% or since midnight, the current cycle chart and today at a glance.
@@ -24,7 +28,13 @@ Everything stays on the phone. No root required; screen time and apps need Usage
 
 ## Building
 
-Every push builds on GitHub Actions; the debug and release APKs are attached to the run as the `volta-apks` artifact. The release APK is minified and signed with the debug key so it can be sideloaded.
+Every push builds on GitHub Actions; the debug and release APKs are attached to the run as the `volta-apks` artifact.
+
+To publish a release, bump `versionCode` and `versionName` in `app/build.gradle.kts`, add a section for the version to `CHANGELOG.md`, then push a matching tag (for example `git tag v1.2.0 && git push origin v1.2.0`). The release workflow builds the APK and publishes it with that changelog section as the notes.
+
+Releases are signed with a private key from the repository secrets `VOLTA_KEYSTORE_BASE64` (a base64-encoded keystore whose key alias is `volta`) and `VOLTA_KEYSTORE_PASSWORD`, so each version installs over the last. Locally, set `VOLTA_KEYSTORE` to the keystore file and `VOLTA_KEYSTORE_PASSWORD` to sign the same way; otherwise builds use the debug key.
+
+The **Emulator tour** workflow (run it from the Actions tab) boots an emulator, walks through every screen with simulated battery changes and pushes screenshots to the `emulator-screens` branch.
 
 Locally, with Android Studio or the Android SDK installed:
 

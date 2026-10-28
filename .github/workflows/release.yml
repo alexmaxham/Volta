@@ -1,0 +1,61 @@
+name: Release
+
+# Push a tag like v1.1.0 to publish a release. The tag must match versionName in
+# app/build.gradle.kts, and CHANGELOG.md must have a "## 1.1.0" section, which becomes the notes.
+# Set the repository secrets VOLTA_KEYSTORE_BASE64 (a base64-encoded keystore with alias "volta")
+# and VOLTA_KEYSTORE_PASSWORD so every release is signed with the same private key.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Check version and changelog
+        id: version
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          grep -q "versionName = \"$VERSION\"" app/build.gradle.kts || { echo "versionName in app/build.gradle.kts isn't $VERSION"; exit 1; }
+          awk -v v="$VERSION" '$0 ~ "^## "v" " || $0 == "## "v {f=1; next} /^## / {f=0} f' CHANGELOG.md > notes.md
+          [ -s notes.md ] || { echo "CHANGELOG.md has no section for $VERSION"; exit 1; }
+          printf '\n---\nInstall: download **Volta-%s.apk** below and open it on your phone. Allow installs from your browser or files app if Android asks.\n' "$VERSION" >> notes.md
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Test battery logic
+        run: ./gradlew -p core test
+
+      - name: Build release APK
+        env:
+          KEYSTORE_BASE64: ${{ secrets.VOLTA_KEYSTORE_BASE64 }}
+          VOLTA_KEYSTORE_PASSWORD: ${{ secrets.VOLTA_KEYSTORE_PASSWORD }}
+        run: |
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            echo "$KEYSTORE_BASE64" | base64 -d > "$RUNNER_TEMP/volta.jks"
+            export VOLTA_KEYSTORE="$RUNNER_TEMP/volta.jks"
+          else
+            echo "::warning::VOLTA_KEYSTORE_BASE64 isn't set, so this release is signed with a throwaway debug key and won't install over other versions."
+            printf '\n> Signed with a temporary key: uninstall any earlier Volta build before installing this one.\n' >> notes.md
+          fi
+          ./gradlew assembleRelease
+          cp app/build/outputs/apk/release/app-release.apk "Volta-${{ steps.version.outputs.version }}.apk"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          name: Volta ${{ steps.version.outputs.version }}
+          body_path: notes.md
+          files: Volta-${{ steps.version.outputs.version }}.apk
+          make_latest: true

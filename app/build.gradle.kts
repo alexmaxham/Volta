@@ -14,8 +14,24 @@ android {
         applicationId = "com.alexmaxham.volta"
         minSdk = 29
         targetSdk = 36
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.1.0"
+    }
+
+    // Release builds are signed with a private key when VOLTA_KEYSTORE (a keystore file) and
+    // VOLTA_KEYSTORE_PASSWORD are set, as the release workflow does from repository secrets. One
+    // fixed key lets each new APK install over the last and keep its data. Without it, builds
+    // fall back to the debug key, which differs between machines.
+    val keystore = System.getenv("VOLTA_KEYSTORE")?.let { file(it) }?.takeIf { it.exists() }
+    signingConfigs {
+        if (keystore != null) {
+            create("volta") {
+                storeFile = keystore
+                storePassword = System.getenv("VOLTA_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("VOLTA_KEY_ALIAS") ?: "volta"
+                keyPassword = System.getenv("VOLTA_KEY_PASSWORD") ?: System.getenv("VOLTA_KEYSTORE_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
@@ -23,8 +39,7 @@ android {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Signed with the debug key so the release APK can be sideloaded straight from CI.
-            signingConfig = signingConfigs.getByName("debug")
+            signingConfig = signingConfigs.findByName("volta") ?: signingConfigs.getByName("debug")
         }
     }
 
