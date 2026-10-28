@@ -11,12 +11,17 @@ import androidx.compose.animation.slideOutVertically
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -81,8 +86,18 @@ fun VoltaRoot(vm: VoltaViewModel, pendingRoute: MutableStateFlow<String?>, onDar
     VoltaTheme(s.scheme, s.themeMode) {
         val dark = isDark(s.themeMode)
         LaunchedEffect(dark) { onDarkChanged(dark) }
-        Box(Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background)) {
-            if (!s.onboarded) WelcomeScreen(vm) else Main(vm, s, pendingRoute)
+        // Surface sets the default content colour, so plain Text follows the theme in light and dark.
+        Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background, contentColor = MaterialTheme.colorScheme.onBackground) {
+            Box(Modifier.fillMaxSize()) {
+                if (!s.onboarded) WelcomeScreen(vm) else Main(vm, s, pendingRoute)
+                // Keeps scrolled content from running under the status bar icons.
+                Box(
+                    Modifier
+                        .fillMaxWidth()
+                        .windowInsetsTopHeight(WindowInsets.statusBars)
+                        .background(MaterialTheme.colorScheme.background.copy(alpha = 0.94f)),
+                )
+            }
         }
     }
 }

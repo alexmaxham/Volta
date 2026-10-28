@@ -73,7 +73,7 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
                     charging = current.plugged && current.level < 100,
                     eyebrow = Fmt.status(current),
                     // Until the snapshot catches up with a plug change, don't show a stale estimate.
-                    caption = Fmt.estimate(if (current.plugged == snap.readings.lastOrNull()?.plugged) snap.estimate else Estimate.Learning(0f)),
+                    caption = Fmt.estimate(if (current.plugged == snap.readings.lastOrNull()?.plugged) snap.estimate else Estimate.Learning(0f), current.plugged),
                 )
             }
         }

@@ -38,6 +38,7 @@ import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.selected
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -106,9 +107,10 @@ fun RowsCard(rows: List<Pair<String, String>>, modifier: Modifier = Modifier) {
     Column(modifier.fillMaxWidth().clip(CardShape).background(MaterialTheme.colorScheme.surfaceContainerLow)) {
         rows.forEachIndexed { i, (k, v) ->
             if (i > 0) Box(Modifier.fillMaxWidth().height(2.dp).background(MaterialTheme.colorScheme.background))
-            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp)) {
+            Row(Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 15.dp), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                 Text(k, style = MaterialTheme.typography.bodyLarge, modifier = Modifier.weight(1f))
-                Text(v, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold)
+                // Long values wrap within their own half instead of squeezing the label.
+                Text(v, style = MaterialTheme.typography.bodyLarge, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.End, modifier = Modifier.weight(1f, fill = false))
             }
         }
     }

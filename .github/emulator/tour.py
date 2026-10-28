@@ -117,7 +117,7 @@ def main():
     battery(ac=0, usb=0, status=3, level=92, temp=312)
 
     sh(f"am start -n {PKG}/.MainActivity")
-    shot("01-welcome", wait=4)
+    shot("01-welcome", wait=9)
     tap("Get started")
     shot("02-today", wait=3)
 

@@ -13,7 +13,9 @@ import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.spring
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -292,9 +294,9 @@ private fun Header(text: String) {
     Text(text, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 6.dp, top = 10.dp))
 }
 
-private val swatchMorph = Morph(ExpressiveShapes.circle, ExpressiveShapes.clover4)
+private val swatchMorph = Morph(ExpressiveShapes.circle, ExpressiveShapes.cookie9)
 
-/** A palette swatch that morphs from a circle into a four-leaf shape when selected. */
+/** A palette swatch that morphs from a circle into the scalloped hero shape when selected. */
 @Composable
 private fun Swatch(scheme: Scheme, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
     val context = LocalContext.current
@@ -310,12 +312,16 @@ private fun Swatch(scheme: Scheme, selected: Boolean, modifier: Modifier, onClic
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Box(Modifier.size(76.dp), contentAlignment = Alignment.Center) {
-            Canvas(Modifier.size(72.dp).clip(MorphShape(swatchMorph, progress, progress * 45f))) {
+            Canvas(Modifier.size(72.dp).clip(MorphShape(swatchMorph, progress, progress * 20f))) {
                 drawRect(a, size = Size(size.width, size.height / 2))
                 drawRect(b, topLeft = Offset(0f, size.height / 2), size = Size(size.width / 2, size.height / 2))
                 drawRect(d, topLeft = Offset(size.width / 2, size.height / 2), size = Size(size.width / 2, size.height / 2))
             }
-            if (selected) Icon(VIcons.Check, null, tint = Color.White, modifier = Modifier.size(22.dp))
+            if (selected) {
+                Box(Modifier.size(30.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center) {
+                    Icon(VIcons.Check, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(18.dp))
+                }
+            }
         }
         Text(name, style = MaterialTheme.typography.labelLarge, fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium, modifier = Modifier.padding(top = 6.dp))
     }

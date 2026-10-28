@@ -103,11 +103,11 @@ object Fmt {
         return "$day, ${time(ms, zone)}"
     }
 
-    fun estimate(e: Estimate): String = when (e) {
+    fun estimate(e: Estimate, charging: Boolean = false): String = when (e) {
         is Estimate.Remaining -> if (e.millis >= com.alexmaxham.volta.core.Drain.MAX_REMAINING) "Over 3 days at this pace" else "About ${Format.duration(e.millis)} left"
         is Estimate.UntilFull -> "Full in ${Format.duration(e.millis)}"
         Estimate.Full -> "Fully charged"
-        is Estimate.Learning -> "Learning your battery"
+        is Estimate.Learning -> if (charging) "Estimating time to full" else "Learning your battery"
     }
 
     fun status(r: Reading?): String = when {

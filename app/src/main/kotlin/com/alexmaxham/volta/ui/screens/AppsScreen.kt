@@ -97,7 +97,7 @@ fun AppsScreen(snap: Snapshot, vm: VoltaViewModel) {
         VCard(color = c.primaryContainer) {
             Text(
                 when (w.key) {
-                    "charge" -> if (snap.lastFull != null) "Since 100% at ${Fmt.whenAt(w.from, snap.now, snap.zone)}" else "Since tracking began"
+                    "charge" -> if (snap.lastFull != null) "Since 100% · ${Fmt.whenAt(w.from, snap.now, snap.zone)}" else "Since tracking began"
                     "today" -> "Since local midnight"
                     else -> Fmt.whenAt(w.from, snap.now, snap.zone) + " → " + Fmt.whenAt(w.to, snap.now, snap.zone)
                 },

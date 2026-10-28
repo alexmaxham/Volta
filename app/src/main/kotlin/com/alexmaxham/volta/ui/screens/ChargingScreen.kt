@@ -57,7 +57,8 @@ fun ChargingScreen(snap: Snapshot, s: VoltaSettings, start: Long?, onBack: () ->
             Milestone("to 100%", cs.to100, Modifier.weight(1f), RoundedCornerShape(8.dp, 24.dp, 24.dp, 8.dp), c.surfaceContainerLow, c.onSurface)
         }
 
-        val power = cs.readings.mapNotNull { r -> r.powerW?.let { TimePoint(r.time, it.coerceAtLeast(0f)) } }
+        // The unplugged reading that closes a session isn't charging power.
+        val power = cs.readings.filter { it.plugged }.mapNotNull { r -> r.powerW?.let { TimePoint(r.time, it.coerceAtLeast(0f)) } }
         val temp = cs.readings.mapNotNull { r -> r.tempC?.let { TimePoint(r.time, if (s.fahrenheit) it * 9 / 5 + 32 else it) } }
         VCard {
             Text("Charging speed & temperature", style = MaterialTheme.typography.titleMedium)
