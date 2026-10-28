@@ -34,6 +34,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.core.graphics.drawable.toBitmap
+import kotlin.math.roundToInt
 import com.alexmaxham.volta.core.AppTime
 import com.alexmaxham.volta.core.Apps
 import com.alexmaxham.volta.core.Drain
@@ -78,6 +79,8 @@ fun AppsScreen(snap: Snapshot, vm: VoltaViewModel) {
 
     val screen = remember(snap, w) { ScreenTimeline.build(snap.screenEvents, w.from, w.to) }
     val used = remember(snap, w) { Drain.usage(snap.readings, screen.onIntervals, w.from, w.to).used }
+    // Saved cycles keep only totals, since Android has already dropped their app events.
+    val drain = remember(snap, w) { if (w.saved == null) Apps.drain(snap.appEvents, snap.readings, w.from, w.to) else emptyMap() }
     // On big screens the window and its total sit beside the list of apps.
     AdaptiveScreen(start = start@{
         TabTitle("Apps") {
@@ -121,16 +124,19 @@ fun AppsScreen(snap: Snapshot, vm: VoltaViewModel) {
             val max = rows.first().foreground.coerceAtLeast(1)
             GroupCard {
                 Column(Modifier.padding(vertical = 6.dp)) {
-                    for (a in rows.take(40)) AppRow(a, max)
+                    for (a in rows.take(40)) AppRow(a, max, drain[a.pkg])
                 }
             }
-            Muted("Time each app spent in the foreground. Android doesn't report per-app battery drain to other apps, so this shows where your screen time went.")
+            Muted(
+                if (drain.isEmpty()) "Time each app spent in the foreground. Android doesn't report per-app battery use to other apps."
+                else "Time each app spent in the foreground. Battery is an estimate: Android doesn't report per-app use to other apps, so Volta splits each drop between the apps open at the time, by how long each was open. Background use isn't included, and a game and a notes app open for the same time get the same share.",
+            )
         }
     })
 }
 
 @Composable
-private fun AppRow(a: AppTime, max: Long) {
+private fun AppRow(a: AppTime, max: Long, drain: Double?) {
     val context = LocalContext.current
     val c = MaterialTheme.colorScheme
     val label = remember(a.pkg) { UsageReader.label(context, a.pkg) }
@@ -152,6 +158,12 @@ private fun AppRow(a: AppTime, max: Long) {
             }
             Box(Modifier.padding(top = 7.dp).fillMaxWidth().height(6.dp).clip(RoundedCornerShape(3.dp)).background(c.surfaceContainerHigh)) {
                 Box(Modifier.fillMaxWidth((a.foreground.toFloat() / max).coerceIn(0.02f, 1f)).fillMaxHeight().clip(RoundedCornerShape(3.dp)).background(c.primary))
+            }
+            if (drain != null) {
+                Text(
+                    if (drain < 0.5) "Under 1% battery (estimate)" else "About ${drain.roundToInt()}% battery (estimate)",
+                    style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant, modifier = Modifier.padding(top = 6.dp),
+                )
             }
         }
     }

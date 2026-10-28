@@ -12,8 +12,8 @@ Get the latest APK from **[Releases](https://github.com/alexmaxham/Volta/release
 - **History:** a 7-day battery level chart, daily use with a week-over-week comparison, recent readings, charging sessions, overnight reports and charge cycles.
 - **Charging sessions:** time to 50, 80 and 100%, net power and temperature graphs, and peaks.
 - **Overnight reports:** drain and rate while you slept, deep sleep, screen wakes and coverage for any night, with adjustable hours and an optional morning summary notification.
-- **Apps:** foreground time per app for the current charge, today or past cycles (saved before Android's week of history runs out), with CSV export.
-- **Lab:** timed drain and charging tests with recorded conditions, presets, 15-second review recording with a notification, comparison of matching runs, CSV export and run backup and import.
+- **Apps:** foreground time and an estimated battery share per app for the current charge, today or past cycles (saved before Android's week of history runs out), with CSV export.
+- **Lab** (Settings → Advanced, for reviewing phones): timed drain and charging tests with recorded conditions, presets, 15-second review recording with a notification, comparison of matching runs, CSV export and run backup and import.
 - **Battery health:** full-capacity estimates learned from 30+ point charges, compared with the design capacity you enter.
 - **Reminders:** low battery, charge level and warm battery alerts.
 - **Widget** and a shareable **stats image**.

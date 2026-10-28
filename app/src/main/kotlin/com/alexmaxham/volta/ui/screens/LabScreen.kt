@@ -45,7 +45,6 @@ import com.alexmaxham.volta.core.Conditions
 import com.alexmaxham.volta.core.Format
 import com.alexmaxham.volta.core.TestType
 import com.alexmaxham.volta.data.VoltaSettings
-import com.alexmaxham.volta.ui.LocalVoltaLayout
 import com.alexmaxham.volta.ui.Snapshot
 import com.alexmaxham.volta.ui.VoltaViewModel
 import com.alexmaxham.volta.ui.components.CircleIconButton
@@ -64,7 +63,7 @@ import com.alexmaxham.volta.work.Notifier
 import kotlinx.coroutines.delay
 
 @Composable
-fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String) -> Unit) {
+fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String) -> Unit, onBack: () -> Unit) {
     val c = MaterialTheme.colorScheme
     var creating by remember { mutableStateOf(false) }
     val importer = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) vm.importRun(uri) }
@@ -79,11 +78,10 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
         }
     }
 
-    val rail = LocalVoltaLayout.current.rail
     Box(Modifier.fillMaxSize()) {
-        // Room under the lists for the New test button, which sits above the nav bar on phones.
-        AdaptiveScreen(bottom = if (rail) 120.dp else 200.dp, start = {
-            TabTitle("Lab") {
+        // Room under the lists for the New test button.
+        AdaptiveScreen(bottom = 120.dp, start = {
+            DetailBar("Lab", onBack) {
                 CircleIconButton(VIcons.Upload, "Import run", { importer.launch(arrayOf("application/json", "text/plain", "*/*")) })
             }
             Muted("Start a timed drain or charging test at any battery level. Record your test conditions, then export the results or compare repeat runs.", Modifier.padding(top = 0.dp))
@@ -163,7 +161,7 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
                 Modifier
                     .align(Alignment.BottomEnd)
                     .navigationBarsPadding()
-                    .padding(end = 20.dp, bottom = if (rail) 24.dp else 104.dp)
+                    .padding(end = 20.dp, bottom = 24.dp)
                     .shadow(10.dp, RoundedCornerShape(24.dp))
                     .height(60.dp),
                 icon = VIcons.Plus,

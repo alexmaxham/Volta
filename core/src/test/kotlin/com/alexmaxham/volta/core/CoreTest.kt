@@ -254,6 +254,26 @@ class AppsTest {
         assertEquals(2, u[0].opens)
         assertEquals(5 * M, u[1].foreground)
     }
+
+    @Test fun drainSplitsDropsByTimeInFront() {
+        // "a" in front 0–10, "b" 10–20, nothing 20–30 (screen off).
+        val events = listOf(
+            AppEvent(0, "a", true), AppEvent(10 * M, "a", false),
+            AppEvent(10 * M, "b", true), AppEvent(20 * M, "b", false),
+        )
+        val readings = listOf(r(0, 100), r(20, 96), r(30, 95))
+        val d = Apps.drain(events, readings, 0, 30 * M)
+        assertEquals(2.0, d["a"]!!, 0.001)
+        assertEquals(2.0, d["b"]!!, 0.001)
+        // The screen-off point isn't given to either app.
+        assertEquals(4.0, d.values.sum(), 0.001)
+    }
+
+    @Test fun drainSkipsChargingAndGaps() {
+        val events = listOf(AppEvent(0, "a", true))
+        val readings = listOf(r(0, 50), r(10, 52, plugged = true), r(20, 51), r(200, 40))
+        assertTrue(Apps.drain(events, readings, 0, 200 * M).isEmpty())
+    }
 }
 
 class ReviewTest {

@@ -85,7 +85,7 @@ private sealed interface Editing {
 }
 
 @Composable
-fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, onBack: () -> Unit) {
+fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String) -> Unit) {
     val context = LocalContext.current
     val c = MaterialTheme.colorScheme
     var editing by remember { mutableStateOf<Editing?>(null) }
@@ -107,8 +107,7 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, onBack:
         }
     }
 
-    AdaptiveScreen(bottom = 40.dp, start = {
-        DetailBar("", onBack)
+    AdaptiveScreen(start = {
         TabTitle("Settings")
 
         Header("Make it yours")
@@ -169,12 +168,6 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, onBack:
                     )
                 },
             )
-            GroupDivider()
-            SwitchRow(
-                "Review recording by default",
-                "New Lab runs record every 15 seconds with a visible notification",
-                s.reviewRecordingDefault,
-            ) { on -> if (on) withNotify { it.copy(reviewRecordingDefault = true) } else vm.update { it.copy(reviewRecordingDefault = false) } }
         }
     }, end = {
         Header("Battery")
@@ -244,6 +237,18 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, onBack:
             }
         }
         Muted("Everything Volta records stays on this phone. Review runs stay saved until you delete them in Lab.")
+
+        // Lab is for people reviewing phones, so it lives here rather than in the nav bar.
+        Header("Advanced")
+        GroupCard {
+            ChevronRow("Lab", "Timed drain and charging tests with recorded conditions, for reviewing phones") { go("lab") }
+            GroupDivider()
+            SwitchRow(
+                "Review recording by default",
+                "New Lab runs record every 15 seconds with a visible notification",
+                s.reviewRecordingDefault,
+            ) { on -> if (on) withNotify { it.copy(reviewRecordingDefault = true) } else vm.update { it.copy(reviewRecordingDefault = false) } }
+        }
         Text(
             "Volta ${runCatching { context.packageManager.getPackageInfo(context.packageName, 0).versionName }.getOrNull() ?: ""}",
             style = MaterialTheme.typography.bodySmall, color = c.onSurfaceVariant,

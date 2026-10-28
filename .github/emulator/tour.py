@@ -189,7 +189,8 @@ def main():
     tap("Apps")
     shot("13-apps")
 
-    tap("Lab")
+    tap("Settings")
+    tap("Lab", scrolls=8)
     shot("14-lab-empty")
     if tap("New test"):
         shot("15-new-test-sheet")
@@ -207,6 +208,7 @@ def main():
                 shot("19-run-finished")
             back()
         shot("20-lab-saved")
+    back_from_detail()  # Lab opens from Settings, so go back to it first.
 
     tap("Today")
     tap("Share battery stats")
@@ -218,19 +220,20 @@ def main():
     back()
 
     tap("Settings")
-    scroll_shots("22-settings", 4)
+    scroll_shots("22-settings", 5)
     for scheme in ("Sage", "Ocean", "Ember", "Iris", "Dynamic"):
         if tap(f"{scheme} color scheme"):
             shot(f"23-settings-{scheme.lower()}")
     tap("Bloom color scheme")
     tap("Dark")
     shot("24-settings-dark")
-    back()
+    tap("Lab", scrolls=8)
+    shot("27-lab-dark")
+    back_from_detail()
+    tap("Today")
     shot("25-today-dark", wait=2)
     tap("History")
     shot("26-history-dark")
-    tap("Lab")
-    shot("27-lab-dark")
 
     with open(f"{OUT}/logcat-volta.txt", "w") as f:
         pid_lines = adb("logcat", "-d", "-v", "time")

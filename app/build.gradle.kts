@@ -14,8 +14,8 @@ android {
         applicationId = "com.alexmaxham.volta"
         minSdk = 29
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.2.0"
+        versionCode = 5
+        versionName = "1.3.0"
     }
 
     // Release builds are signed with a private key when VOLTA_KEYSTORE (a keystore file) and
