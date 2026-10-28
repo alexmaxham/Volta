@@ -99,8 +99,9 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
         // Half folded like a laptop: the level stands in the upper half, the numbers scroll below.
         top = {
             BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                val heroSize = minOf(maxHeight, 312.dp)
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                    hero(minOf(maxHeight, 312.dp))
+                    hero(heroSize)
                     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { pills() }
                 }
             }
