@@ -68,7 +68,8 @@ data class Snapshot(
     val appEvents: List<AppEvent>,
     val usageAccess: Boolean,
     val estimate: Estimate,
-    val lastFull: Long?,
+    /** When the phone came off the charger after its last full charge. */
+    val cycleStart: Long?,
     val sinceFull: WindowStats,
     val sinceMidnight: WindowStats,
     val health: Health?,
@@ -120,7 +121,7 @@ class VoltaViewModel(app: Application) : AndroidViewModel(app) {
         val access = UsageReader.hasAccess(context)
         val events = withContext(Dispatchers.IO) { UsageReader.events(context, now - (UsageReader.RETENTION_DAYS + 1) * Time.DAY, now) }
         val all = readings + listOfNotNull(_live.value?.takeIf { l -> readings.none { it.time >= l.time } })
-        val lastFull = Charging.lastFull(all)
+        val cycleStart = History.cycleStart(all)
         val today = LocalDate.now(zone)
         val midnight = History.startOfDay(today, zone)
         val interactive = context.getSystemService(android.os.PowerManager::class.java)?.isInteractive
@@ -144,8 +145,8 @@ class VoltaViewModel(app: Application) : AndroidViewModel(app) {
             appEvents = events.apps,
             usageAccess = access,
             estimate = Drain.estimate(all),
-            lastFull = lastFull,
-            sinceFull = window(lastFull ?: firstTime),
+            cycleStart = cycleStart,
+            sinceFull = window(cycleStart ?: firstTime),
             sinceMidnight = window(midnight),
             health = Capacity.health(db.capacity(), s.designMah),
             sessions = Charging.sessions(all),

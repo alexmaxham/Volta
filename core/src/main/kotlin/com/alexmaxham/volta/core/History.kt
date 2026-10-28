@@ -48,13 +48,40 @@ object History {
         return WeekComparison(now.sumOf { it.used }, last.sumOf { it.used }, now.count { it.hasData })
     }
 
-    /** Cycles from one observed 100% to the next, newest first. */
+    /**
+     * Moments a battery cycle began: the first unplugged reading after a charge that reached
+     * 100%. Counting starts when the phone comes off the charger, not when the level first drops
+     * below 100. Also counts tracking that begins unplugged at 100%, and a full battery seen
+     * after an unrecorded charge.
+     */
+    fun cycleStarts(readings: List<Reading>): List<Long> {
+        val sorted = readings.sortedBy { it.time }
+        val out = mutableListOf<Long>()
+        var fullOnCharger = false
+        for ((i, r) in sorted.withIndex()) {
+            val prev = sorted.getOrNull(i - 1)
+            if (r.plugged) {
+                if (prev == null || !prev.plugged) fullOnCharger = false
+                if (r.level >= 100) fullOnCharger = true
+                continue
+            }
+            when {
+                prev == null -> if (r.level >= 100) out += r.time
+                prev.plugged -> if (fullOnCharger || r.level >= 100) out += r.time
+                prev.level < 100 && r.level >= 100 -> out += r.time
+            }
+        }
+        return out
+    }
+
+    /** Start of the current battery cycle, or null before the first full charge is seen. */
+    fun cycleStart(readings: List<Reading>): Long? = cycleStarts(readings).lastOrNull()
+
+    /** Cycles from one unplug at full charge to the next, newest first. */
     fun cycles(readings: List<Reading>, now: Long): List<Cycle> {
         val sorted = readings.sortedBy { it.time }
         if (sorted.isEmpty()) return emptyList()
-        // A cycle starts when the battery leaves 100%: the last reading at 100 before a drop.
-        val starts = mutableListOf<Long>()
-        for ((a, b) in sorted.zipWithNext()) if (a.level >= 100 && b.level < 100) starts += a.time
+        val starts = cycleStarts(sorted)
         val bounds = mutableListOf<Long>()
         val partial = starts.isEmpty() || starts.first() > sorted.first().time
         if (partial) bounds += sorted.first().time

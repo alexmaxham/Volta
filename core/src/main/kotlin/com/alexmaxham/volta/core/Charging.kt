@@ -73,7 +73,4 @@ object Charging {
             readings = rs,
         )
     }
-
-    /** Time of the last reading at 100%, the start of the current battery cycle. */
-    fun lastFull(readings: List<Reading>): Long? = readings.filter { it.level >= 100 }.maxOfOrNull { it.time }
 }

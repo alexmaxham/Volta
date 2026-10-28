@@ -2,6 +2,11 @@
 
 What's new in each version of Volta. Download any version from [Releases](https://github.com/alexmaxham/Volta/releases).
 
+## 1.1.1 — 2026-10-28
+
+### Fixed
+- **Apps, Today and History start counting the moment you unplug** after a full charge. Before, nothing was counted until the battery first dropped from 100% to 99%, so the first stretch after unplugging was missing. With Volta open the unplug is caught right away; with only background logging it's caught at the next reading, usually within 15 minutes.
+
 ## 1.1.0 — 2026-10-28
 
 ### New

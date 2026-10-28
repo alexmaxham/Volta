@@ -215,7 +215,7 @@ object ExportImages {
         val tx = colors.onSurface.toArgb()
         val mu = colors.onSurfaceVariant.toArgb()
         val win = if (s.range == Range.SINCE_FULL) snap.sinceFull else snap.sinceMidnight
-        val sinceFull = s.range == Range.SINCE_FULL && snap.lastFull != null
+        val sinceFull = s.range == Range.SINCE_FULL && snap.cycleStart != null
 
         ink.text("VOLTA", m, m + 20f, 22f, mu, ink.bold, spacing = 0.18f)
         ink.text(deviceLine(), m, m + 58f, 26f, tx, ink.headline)
@@ -237,7 +237,7 @@ object ExportImages {
         val w1 = ink.text(used, m - 4f, heroY, 110f, tx, ink.display)
         ink.text("pts", m + w1 + 12f, heroY, 40f, mu, ink.headline)
         ink.text(
-            (if (sinceFull) "used since 100% at ${Fmt.time(win.from, snap.zone)}" else if (s.range == Range.SINCE_FULL) "used since tracking began" else "used since midnight") +
+            (if (sinceFull) "used since unplugged at ${Fmt.time(win.from, snap.zone)}" else if (s.range == Range.SINCE_FULL) "used since tracking began" else "used since midnight") +
                 " · " + Format.duration(win.to - win.from),
             m, heroY + 46f, 24f, mu,
         )

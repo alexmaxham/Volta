@@ -98,7 +98,7 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
             { i -> vm.update { it.copy(range = if (i == 0) Range.SINCE_FULL else Range.SINCE_MIDNIGHT) } },
             Modifier.padding(top = 6.dp),
         )
-        if (s.range == Range.SINCE_FULL && snap.lastFull == null) {
+        if (s.range == Range.SINCE_FULL && snap.cycleStart == null) {
             Muted("No full charge recorded yet. Totals start from your first reading; open the app at 100% or keep background logging on.")
         }
 
@@ -149,7 +149,7 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Bottom) {
                 Text("−${w.usage.used}", style = MaterialTheme.typography.headlineMedium)
                 Text(
-                    " pts " + if (s.range == Range.SINCE_FULL && snap.lastFull != null) "since 100% at ${Fmt.time(from, snap.zone)}" else "since ${Fmt.time(from, snap.zone)}",
+                    " pts " + if (s.range == Range.SINCE_FULL && snap.cycleStart != null) "since unplugged at ${Fmt.time(from, snap.zone)}" else "since ${Fmt.time(from, snap.zone)}",
                     style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant, modifier = Modifier.padding(bottom = 3.dp),
                 )
             }

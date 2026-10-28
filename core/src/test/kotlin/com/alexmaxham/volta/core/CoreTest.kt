@@ -121,10 +121,6 @@ class ChargingTest {
         assertEquals(50, s.first().startLevel)
     }
 
-    @Test fun lastFull() {
-        assertEquals(30 * M, Charging.lastFull(listOf(r(0, 100, true), r(30, 100), r(60, 97))))
-        assertNull(Charging.lastFull(listOf(r(0, 50))))
-    }
 }
 
 class CapacityTest {
@@ -171,6 +167,24 @@ class HistoryTest {
         val w = History.week(rs, today, zone)
         assertEquals(50, w.thisWeek)
         assertNull(w.change)
+    }
+
+    @Test fun cycleStartsWhenUnpluggedNotWhenLevelDrops() {
+        // Unplugged at 100% and still reading 100% for half an hour: the cycle starts at the unplug.
+        val rs = listOf(r(0, 90, true), r(10, 100, true), r(20, 100), r(35, 100), r(50, 99))
+        assertEquals(20 * M, History.cycleStart(rs))
+        assertEquals(20 * M, History.cycles(rs, 60 * M).first().start)
+    }
+
+    @Test fun unpluggingBeforeFullDoesNotStartACycle() {
+        val rs = listOf(r(0, 100, true), r(10, 100), r(60, 70), r(70, 75, true), r(90, 85, true), r(100, 85))
+        assertEquals(10 * M, History.cycleStart(rs))
+    }
+
+    @Test fun cycleStartWithoutPlugData() {
+        assertEquals(0L, History.cycleStart(listOf(r(0, 100), r(30, 98))))
+        assertEquals(40 * M, History.cycleStart(listOf(r(0, 60), r(40, 100), r(70, 97))))
+        assertNull(History.cycleStart(listOf(r(0, 50), r(30, 48))))
     }
 
     @Test fun cyclesRunFromFullToFull() {
