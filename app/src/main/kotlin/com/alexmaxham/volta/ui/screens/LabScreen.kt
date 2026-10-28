@@ -45,6 +45,7 @@ import com.alexmaxham.volta.core.Conditions
 import com.alexmaxham.volta.core.Format
 import com.alexmaxham.volta.core.TestType
 import com.alexmaxham.volta.data.VoltaSettings
+import com.alexmaxham.volta.ui.LocalVoltaLayout
 import com.alexmaxham.volta.ui.Snapshot
 import com.alexmaxham.volta.ui.VoltaViewModel
 import com.alexmaxham.volta.ui.components.CircleIconButton
@@ -78,8 +79,10 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
         }
     }
 
+    val rail = LocalVoltaLayout.current.rail
     Box(Modifier.fillMaxSize()) {
-        ScreenColumn(bottom = 200.dp) {
+        // Room under the lists for the New test button, which sits above the nav bar on phones.
+        AdaptiveScreen(bottom = if (rail) 120.dp else 200.dp, start = {
             TabTitle("Lab") {
                 CircleIconButton(VIcons.Upload, "Import run", { importer.launch(arrayOf("application/json", "text/plain", "*/*")) })
             }
@@ -111,8 +114,7 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
                 }
             }
 
-            val finished = snap.runs.filter { !it.active }
-            if (finished.isEmpty() && active == null) {
+            if (snap.runs.none { !it.active } && active == null) {
                 VCard {
                     IconBadge(VIcons.Lab, c.tertiaryContainer, c.onTertiaryContainer, RoundedCornerShape(16.dp))
                     Text("Your next review starts here", style = MaterialTheme.typography.titleMedium, modifier = Modifier.padding(top = 12.dp))
@@ -122,6 +124,8 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
                     )
                 }
             }
+        }, end = {
+            val finished = snap.runs.filter { !it.active }
             if (finished.isNotEmpty()) {
                 SectionTitle("Saved runs (${finished.size})")
                 GroupCard {
@@ -151,7 +155,7 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
                     for ((name, _) in snap.presets) SelectChip(name, false, { creating = true })
                 }
             }
-        }
+        })
 
         if (active == null) {
             PillButton(
@@ -159,7 +163,7 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
                 Modifier
                     .align(Alignment.BottomEnd)
                     .navigationBarsPadding()
-                    .padding(end = 20.dp, bottom = 104.dp)
+                    .padding(end = 20.dp, bottom = if (rail) 24.dp else 104.dp)
                     .shadow(10.dp, RoundedCornerShape(24.dp))
                     .height(60.dp),
                 icon = VIcons.Plus,

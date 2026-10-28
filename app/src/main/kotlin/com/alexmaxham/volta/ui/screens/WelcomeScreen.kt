@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -38,6 +39,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.alexmaxham.volta.data.UsageReader
+import com.alexmaxham.volta.ui.LocalVoltaLayout
 import com.alexmaxham.volta.ui.VoltaViewModel
 import com.alexmaxham.volta.ui.components.PillButton
 import com.alexmaxham.volta.ui.components.VIcons
@@ -52,15 +54,7 @@ fun WelcomeScreen(vm: VoltaViewModel) {
     LaunchedEffect(Unit) { shown = true }
     val pop by animateFloatAsState(if (shown) 1f else 0.6f, spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessLow), label = "pop")
 
-    Column(
-        Modifier
-            .fillMaxSize()
-            .verticalScroll(rememberScrollState())
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(horizontal = 24.dp, vertical = 24.dp),
-    ) {
-        Text("VOLTA", style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp), color = c.onSurfaceVariant)
+    val art: @Composable () -> Unit = {
         Box(Modifier.fillMaxWidth().height(340.dp), contentAlignment = Alignment.Center) {
             Box(
                 Modifier
@@ -79,6 +73,8 @@ fun WelcomeScreen(vm: VoltaViewModel) {
             )
             Icon(VIcons.Bolt, null, tint = c.onPrimaryContainer, modifier = Modifier.size(88.dp))
         }
+    }
+    val copy: @Composable () -> Unit = {
         Text("A little battery clarity.", style = MaterialTheme.typography.displaySmall)
         Spacer(Modifier.height(14.dp))
         Text(
@@ -116,5 +112,38 @@ fun WelcomeScreen(vm: VoltaViewModel) {
             onClick = { vm.update { it.copy(onboarded = true) } },
             modifier = Modifier.fillMaxWidth().height(60.dp),
         )
+    }
+
+    if (LocalVoltaLayout.current.rail) {
+        // Tablets and unfolded foldables: the artwork on one side, the words and buttons on the other.
+        Row(
+            Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 40.dp, vertical = 24.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(40.dp),
+        ) {
+            Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+                Text("VOLTA", style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp), color = c.onSurfaceVariant)
+                art()
+            }
+            Column(Modifier.weight(1f).widthIn(max = 480.dp).verticalScroll(rememberScrollState())) { copy() }
+        }
+        return
+    }
+
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .statusBarsPadding()
+            .navigationBarsPadding()
+            .padding(horizontal = 24.dp, vertical = 24.dp),
+    ) {
+        Text("VOLTA", style = MaterialTheme.typography.labelLarge.copy(letterSpacing = 2.sp), color = c.onSurfaceVariant)
+        art()
+        copy()
     }
 }

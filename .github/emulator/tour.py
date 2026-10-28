@@ -91,6 +91,12 @@ def back():
     time.sleep(1.2)
 
 
+def back_from_detail():
+    """Goes back from a detail screen. On big screens details open beside their list, with no Back."""
+    if find("Back") is not None:
+        back()
+
+
 def battery(**kv):
     for k, v in kv.items():
         sh(f"dumpsys battery set {k} {v}")
@@ -154,12 +160,12 @@ def main():
                 tap("16:9")
                 shot("09-export-wide", wait=2)
                 back()
-            back()
+            back_from_detail()
     if tap("Nights"):
         shot("10-history-nights")
         if tap("→", exact=False, required=False):
             scroll_shots("11-night-detail", 2)
-            back()
+            back_from_detail()
     if tap("Cycles"):
         shot("12-history-cycles")
 

@@ -1,8 +1,10 @@
 package com.alexmaxham.volta.ui.screens
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -23,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.alexmaxham.volta.core.Estimate
 import com.alexmaxham.volta.core.Format
@@ -30,6 +33,7 @@ import com.alexmaxham.volta.core.Reading
 import com.alexmaxham.volta.data.Range
 import com.alexmaxham.volta.data.UsageReader
 import com.alexmaxham.volta.data.VoltaSettings
+import com.alexmaxham.volta.ui.LocalTwoPane
 import com.alexmaxham.volta.ui.Snapshot
 import com.alexmaxham.volta.ui.VoltaViewModel
 import com.alexmaxham.volta.ui.components.BatteryHero
@@ -51,39 +55,36 @@ import kotlin.math.roundToInt
 
 @Composable
 fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewModel, go: (String) -> Unit) {
-    val context = LocalContext.current
     val c = MaterialTheme.colorScheme
     val current = live ?: snap.readings.lastOrNull()
     var sharing by remember { mutableStateOf(false) }
-    val w = if (s.range == Range.SINCE_FULL) snap.sinceFull else snap.sinceMidnight
-    val access = snap.usageAccess
 
-    ScreenColumn {
+    val title: @Composable () -> Unit = {
         TabTitle("Today", Fmt.longDay(snap.now, snap.zone)) {
             CircleIconButton(VIcons.Share, "Share battery stats", { sharing = true })
             CircleIconButton(VIcons.Tune, "Settings", { go("settings") })
         }
-
-        Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-            if (current == null) {
-                Text("Wait for the first battery reading.", color = c.onSurfaceVariant, modifier = Modifier.padding(vertical = 120.dp))
-            } else {
-                BatteryHero(
-                    level = current.level,
-                    charging = current.plugged && current.level < 100,
-                    eyebrow = Fmt.status(current),
-                    // Until the snapshot catches up with a plug change, don't show a stale estimate.
-                    caption = Fmt.estimate(if (current.plugged == snap.readings.lastOrNull()?.plugged) snap.estimate else Estimate.Learning(0f), current.plugged),
-                )
-            }
+    }
+    val hero: @Composable (Dp) -> Unit = { size ->
+        if (current == null) {
+            Text("Wait for the first battery reading.", color = c.onSurfaceVariant, modifier = Modifier.padding(vertical = 120.dp))
+        } else {
+            BatteryHero(
+                level = current.level,
+                charging = current.plugged && current.level < 100,
+                eyebrow = Fmt.status(current),
+                // Until the snapshot catches up with a plug change, don't show a stale estimate.
+                caption = Fmt.estimate(if (current.plugged == snap.readings.lastOrNull()?.plugged) snap.estimate else Estimate.Learning(0f), current.plugged),
+                size = size,
+            )
         }
-
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) {
-            current?.tempC?.let { Pill(VIcons.Thermo, Format.temp(it, s.fahrenheit)) }
-            current?.powerW?.let { Pill(VIcons.Bolt, (if (it > 0) "+" else "−") + Format.watts(kotlin.math.abs(it))) }
-            snap.health?.percent?.let { Pill(VIcons.Heart, "$it% health") }
-        }
-
+    }
+    val pills: @Composable () -> Unit = {
+        current?.tempC?.let { Pill(VIcons.Thermo, Format.temp(it, s.fahrenheit)) }
+        current?.powerW?.let { Pill(VIcons.Bolt, (if (it > 0) "+" else "−") + Format.watts(kotlin.math.abs(it))) }
+        snap.health?.percent?.let { Pill(VIcons.Heart, "$it% health") }
+    }
+    val learning: @Composable () -> Unit = {
         if (snap.estimate is Estimate.Learning && current?.plugged == false) {
             Muted(
                 "Learning needs at least 45 minutes and a 3-point drop of continuous unplugged use." +
@@ -91,7 +92,52 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
                 Modifier.fillMaxWidth(),
             )
         }
+    }
+    val details: @Composable () -> Unit = { TodayDetails(snap, current, s, vm, go) }
 
+    TabletopScreen(
+        // Half folded like a laptop: the level stands in the upper half, the numbers scroll below.
+        top = {
+            BoxWithConstraints(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                val heroSize = minOf(maxHeight, 312.dp)
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(24.dp)) {
+                    hero(heroSize)
+                    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) { pills() }
+                }
+            }
+        },
+        bottom = {
+            title()
+            learning()
+            details()
+        },
+        fallback = {
+            AdaptiveScreen(
+                start = {
+                    title()
+                    BoxWithConstraints(Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
+                        // Panes on big screens have room for a larger hero.
+                        hero(minOf(maxWidth, if (LocalTwoPane.current) 380.dp else 312.dp))
+                    }
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)) { pills() }
+                    learning()
+                },
+                end = { details() },
+            )
+        },
+    )
+
+    if (sharing) StatsImageDialog(snap, live, s, onDismiss = { sharing = false })
+}
+
+/** Usage totals, the cycle chart and the cards under the hero. */
+@Composable
+private fun TodayDetails(snap: Snapshot, current: Reading?, s: VoltaSettings, vm: VoltaViewModel, go: (String) -> Unit) {
+    val context = LocalContext.current
+    val c = MaterialTheme.colorScheme
+    val w = if (s.range == Range.SINCE_FULL) snap.sinceFull else snap.sinceMidnight
+    val access = snap.usageAccess
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(14.dp)) {
         ConnectedButtons(
             listOf("Since 100%", "Since midnight"),
             if (s.range == Range.SINCE_FULL) 0 else 1,
@@ -219,8 +265,6 @@ fun TodayScreen(snap: Snapshot, live: Reading?, s: VoltaSettings, vm: VoltaViewM
             Muted("Logging while open · background logging is off. Samples are saved up to once a minute while you use the app.")
         }
     }
-
-    if (sharing) StatsImageDialog(snap, live, s, onDismiss = { sharing = false })
 }
 
 @Composable

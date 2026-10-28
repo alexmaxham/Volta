@@ -15,8 +15,11 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoTracker
 import com.alexmaxham.volta.core.Source
 import com.alexmaxham.volta.data.BatteryReader
+import com.alexmaxham.volta.ui.Fold
 import com.alexmaxham.volta.ui.VoltaRoot
 import com.alexmaxham.volta.ui.VoltaViewModel
 import kotlinx.coroutines.delay
@@ -26,6 +29,7 @@ import kotlinx.coroutines.launch
 class MainActivity : ComponentActivity() {
     private val vm: VoltaViewModel by viewModels()
     private val route = MutableStateFlow<String?>(null)
+    private val fold = MutableStateFlow<Fold?>(null)
 
     private val battery = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
@@ -39,7 +43,20 @@ class MainActivity : ComponentActivity() {
         vm.readNow()
         vm.refresh()
         setContent {
-            VoltaRoot(vm, route, onDarkChanged = ::applySystemBars)
+            VoltaRoot(vm, route, fold, onDarkChanged = ::applySystemBars)
+        }
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                WindowInfoTracker.getOrCreate(this@MainActivity).windowLayoutInfo(this@MainActivity).collect { info ->
+                    fold.value = info.displayFeatures.filterIsInstance<FoldingFeature>().firstOrNull()?.let {
+                        Fold(
+                            it.bounds.left, it.bounds.top, it.bounds.right, it.bounds.bottom,
+                            vertical = it.orientation == FoldingFeature.Orientation.VERTICAL,
+                            halfOpened = it.state == FoldingFeature.State.HALF_OPENED,
+                        )
+                    }
+                }
+            }
         }
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {

@@ -76,7 +76,10 @@ fun AppsScreen(snap: Snapshot, vm: VoltaViewModel) {
         if (uri != null) vm.exportApps(uri, rows)
     }
 
-    ScreenColumn {
+    val screen = remember(snap, w) { ScreenTimeline.build(snap.screenEvents, w.from, w.to) }
+    val used = remember(snap, w) { Drain.usage(snap.readings, screen.onIntervals, w.from, w.to).used }
+    // On big screens the window and its total sit beside the list of apps.
+    AdaptiveScreen(start = start@{
         TabTitle("Apps") {
             if (snap.usageAccess && rows.isNotEmpty()) PillButton("CSV", { export.launch("volta-apps-${w.label.replace(' ', '-').lowercase()}.csv") }, tonal = true, icon = VIcons.Download)
         }
@@ -86,14 +89,12 @@ fun AppsScreen(snap: Snapshot, vm: VoltaViewModel) {
                 "App usage needs Usage Access. Open Settings → Apps → Special app access → Usage access, then allow Volta.",
                 "Enable usage access",
             ) { runCatching { context.startActivity(UsageReader.accessIntent()) } }
-            return@ScreenColumn
+            return@start
         }
         Row(Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
             for (win in windows) SelectChip(win.label, win.key == w.key, { key = win.key })
         }
 
-        val screen = remember(snap, w) { ScreenTimeline.build(snap.screenEvents, w.from, w.to) }
-        val used = remember(snap, w) { Drain.usage(snap.readings, screen.onIntervals, w.from, w.to).used }
         VCard(color = c.primaryContainer) {
             Text(
                 when (w.key) {
@@ -112,7 +113,8 @@ fun AppsScreen(snap: Snapshot, vm: VoltaViewModel) {
         if (partial && w.saved == null) {
             Muted("Partial history: Android keeps about a week of app events, and may keep less.")
         }
-
+    }, end = end@{
+        if (!snap.usageAccess) return@end
         if (rows.isEmpty()) {
             Muted("No foreground app intervals were observed in this window.")
         } else {
@@ -124,7 +126,7 @@ fun AppsScreen(snap: Snapshot, vm: VoltaViewModel) {
             }
             Muted("Time each app spent in the foreground. Android doesn't report per-app battery drain to other apps, so this shows where your screen time went.")
         }
-    }
+    })
 }
 
 @Composable

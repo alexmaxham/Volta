@@ -58,16 +58,16 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
     val csv = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("text/csv")) { uri -> if (uri != null) vm.exportRunCsv(id, uri) }
     val backup = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/json")) { uri -> if (uri != null) vm.backupRun(id, uri) }
 
-    ScreenColumn(bottom = 32.dp) {
+    val r = run
+    val sum = r?.let { Review.summary(it, now) }
+    AdaptiveScreen(bottom = 32.dp, start = start@{
         DetailBar("Review run", onBack) {
             if (run?.active == false) CircleIconButton(VIcons.Trash, "Delete this run", { confirmDelete = true })
         }
-        val r = run
-        if (r == null) {
+        if (r == null || sum == null) {
             Muted(if (loaded) "This review no longer exists." else "Loading run…")
-            return@ScreenColumn
+            return@start
         }
-        val sum = Review.summary(r, now)
         val cond = r.conditions
         Text(cond.protocol.ifBlank { "Lab test" }, style = MaterialTheme.typography.headlineLarge, modifier = Modifier.padding(horizontal = 4.dp))
         Muted(listOfNotNull(Fmt.whenAt(r.started, now, java.time.ZoneId.systemDefault()), if (cond.type == TestType.DRAIN) "Drain test" else "Charging test", conditionsLine(cond).ifBlank { null }).joinToString(" · "))
@@ -98,6 +98,9 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
                 Muted("Need at least two recorded readings.", Modifier.padding(top = 8.dp))
             }
         }
+    }, end = end@{
+        if (r == null || sum == null) return@end
+        val cond = r.conditions
 
         RowsCard(
             buildList {
@@ -140,7 +143,7 @@ fun RunScreen(vm: VoltaViewModel, s: VoltaSettings, id: String, onBack: () -> Un
                 ChevronRow("Back up run", "A file you can import on another phone") { backup.launch("volta-run-${r.started}.json") }
             }
         }
-    }
+    })
 
     if (confirmDelete) {
         AlertDialog(
@@ -168,9 +171,9 @@ fun CompareScreen(vm: VoltaViewModel, snap: Snapshot, id: String, onBack: () -> 
     LaunchedEffect(matching.map { it.id }) { vm.loadRuns(matching.map { it.id }) { runs = it } }
     val palette = listOf(c.primary, c.tertiary, c.onSurfaceVariant, c.secondary, c.outline)
 
-    ScreenColumn(bottom = 32.dp) {
+    val loaded = runs
+    AdaptiveScreen(bottom = 32.dp, start = {
         DetailBar("Compare matching tests", onBack)
-        val loaded = runs
         when {
             base == null -> Muted("This review no longer exists.")
             loaded == null -> Muted("Loading…")
@@ -188,14 +191,17 @@ fun CompareScreen(vm: VoltaViewModel, snap: Snapshot, id: String, onBack: () -> 
                         loaded.forEachIndexed { i, r -> LegendDot(palette[i % palette.size], Fmt.day(r.started, snap.zone)) }
                     }
                 }
-                RowsCard(
-                    loaded.map { r ->
-                        val sum = Review.summary(r, snap.now)
-                        Fmt.day(r.started, snap.zone) + " · " + Format.duration(sum.elapsed) to rateLine(r.conditions.type, sum.ratePerHour)
-                    },
-                )
             }
         }
+    }, end = {
+        if (base != null && loaded != null && loaded.size >= 2) {
+            RowsCard(
+                loaded.map { r ->
+                    val sum = Review.summary(r, snap.now)
+                    Fmt.day(r.started, snap.zone) + " · " + Format.duration(sum.elapsed) to rateLine(r.conditions.type, sum.ratePerHour)
+                },
+            )
+        }
         Muted("Groups match protocol, test type, brightness, refresh rate, resolution, network, performance, charger and recording mode. Notes and software can still differ—check them before drawing conclusions.")
-    }
+    })
 }
