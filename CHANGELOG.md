@@ -2,7 +2,7 @@
 
 What's new in each version of Volta. Download any version from [Releases](https://github.com/alexmaxham/Volta/releases).
 
-## Unreleased
+## 1.3.0 — 2026-10-28
 
 ### Changed
 - **Settings is now a tab** in place of Lab, so it's one tap away instead of behind a button on Today.
