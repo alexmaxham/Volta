@@ -4,6 +4,9 @@ What's new in each version of Volta. Download any version from [Releases](https:
 
 ## Unreleased
 
+### Changed
+- **Temperatures show in °F by default** on new installs, across the app, widget, alerts and exported images. Switch to °C in Settings → Use Fahrenheit. If you've installed Volta before, your current choice is kept.
+
 ### New
 - **App benchmark** in Lab (Settings → Advanced → Lab → App benchmark). Volta opens Chrome, YouTube, Instagram, your camera app recording 4K 60 fps video, TikTok, X, YouTube Music and Subway Surfers for an hour each, in that order, then starts again until the battery reaches 3% or a charger is connected. It scrolls feeds, opens a fixed set of web pages, swipes videos, starts and stops recording and plays the game, keeps the screen on, and brings an app back if a popup or another app stays in front for 15 seconds. It needs Volta's accessibility service, which only acts while a benchmark you started is running.
 - **Checklist before each benchmark:** auto brightness off and charged to 100% (and unplugged) are checked live by Volta; you confirm brightness is set to 200 nits with a lux meter, using a full white screen Volta shows for measuring, and that the camera is set to 4K 60 fps.

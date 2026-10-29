@@ -25,7 +25,7 @@ data class VoltaSettings(
     val onboarded: Boolean = false,
     val scheme: Scheme = Scheme.BLOOM,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
-    val fahrenheit: Boolean = false,
+    val fahrenheit: Boolean = true,
     val backgroundLogging: Boolean = true,
     val reviewRecordingDefault: Boolean = true,
     val designMah: Int? = null,
