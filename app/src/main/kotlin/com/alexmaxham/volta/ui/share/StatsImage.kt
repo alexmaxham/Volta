@@ -56,6 +56,7 @@ import com.alexmaxham.volta.ui.components.TimePoint
 import com.alexmaxham.volta.ui.screens.Fmt
 import com.alexmaxham.volta.ui.screens.chargerName
 import java.io.File
+import kotlin.math.roundToInt
 
 /** Shapes of exported images. Square and 16:9 suit reviews; portrait suits phone screens. */
 enum class ExportFormat(val label: String, val width: Int, val height: Int) {
@@ -104,14 +105,17 @@ private class Ink(context: Context, val colors: ColorScheme, val c: Canvas, val 
         c.drawRoundRect(r, radius * scale, radius * scale, p)
     }
 
-    /** A labelled stat tile. */
-    fun tile(r: RectF, label: String, value: String, bg: Int, fg: Int) {
+    /** A labelled stat tile. [second] is a smaller value after the main one, such as the other temperature unit. */
+    fun tile(r: RectF, label: String, value: String, bg: Int, fg: Int, second: String? = null, secondColor: Int = fg) {
         box(r, 28f, bg)
         val pad = 22f * scale
+        val gap = 10f * scale
         text(label, r.left + pad, r.top + pad + 22f * scale, 22f, fg)
+        fun width(size: Float) = measure(value, size, display) + if (second != null) gap + measure(second, size * 0.55f, headline) else 0f
         var size = 44f
-        while (size > 24f && measure(value, size, display) > r.width() - 2 * pad) size -= 2f
-        text(value, r.left + pad, r.bottom - pad, size, fg, display)
+        while (size > 24f && width(size) > r.width() - 2 * pad) size -= 2f
+        val w = text(value, r.left + pad, r.bottom - pad, size, fg, display)
+        if (second != null) text(second, r.left + pad + w + gap, r.bottom - pad, size * 0.55f, secondColor, headline)
     }
 
     fun legend(x: Float, y: Float, color: Int, label: String): Float {
@@ -303,37 +307,44 @@ object ExportImages {
 
         ink.text("VOLTA · APP BENCHMARK", m, m + 20f, 22f, mu, ink.bold, spacing = 0.16f)
         ink.text(deviceLine(), m, m + 58f, 26f, tx, ink.headline)
-        ink.text(listOf(Fmt.longDay(run.started, zone), run.conditions.brightness).filter { it.isNotBlank() }.joinToString(" · "), m, m + 92f, 22f, mu)
+        ink.text(Fmt.longDay(run.started, zone), m, m + 92f, 22f, mu)
 
         val heroY = m + 210f
         ink.text(Format.duration(rep.elapsed), m - 4f, heroY, 104f, tx, ink.display)
         val levels = if (rep.startLevel != null) "${rep.startLevel}% → ${rep.endLevel}%" else ""
         ink.text(listOf(if (run.active) "so far" else "until stopped", levels, "1 h per app on repeat").filter { it.isNotBlank() }.joinToString(" · "), m, heroY + 46f, 24f, mu)
 
+        // Temperatures show in both units, the one chosen in Settings first.
+        fun both(celsius: Float) = Format.temp(celsius, s.fahrenheit) + " · " + Format.temp(celsius, !s.fahrenheit)
+
         // Tiles along the bottom, bars in a card between.
-        val tiles = listOf(
-            "Average temp" to (rep.avgTempC?.let { Format.temp(it, s.fahrenheit) } ?: "—"),
-            "Peak temp" to (rep.peakTempC?.let { Format.temp(it, s.fahrenheit) } ?: "—"),
-            "Rounds" to "${rep.rounds}",
-        )
+        val hottest = rep.apps.filter { it.peakTempC != null }.maxByOrNull { it.peakTempC!! }
         val tilesH = if (format == ExportFormat.PORTRAIT) 150f else 130f
         val area = RectF(m, format.height - m - 40f - tilesH, format.width - m, format.height - m - 40f)
-        grid(area, tiles.size, 3, 12f).forEachIndexed { i, r -> ink.tile(r, tiles[i].first, tiles[i].second, s1, tx) }
+        val tileRects = grid(area, 3, 3, 12f)
+        fun tempTile(r: RectF, label: String, celsius: Float?) =
+            ink.tile(r, label, celsius?.let { Format.temp(it, s.fahrenheit) } ?: "—", s1, tx, celsius?.let { Format.temp(it, !s.fahrenheit) }, mu)
+        tempTile(tileRects[0], "Average temp", rep.avgTempC)
+        tempTile(tileRects[1], "Peak temp", rep.peakTempC)
+        ink.tile(tileRects[2], "Hottest app", hottest?.name ?: "—", s1, tx)
 
         val card = RectF(m, heroY + 84f, format.width - m, area.top - 18f)
         ink.box(card, 36f, s1)
         val pad = 32f
         ink.text("Drain by app", card.left + pad, card.top + pad + 26f, 28f, tx, ink.headline)
-        ink.text("battery points per hour", card.right - pad, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
+        // Two value columns: battery points per hour, then charge per hour.
+        val mahRight = card.right - pad
+        val ptsRight = mahRight - 130f
+        ink.text("pts/h", ptsRight, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
+        ink.text("mAh/h", mahRight, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
         val apps = rep.apps
         if (apps.isNotEmpty()) {
             val top = card.top + pad + 56f
             val rowH = (card.bottom - pad - top) / apps.size
             val max = apps.mapNotNull { it.perHour }.maxOrNull()?.takeIf { it > 0 } ?: 1.0
             val labelW = 250f
-            val valueW = 150f
             val barL = card.left + pad + labelW
-            val barR = card.right - pad - valueW
+            val barR = ptsRight - 110f
             val barH = minOf(22f, rowH * 0.32f)
             apps.forEachIndexed { i, a ->
                 val cy = top + rowH * i + rowH / 2f
@@ -341,9 +352,9 @@ object ExportImages {
                 ink.box(RectF(barL, cy - barH / 2f, barR, cy + barH / 2f), barH / 2f, colors.surfaceContainerHighest.toArgb())
                 val f = ((a.perHour ?: 0.0) / max).toFloat().coerceIn(0f, 1f)
                 if (f > 0f) ink.box(RectF(barL, cy - barH / 2f, barL + maxOf(barH, (barR - barL) * f), cy + barH / 2f), barH / 2f, colors.primary.toArgb())
-                ink.text(a.perHour?.let { "%.1f".format(java.util.Locale.getDefault(), it) } ?: "—", card.right - pad, cy + 9f, 26f, tx, ink.display, Paint.Align.RIGHT)
-                val sub = listOfNotNull(a.mahPerHour?.let { Format.mah(it.toFloat()) + "/h" }, a.peakTempC?.let { "peak " + Format.temp(it, s.fahrenheit) }).joinToString(" · ")
-                if (sub.isNotEmpty() && rowH >= 64f) ink.text(sub, barL, cy + barH / 2f + 24f, 17f, mu)
+                ink.text(a.perHour?.let { "%.1f".format(java.util.Locale.getDefault(), it) } ?: "—", ptsRight, cy + 9f, 26f, tx, ink.display, Paint.Align.RIGHT)
+                ink.text(a.mahPerHour?.let { "%,d".format(java.util.Locale.getDefault(), it.roundToInt()) } ?: "—", mahRight, cy + 9f, 26f, tx, ink.display, Paint.Align.RIGHT)
+                a.peakTempC?.takeIf { rowH >= 64f }?.let { ink.text("peak " + both(it), barL, cy + barH / 2f + 24f, 17f, mu) }
             }
         }
 
