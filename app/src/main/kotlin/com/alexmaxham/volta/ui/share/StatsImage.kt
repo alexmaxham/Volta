@@ -355,7 +355,7 @@ object ExportImages {
                 if (f > 0f) ink.box(RectF(barL, cy - barH / 2f, barL + maxOf(barH, (barR - barL) * f), cy + barH / 2f), barH / 2f, colors.primary.toArgb())
                 ink.text(a.perHour?.let { "%.1f".format(java.util.Locale.getDefault(), it) } ?: "—", ptsRight, cy + 9f, 26f, tx, ink.display, Paint.Align.RIGHT)
                 ink.text(a.mahPerHour?.let { "%,d".format(java.util.Locale.getDefault(), it.roundToInt()) } ?: "—", mahRight, cy + 9f, 26f, tx, ink.display, Paint.Align.RIGHT)
-                a.peakTempC?.takeIf { rowH >= 64f }?.let { ink.text("peak " + both(it), barL, cy + barH / 2f + 24f, 17f, mu) }
+                a.peakTempC?.takeIf { rowH >= 56f }?.let { ink.text("peak " + both(it), barL, cy + barH / 2f + 24f, 17f, mu) }
             }
         }
 
