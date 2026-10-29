@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -243,6 +244,8 @@ private fun ChecklistDialog(live: Reading?, camera: Boolean, onDismiss: () -> Un
     var nits by rememberSaveable { mutableStateOf(false) }
     var cameraSet by rememberSaveable { mutableStateOf(false) }
     var white by remember { mutableStateOf(false) }
+    // The brightness box can only be ticked once the white screen has been opened to measure on.
+    var measured by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(Unit) {
         while (true) {
             auto = Bench.autoBrightness(context)
@@ -274,10 +277,15 @@ private fun ChecklistDialog(live: Reading?, camera: Boolean, onDismiss: () -> Un
                 )
                 CheckItem(
                     "Brightness set to 200 nits with a lux meter",
-                    "Show a white screen and adjust the brightness slider until your meter reads 200 nits. A lux meter held flat against the screen reads roughly 630 lux at 200 nits.",
+                    "Open the white screen and adjust the brightness slider until your meter reads 200 nits. A lux meter held flat against the screen reads roughly 630 lux at 200 nits.",
                     nits,
                     onToggle = { nits = it },
-                    action = "White screen" to { white = true },
+                    enabled = measured,
+                    note = if (measured) null else "Open the white screen first",
+                    action = "Open white screen to calibrate" to {
+                        measured = true
+                        white = true
+                    },
                 )
                 CheckItem(
                     "Charged to 100%",
@@ -312,19 +320,28 @@ private fun ChecklistDialog(live: Reading?, camera: Boolean, onDismiss: () -> Un
 
 /** One checklist line. Without [onToggle] the box is ticked by Volta's own check. */
 @Composable
-private fun CheckItem(title: String, sub: String, checked: Boolean, onToggle: ((Boolean) -> Unit)? = null, action: Pair<String, () -> Unit>? = null) {
+private fun CheckItem(
+    title: String,
+    sub: String,
+    checked: Boolean,
+    onToggle: ((Boolean) -> Unit)? = null,
+    enabled: Boolean = true,
+    note: String? = null,
+    action: Pair<String, () -> Unit>? = null,
+) {
     Row(verticalAlignment = Alignment.Top, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        Checkbox(checked, onCheckedChange = onToggle)
+        Checkbox(checked, onCheckedChange = onToggle, enabled = enabled)
         Column(Modifier.weight(1f).padding(top = 10.dp)) {
             Text(title, style = MaterialTheme.typography.titleSmall)
             Text(sub, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
             if (onToggle == null) {
                 Text(if (checked) "Checked by Volta" else "Volta checks this for you", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.primary)
             }
+            if (note != null) Text(note, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.error)
             if (action != null) {
                 Text(
                     action.first,
-                    style = MaterialTheme.typography.labelLarge,
+                    style = MaterialTheme.typography.labelLarge.copy(textDecoration = TextDecoration.Underline),
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier.padding(top = 6.dp).clip(RoundedCornerShape(8.dp)).clickable(onClick = action.second).padding(vertical = 4.dp),
                 )
