@@ -335,8 +335,8 @@ object ExportImages {
         // Two value columns: battery points per hour, then charge per hour.
         val mahRight = card.right - pad
         val ptsRight = mahRight - 130f
-        ink.text("pts/h", ptsRight, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
-        ink.text("mAh/h", mahRight, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
+        ink.text("%/hr", ptsRight, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
+        ink.text("mAh/hr", mahRight, card.top + pad + 26f, 20f, mu, align = Paint.Align.RIGHT)
         val apps = rep.apps
         if (apps.isNotEmpty()) {
             val top = card.top + pad + 56f
