@@ -40,7 +40,6 @@ import com.alexmaxham.volta.core.Source
 import com.alexmaxham.volta.core.Time
 import com.alexmaxham.volta.data.BatteryReader
 import com.alexmaxham.volta.data.Db
-import com.alexmaxham.volta.data.Scheme
 import com.alexmaxham.volta.data.SettingsStore
 import com.alexmaxham.volta.ui.theme.Palettes
 
@@ -72,12 +71,9 @@ class VoltaWidget : GlanceAppWidget() {
             },
             temp = live?.tempC?.let { Format.temp(it, settings.fahrenheit) },
         )
-        val colors = if (settings.scheme == Scheme.DYNAMIC) null else ColorProviders(
-            light = Palettes.colors(context, settings.scheme, false),
-            dark = Palettes.colors(context, settings.scheme, true),
-        )
+        val colors = ColorProviders(light = Palettes.colors(false), dark = Palettes.colors(true))
         provideContent {
-            if (colors != null) GlanceTheme(colors) { Content(data) } else GlanceTheme { Content(data) }
+            GlanceTheme(colors) { Content(data) }
         }
     }
 

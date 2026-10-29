@@ -80,6 +80,8 @@ object Benchmark {
         BenchStep("x", "X (Twitter)"),
         BenchStep("camera", "Camera 4K60"),
         BenchStep("tiktok", "TikTok"),
+        BenchStep("maps", "Google Maps"),
+        BenchStep("meet", "Google Meet"),
         BenchStep("youtube", "YouTube", link = "https://www.youtube.com/watch?v=u-dEnJpCGAQ"),
         BenchStep("instagram", "Instagram"),
         BenchStep("ytmusic", "YouTube Music", link = "https://music.youtube.com/playlist?list=RDCLAK5uy_mplKe9BIYCO3ZuNWSHZr48bm9DUDzbWnE&playnext=1"),

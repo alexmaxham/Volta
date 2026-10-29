@@ -1,6 +1,6 @@
 # Volta
 
-A little battery clarity for Android. Volta shows where your charge goes, how you charge, and how your battery is ageing, in a Material 3 Expressive design with six color schemes.
+A little battery clarity for Android. Volta shows where your charge goes, how you charge, and how your battery is ageing, in a Material 3 Expressive design in Android Headlines' colors and type.
 
 ## Download
 
@@ -14,11 +14,11 @@ Get the latest APK from **[Releases](https://github.com/alexmaxham/Volta/release
 - **Overnight reports:** drain and rate while you slept, deep sleep, screen wakes and coverage for any night, with adjustable hours and an optional morning summary notification.
 - **Apps:** foreground time and an estimated battery share per app for the current charge, today or past cycles (saved before Android's week of history runs out), with CSV export.
 - **Lab** (Settings → Advanced, for reviewing phones): timed drain and charging tests with recorded conditions, presets, 15-second review recording with a notification, comparison of matching runs, CSV export and run backup and import.
-- **App benchmark** (in Lab): Volta runs Chrome, Subway Surfers, X, 4K60 camera recording, TikTok, YouTube, Instagram and YouTube Music for an hour each, in order and on repeat, until the battery reaches 5%. It drives each app with scrolls, swipes and taps through an accessibility service, keeps the screen on and brings an app back if something else takes over. A checklist before the start makes sure auto brightness is off, brightness is set to 200 nits with a lux meter and the phone is at 100% and unplugged. Results show drain per app (points and mAh per hour), power and temperature, and share as an image, text or CSV.
+- **App benchmark** (in Lab): Volta runs Chrome, Subway Surfers, X, 4K60 camera recording, TikTok, Google Maps walking navigation, a Google Meet video call, YouTube, Instagram and YouTube Music for an hour each, in order and on repeat, until the battery reaches 5%. It drives each app with scrolls, swipes and taps through an accessibility service, keeps the screen on and brings an app back if something else takes over. A checklist before the start makes sure auto brightness is off, brightness is set to 200 nits with a lux meter and the phone is at 100% and unplugged. Results show drain per app (points and mAh per hour), power and temperature, and share as an image, text or CSV.
 - **Battery health:** full-capacity estimates learned from 30+ point charges, compared with the design capacity you enter.
 - **Reminders:** low battery, charge level and warm battery alerts.
 - **Widget** and a shareable **stats image**.
-- **Make it yours:** Dynamic color plus Bloom, Sage, Ocean, Ember and Iris palettes, each with light and true-black dark themes, and °C or °F.
+- **Android Headlines look:** its red, black and charcoal with Roboto headlines and Work Sans labels, in light and true-black dark themes, with °F or °C.
 
 Everything stays on the phone. No root required; screen time and apps need Usage Access, and the app benchmark needs Volta's accessibility service turned on.
 
@@ -44,4 +44,4 @@ Locally, with Android Studio or the Android SDK installed:
 ./gradlew assembleRelease
 ```
 
-The display font is a subset of [Roboto Flex](https://github.com/googlefonts/roboto-flex) (SIL Open Font License, see `FONT-LICENSE-OFL.txt`).
+Labels use [Work Sans](https://github.com/weiweihuanghuang/Work-Sans) (SIL Open Font License, see `FONT-LICENSE-OFL.txt`); headlines and numbers use the phone's Roboto.

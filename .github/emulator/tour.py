@@ -221,10 +221,6 @@ def main():
 
     tap("Settings")
     scroll_shots("22-settings", 5)
-    for scheme in ("Sage", "Ocean", "Ember", "Iris", "Dynamic"):
-        if tap(f"{scheme} color scheme"):
-            shot(f"23-settings-{scheme.lower()}")
-    tap("Bloom color scheme")
     tap("Dark")
     shot("24-settings-dark")
     tap("Lab", scrolls=8)

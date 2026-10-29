@@ -74,8 +74,9 @@ fun deviceLine(): String {
 
 /** Paints, fonts and drawing helpers for an export canvas in the current palette. */
 private class Ink(context: Context, val colors: ColorScheme, val c: Canvas, val scale: Float) {
-    val display: Typeface = runCatching { ResourcesCompat.getFont(context, R.font.volta_display) }.getOrNull() ?: Typeface.DEFAULT_BOLD
-    val headline: Typeface = runCatching { ResourcesCompat.getFont(context, R.font.volta_headline) }.getOrNull() ?: Typeface.DEFAULT_BOLD
+    /** Roboto bold for big numbers and Work Sans for titles, as in the app. */
+    val display: Typeface = Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD)
+    val headline: Typeface = runCatching { ResourcesCompat.getFont(context, R.font.work_sans_semibold) }.getOrNull() ?: Typeface.DEFAULT_BOLD
     val bold: Typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)
     private val p = Paint(Paint.ANTI_ALIAS_FLAG)
 

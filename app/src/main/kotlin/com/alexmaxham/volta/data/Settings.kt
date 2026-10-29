@@ -15,7 +15,6 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import java.time.LocalTime
 
-enum class Scheme { DYNAMIC, BLOOM, SAGE, OCEAN, EMBER, IRIS }
 enum class ThemeMode { SYSTEM, LIGHT, DARK }
 
 /** Where the Today totals start counting from. */
@@ -23,7 +22,6 @@ enum class Range { SINCE_FULL, SINCE_MIDNIGHT }
 
 data class VoltaSettings(
     val onboarded: Boolean = false,
-    val scheme: Scheme = Scheme.BLOOM,
     val themeMode: ThemeMode = ThemeMode.SYSTEM,
     val fahrenheit: Boolean = true,
     val backgroundLogging: Boolean = true,
@@ -41,7 +39,6 @@ private val Context.store: DataStore<Preferences> by preferencesDataStore("setti
 class SettingsStore(private val context: Context) {
     private object K {
         val onboarded = booleanPreferencesKey("onboarded")
-        val scheme = stringPreferencesKey("scheme")
         val themeMode = stringPreferencesKey("theme_mode")
         val fahrenheit = booleanPreferencesKey("fahrenheit")
         val logging = booleanPreferencesKey("background_logging")
@@ -65,7 +62,6 @@ class SettingsStore(private val context: Context) {
         val d = VoltaSettings()
         return VoltaSettings(
             onboarded = p[K.onboarded] ?: d.onboarded,
-            scheme = p[K.scheme]?.let { runCatching { Scheme.valueOf(it) }.getOrNull() } ?: d.scheme,
             themeMode = p[K.themeMode]?.let { runCatching { ThemeMode.valueOf(it) }.getOrNull() } ?: d.themeMode,
             fahrenheit = p[K.fahrenheit] ?: d.fahrenheit,
             backgroundLogging = p[K.logging] ?: d.backgroundLogging,
@@ -93,7 +89,6 @@ class SettingsStore(private val context: Context) {
             val now = read(p)
             val s = block(now)
             p[K.onboarded] = s.onboarded
-            p[K.scheme] = s.scheme.name
             p[K.themeMode] = s.themeMode.name
             p[K.fahrenheit] = s.fahrenheit
             p[K.logging] = s.backgroundLogging

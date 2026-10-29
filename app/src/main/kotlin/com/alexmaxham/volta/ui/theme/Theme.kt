@@ -11,7 +11,6 @@ import androidx.compose.material3.Typography
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
@@ -20,26 +19,31 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.alexmaxham.volta.R
-import com.alexmaxham.volta.data.Scheme
 import com.alexmaxham.volta.data.ThemeMode
 
-/** Roboto Flex, widened and heavy at display size, for big numbers. */
-val Display = FontFamily(Font(R.font.volta_display, FontWeight.SemiBold))
+/**
+ * Android Headlines' type: Roboto for headlines and big numbers, and Work Sans for titles,
+ * labels and small print, as on its menus and bylines.
+ */
+val Display = FontFamily.SansSerif
 
-/** Roboto Flex at headline size, for screen titles. */
-val Headline = FontFamily(Font(R.font.volta_headline, FontWeight.SemiBold))
+/** Work Sans, for titles and labels. */
+val Label = FontFamily(Font(R.font.work_sans_medium, FontWeight.Medium), Font(R.font.work_sans_semibold, FontWeight.SemiBold))
 
 private val typography = Typography().let { t ->
     t.copy(
-        displayLarge = TextStyle(fontFamily = Display, fontSize = 104.sp, lineHeight = 104.sp, letterSpacing = (-0.04).em),
-        displayMedium = TextStyle(fontFamily = Display, fontSize = 64.sp, lineHeight = 68.sp, letterSpacing = (-0.03).em),
-        displaySmall = TextStyle(fontFamily = Display, fontSize = 44.sp, lineHeight = 48.sp, letterSpacing = (-0.02).em),
-        headlineLarge = TextStyle(fontFamily = Headline, fontSize = 34.sp, lineHeight = 40.sp, letterSpacing = (-0.02).em),
-        headlineMedium = TextStyle(fontFamily = Display, fontSize = 30.sp, lineHeight = 34.sp, letterSpacing = (-0.02).em),
-        headlineSmall = TextStyle(fontFamily = Display, fontSize = 22.sp, lineHeight = 26.sp, letterSpacing = (-0.01).em),
-        titleLarge = t.titleLarge.copy(fontWeight = FontWeight.SemiBold),
-        titleMedium = t.titleMedium.copy(fontWeight = FontWeight.SemiBold),
-        labelLarge = t.labelLarge.copy(fontWeight = FontWeight.SemiBold),
+        displayLarge = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 104.sp, lineHeight = 104.sp, letterSpacing = (-0.04).em),
+        displayMedium = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 64.sp, lineHeight = 68.sp, letterSpacing = (-0.03).em),
+        displaySmall = TextStyle(fontFamily = Display, fontWeight = FontWeight.Bold, fontSize = 44.sp, lineHeight = 48.sp, letterSpacing = (-0.02).em),
+        headlineLarge = TextStyle(fontFamily = Display, fontWeight = FontWeight.Normal, fontSize = 34.sp, lineHeight = 40.sp, letterSpacing = (-0.01).em),
+        headlineMedium = TextStyle(fontFamily = Display, fontWeight = FontWeight.Medium, fontSize = 30.sp, lineHeight = 34.sp, letterSpacing = (-0.01).em),
+        headlineSmall = TextStyle(fontFamily = Display, fontWeight = FontWeight.Medium, fontSize = 22.sp, lineHeight = 26.sp),
+        titleLarge = t.titleLarge.copy(fontFamily = Label, fontWeight = FontWeight.SemiBold),
+        titleMedium = t.titleMedium.copy(fontFamily = Label, fontWeight = FontWeight.SemiBold),
+        titleSmall = t.titleSmall.copy(fontFamily = Label, fontWeight = FontWeight.SemiBold),
+        labelLarge = t.labelLarge.copy(fontFamily = Label, fontWeight = FontWeight.SemiBold),
+        labelMedium = t.labelMedium.copy(fontFamily = Label, fontWeight = FontWeight.Medium),
+        labelSmall = t.labelSmall.copy(fontFamily = Label, fontWeight = FontWeight.Medium),
     )
 }
 
@@ -59,9 +63,8 @@ fun isDark(mode: ThemeMode): Boolean = when (mode) {
 }
 
 @Composable
-fun VoltaTheme(scheme: Scheme, mode: ThemeMode, content: @Composable () -> Unit) {
-    val context = LocalContext.current
-    val target = Palettes.colors(context, scheme, isDark(mode))
+fun VoltaTheme(mode: ThemeMode, content: @Composable () -> Unit) {
+    val target = Palettes.colors(isDark(mode))
     MaterialTheme(colorScheme = target.animated(), typography = typography, shapes = shapes, content = content)
 }
 

@@ -118,7 +118,7 @@ fun LabScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (String)
                     Column(Modifier.weight(1f)) {
                         Text("App benchmark", style = MaterialTheme.typography.titleMedium)
                         Text(
-                            "Chrome, Subway Surfers, X, camera, TikTok, YouTube, Instagram and YouTube Music for an hour each, on repeat, run by Volta",
+                            "Chrome, Subway Surfers, X, camera, TikTok, Maps, Meet, YouTube, Instagram and YouTube Music for an hour each, on repeat, run by Volta",
                             style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
                         )
                     }

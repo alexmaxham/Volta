@@ -40,7 +40,10 @@ sealed interface Move {
  * For apps that play video or music, [play] moves run whenever nothing is playing, and playback
  * is paused before leaving. [ads] are labels of buttons that close an ad; for apps whose own
  * screens have no labelled buttons, like games, the runner taps those instead of its usual moves
- * and holds off while some other labelled button is on screen.
+ * and holds off while some other labelled button is on screen. When none of the [active] labels
+ * is on screen, the step has dropped out of what it was doing, such as a call, and the runner
+ * goes through [start] again. [walk] has the runner walk a test location along [MockWalk]'s
+ * route while the step runs, opening [open] again for each walk.
  */
 class Workload(
     val packages: Set<String>,
@@ -51,6 +54,8 @@ class Workload(
     val leave: List<Move> = emptyList(),
     val play: List<Move> = emptyList(),
     val ads: List<String> = emptyList(),
+    val active: List<String> = emptyList(),
+    val walk: Boolean = false,
 ) {
     val media: Boolean get() = play.isNotEmpty()
 }
@@ -63,6 +68,17 @@ object Workloads {
     const val X = "com.twitter.android"
     const val YT_MUSIC = "com.google.android.apps.youtube.music"
     const val SUBWAY = "com.kiloo.subwaysurf"
+    const val MAPS = "com.google.android.apps.maps"
+
+    /** Google Meet, which took over Duo's app, then the older Meet app. */
+    val MEET = listOf("com.google.android.apps.tachyon", "com.google.android.apps.meetings")
+
+    /** Walking directions to Grand Central, from wherever the phone is: Penn Station, during the walk. */
+    const val NAVIGATE = "google.navigation:q=Grand+Central+Terminal,+New+York,+NY&mode=w"
+
+    /** The same route as a preview, for when Volta can't set a test location. */
+    const val ROUTE = "https://www.google.com/maps/dir/?api=1&origin=Penn+Station,+New+York,+NY" +
+        "&destination=Grand+Central+Terminal,+New+York,+NY&travelmode=walking"
 
     /**
      * The same pages every run, so results compare between phones. Chrome reads each for five
@@ -104,6 +120,9 @@ object Workloads {
     /** Buttons that end an ad in a game, most specific first. */
     private val SUBWAY_ADS = listOf("reward granted", "close ad", "skip ad", "skip video", "close", "skip", "no thanks")
 
+    /** The button that ends a call; while it's on screen, the call is still going. */
+    private val LEAVE_CALL = listOf("leave call", "end call", "hang up", "leave meeting")
+
     private val RECORD = listOf("start recording", "start video", "record video", "begin recording", "record", "shutter")
     private val STOP = listOf("stop recording", "stop video", "stop")
 
@@ -119,6 +138,8 @@ object Workloads {
         "x" -> "Scrolls the home timeline every 6 seconds"
         "ytmusic" -> "Plays the same playlist every run, with the screen on"
         "subway" -> "Plays with swipes and taps every second or so"
+        "maps" -> "Navigates on foot from Penn Station to Grand Central, again and again"
+        "meet" -> "Starts a video call on its own with the camera on"
         else -> ""
     }
 
@@ -137,6 +158,8 @@ object Workloads {
             "x" -> listOf(X).filter(::has)
             "ytmusic" -> listOf(YT_MUSIC).filter(::has)
             "subway" -> listOf(SUBWAY).filter(::has)
+            "maps" -> listOf(MAPS).filter(::has)
+            "meet" -> MEET.filter(::has)
             else -> emptyList()
         }
     }
@@ -197,6 +220,30 @@ object Workloads {
                 }.flatten() + Move.Tap(0.8f, 0.95f),
                 every = 1_200,
                 ads = SUBWAY_ADS,
+            )
+            "maps" -> {
+                val walk = MockWalk.allowed(context)
+                Workload(
+                    setOf(pkg),
+                    if (walk) Intent(Intent.ACTION_VIEW, Uri.parse(NAVIGATE)).setPackage(pkg) else view(ROUTE, pkg),
+                    // Navigation shows a safety note the first time; then it needs nothing.
+                    start = listOf(Move.TapLabel(listOf("got it", "ok", "continue"), exact = true)),
+                    leave = listOf(Move.TapLabel(listOf("close navigation", "exit navigation", "end navigation"))),
+                    walk = walk,
+                )
+            }
+            "meet" -> Workload(
+                pkgs.toSet(), launch,
+                // New → Create a new meeting starts a call with only this phone in it; then join
+                // and close the sheet offering to share the link.
+                start = listOf(
+                    Move.TapLabel(listOf("new", "new meeting"), exact = true),
+                    Move.TapLabel(listOf("create a new meeting", "start an instant meeting", "instant meeting", "create meeting", "start meeting")),
+                    Move.TapLabel(listOf("join now", "join", "start"), exact = true),
+                    Move.TapLabel(listOf("close", "dismiss", "got it"), exact = true),
+                ),
+                leave = listOf(Move.TapLabel(LEAVE_CALL)),
+                active = LEAVE_CALL,
             )
             else -> null
         }

@@ -9,23 +9,13 @@ import android.os.Build
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.Spring
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.core.spring
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
@@ -39,21 +29,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.semantics.contentDescription
-import androidx.compose.ui.semantics.selected
-import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.graphics.shapes.Morph
 import com.alexmaxham.volta.core.Format
-import com.alexmaxham.volta.data.Scheme
 import com.alexmaxham.volta.data.ThemeMode
 import com.alexmaxham.volta.data.UsageReader
 import com.alexmaxham.volta.data.VoltaSettings
@@ -66,11 +46,7 @@ import com.alexmaxham.volta.ui.components.GroupDivider
 import com.alexmaxham.volta.ui.components.ListRow
 import com.alexmaxham.volta.ui.components.SwitchRow
 import com.alexmaxham.volta.ui.components.VCard
-import com.alexmaxham.volta.ui.components.VIcons
 import com.alexmaxham.volta.ui.components.ValueRow
-import com.alexmaxham.volta.ui.theme.ExpressiveShapes
-import com.alexmaxham.volta.ui.theme.MorphShape
-import com.alexmaxham.volta.ui.theme.Palettes
 import com.alexmaxham.volta.widget.VoltaWidgetReceiver
 import com.alexmaxham.volta.work.Notifier
 import kotlin.math.roundToInt
@@ -111,25 +87,6 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (St
         TabTitle("Settings")
 
         Header("Make it yours")
-        VCard {
-            Text("Color scheme", style = MaterialTheme.typography.titleMedium)
-            Text(
-                if (s.scheme == Scheme.DYNAMIC) "Matches your wallpaper." else "Five curated palettes, or match your wallpaper.",
-                style = MaterialTheme.typography.bodyMedium, color = c.onSurfaceVariant,
-            )
-            val schemes = buildList {
-                if (Build.VERSION.SDK_INT >= 31) add(Scheme.DYNAMIC)
-                addAll(Palettes.curated)
-            }
-            Column(Modifier.padding(top = 16.dp), verticalArrangement = Arrangement.spacedBy(14.dp)) {
-                schemes.chunked(3).forEach { row ->
-                    Row(Modifier.fillMaxWidth()) {
-                        for (sc in row) Swatch(sc, sc == s.scheme, Modifier.weight(1f)) { vm.update { it.copy(scheme = sc) } }
-                        repeat(3 - row.size) { Box(Modifier.weight(1f)) }
-                    }
-                }
-            }
-        }
         VCard {
             Text("Theme", style = MaterialTheme.typography.titleMedium)
             ConnectedButtons(
@@ -297,39 +254,6 @@ fun SettingsScreen(snap: Snapshot, s: VoltaSettings, vm: VoltaViewModel, go: (St
 @Composable
 private fun Header(text: String) {
     Text(text, style = MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.SemiBold, modifier = Modifier.padding(start = 6.dp, top = 10.dp))
-}
-
-private val swatchMorph = Morph(ExpressiveShapes.circle, ExpressiveShapes.cookie9)
-
-/** A palette swatch that morphs from a circle into the scalloped hero shape when selected. */
-@Composable
-private fun Swatch(scheme: Scheme, selected: Boolean, modifier: Modifier, onClick: () -> Unit) {
-    val context = LocalContext.current
-    val (a, b, d) = remember(scheme) { Palettes.swatch(context, scheme) }
-    val progress by animateFloatAsState(if (selected) 1f else 0f, spring(Spring.DampingRatioMediumBouncy, Spring.StiffnessLow), label = "swatch")
-    val name = scheme.name.lowercase().replaceFirstChar { it.uppercase() }
-    Column(
-        modifier
-            .clip(MaterialTheme.shapes.medium)
-            .clickable(role = Role.RadioButton, onClick = onClick)
-            .semantics { this.selected = selected; contentDescription = "$name color scheme" }
-            .padding(vertical = 6.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        Box(Modifier.size(76.dp), contentAlignment = Alignment.Center) {
-            Canvas(Modifier.size(72.dp).clip(MorphShape(swatchMorph, progress, progress * 20f))) {
-                drawRect(a, size = Size(size.width, size.height / 2))
-                drawRect(b, topLeft = Offset(0f, size.height / 2), size = Size(size.width / 2, size.height / 2))
-                drawRect(d, topLeft = Offset(size.width / 2, size.height / 2), size = Size(size.width / 2, size.height / 2))
-            }
-            if (selected) {
-                Box(Modifier.size(30.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary), contentAlignment = Alignment.Center) {
-                    Icon(VIcons.Check, null, tint = MaterialTheme.colorScheme.onPrimary, modifier = Modifier.size(18.dp))
-                }
-            }
-        }
-        Text(name, style = MaterialTheme.typography.labelLarge, fontWeight = if (selected) FontWeight.Bold else FontWeight.Medium, modifier = Modifier.padding(top = 6.dp))
-    }
 }
 
 @Composable

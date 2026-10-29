@@ -93,7 +93,7 @@ fun VoltaRoot(vm: VoltaViewModel, pendingRoute: MutableStateFlow<String?>, fold:
     val settings by vm.settings.collectAsStateWithLifecycle()
     val currentFold by fold.collectAsStateWithLifecycle()
     val s = settings ?: return
-    VoltaTheme(s.scheme, s.themeMode) {
+    VoltaTheme(s.themeMode) {
         val dark = isDark(s.themeMode)
         LaunchedEffect(dark) { onDarkChanged(dark) }
         // Surface sets the default content colour, so plain Text follows the theme in light and dark.
