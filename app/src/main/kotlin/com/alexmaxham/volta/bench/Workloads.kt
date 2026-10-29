@@ -86,6 +86,9 @@ object Workloads {
     /** The middle of YouTube's player, which sits at the top of the screen in portrait. */
     private const val PLAYER_Y = 0.16f
 
+    /** Where the runner taps in Subway Surfers: above the Save me prompt, which would play an ad. */
+    private const val SUBWAY_TAP_Y = 0.25f
+
     /** Buttons that end an ad in a game, most specific first. */
     private val SUBWAY_ADS = listOf("reward granted", "close ad", "skip ad", "skip video", "close", "skip", "no thanks")
 
@@ -167,15 +170,18 @@ object Workloads {
             )
             "subway" -> Workload(
                 setOf(pkg), launch,
-                // A tap starts a run or dismisses the end screen; swipes dodge left, right, up and down.
-                start = listOf(Move.Tap(0.5f, 0.6f)),
-                loop = listOf(
-                    Move.Swipe(0.65f, 0.6f, 0.3f, 0.6f, 120),
-                    Move.Swipe(0.5f, 0.65f, 0.5f, 0.35f, 120),
-                    Move.Swipe(0.35f, 0.6f, 0.7f, 0.6f, 120),
-                    Move.Swipe(0.5f, 0.4f, 0.5f, 0.7f, 120),
-                    Move.Tap(0.5f, 0.6f),
-                ),
+                // Swipes dodge left, right, up and down. An occasional tap starts the next run, but
+                // high up the screen: the Save me prompt after a crash sits in the middle, and its
+                // button continues by watching an ad. Left alone, the prompt times out by itself.
+                start = listOf(Move.Tap(0.5f, SUBWAY_TAP_Y)),
+                loop = List(2) {
+                    listOf(
+                        Move.Swipe(0.65f, 0.6f, 0.3f, 0.6f, 120),
+                        Move.Swipe(0.5f, 0.65f, 0.5f, 0.35f, 120),
+                        Move.Swipe(0.35f, 0.6f, 0.7f, 0.6f, 120),
+                        Move.Swipe(0.5f, 0.4f, 0.5f, 0.7f, 120),
+                    )
+                }.flatten() + Move.Tap(0.5f, SUBWAY_TAP_Y),
                 every = 1_200,
                 ads = SUBWAY_ADS,
             )
