@@ -64,17 +64,29 @@ object Workloads {
     const val YT_MUSIC = "com.google.android.apps.youtube.music"
     const val SUBWAY = "com.kiloo.subwaysurf"
 
-    /** The same pages every run, so results compare between phones. Chrome reads each for about a minute. */
+    /**
+     * The same pages every run, so results compare between phones. Chrome reads each for five
+     * minutes, so the twelve fill the hour. Long reads sit between news and sports pages so the
+     * scrolling doesn't run out: books, and Wikipedia in its desktop layout, because the mobile
+     * one folds each section away.
+     */
     val PAGES = listOf(
-        "https://en.wikipedia.org/wiki/Lithium-ion_battery",
         "https://www.bbc.com/news",
+        "https://en.wikipedia.org/w/index.php?title=World_War_II&mobileaction=toggle_view_desktop",
         "https://www.theverge.com",
-        "https://en.wikipedia.org/wiki/Android_(operating_system)",
-        "https://github.com/trending",
+        "https://www.gutenberg.org/cache/epub/1342/pg1342-images.html",
         "https://www.espn.com",
-        "https://en.wikipedia.org/wiki/Smartphone",
+        "https://en.wikipedia.org/w/index.php?title=Lithium-ion_battery&mobileaction=toggle_view_desktop",
         "https://www.imdb.com/chart/top/",
+        "https://en.wikipedia.org/w/index.php?title=History_of_the_Internet&mobileaction=toggle_view_desktop",
+        "https://www.cnn.com",
+        "https://www.gutenberg.org/cache/epub/2701/pg2701-images.html",
+        "https://github.com/trending",
+        "https://en.wikipedia.org/w/index.php?title=Smartphone&mobileaction=toggle_view_desktop",
     )
+
+    /** Scrolls six seconds apart before Chrome opens the next page: five minutes a page. */
+    private const val SCROLLS_PER_PAGE = 49
 
     /** Chrome tags the tab it opens for this id and reuses it, so pages don't pile up as new tabs. */
     private const val TAB_ID = "com.alexmaxham.volta.bench"
@@ -146,8 +158,8 @@ object Workloads {
         return when (step.id) {
             "chrome" -> Workload(
                 setOf(pkg), view(PAGES.first(), pkg),
-                // About a minute a page: nine scrolls six seconds apart, then the next page.
-                loop = PAGES.drop(1).plus(PAGES.first()).flatMap { List(9) { SCROLL } + Move.Open(it) },
+                // Five minutes a page: scrolls six seconds apart, then the next page.
+                loop = PAGES.drop(1).plus(PAGES.first()).flatMap { List(SCROLLS_PER_PAGE) { SCROLL } + Move.Open(it) },
                 every = 6_000,
             )
             "youtube" -> Workload(
