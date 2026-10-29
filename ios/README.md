@@ -12,9 +12,20 @@ iOS doesn't let an app open other apps, tap inside them or see which one is in f
 
 ## What you need
 
-- A Mac with Xcode 16 or later, a JDK 17 or later (`brew install openjdk@17`) and XcodeGen (`brew install xcodegen`).
+- A Mac with Xcode 16 or later.
+- [Homebrew](https://brew.sh), then XcodeGen and a JDK 17 for building the shared Kotlin code:
+
+  ```bash
+  brew install xcodegen openjdk@17
+  sudo ln -sfn /opt/homebrew/opt/openjdk@17/libexec/openjdk.jdk /Library/Java/JavaVirtualMachines/openjdk-17.jdk
+  ```
+
 - An Apple Developer account. The app group that lets the runner and Volta share files needs a paid account.
 - The iPhone on iOS 17 or later, with Developer Mode on (Settings → Privacy & Security → Developer Mode).
+
+## Try it on a simulator
+
+`ios/sim.sh` builds everything and runs a 2-minute Safari benchmark on an iPhone simulator. No phone or developer account is needed, so it's the quickest check that the build works.
 
 ## Setup, once
 
