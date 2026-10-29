@@ -71,18 +71,18 @@ object Benchmark {
     const val PROTOCOL = "App benchmark"
 
     /** The run ends when the battery reaches this level, before the phone shuts itself down. */
-    const val STOP_LEVEL = 3
+    const val STOP_LEVEL = 5
 
     /** The default loop: an hour in each app, in this order, then round again. */
     val DEFAULT = listOf(
         BenchStep("chrome", "Chrome"),
-        BenchStep("youtube", "YouTube", link = "https://www.youtube.com/watch?v=u-dEnJpCGAQ"),
-        BenchStep("instagram", "Instagram"),
+        BenchStep("subway", "Subway Surfers"),
+        BenchStep("x", "X (Twitter)"),
         BenchStep("camera", "Camera 4K60"),
         BenchStep("tiktok", "TikTok"),
-        BenchStep("x", "X (Twitter)"),
+        BenchStep("youtube", "YouTube", link = "https://www.youtube.com/watch?v=u-dEnJpCGAQ"),
+        BenchStep("instagram", "Instagram"),
         BenchStep("ytmusic", "YouTube Music", link = "https://music.youtube.com/playlist?list=RDCLAK5uy_mplKe9BIYCO3ZuNWSHZr48bm9DUDzbWnE&playnext=1"),
-        BenchStep("subway", "Subway Surfers"),
     )
 
     fun name(stepId: String): String = DEFAULT.firstOrNull { it.id == stepId }?.name ?: stepId
