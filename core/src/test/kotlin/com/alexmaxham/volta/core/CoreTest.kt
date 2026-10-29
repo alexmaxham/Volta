@@ -392,6 +392,12 @@ class BenchmarkTest {
         assertEquals(2 * H + 30 * M, again.start)
     }
 
+    @Test fun videoAndMusicHaveDefaultLinks() {
+        assertTrue(Benchmark.defaultLink("youtube").startsWith("https://www.youtube.com/watch?v="))
+        assertTrue(Benchmark.defaultLink("ytmusic").startsWith("https://music.youtube.com/playlist?list="))
+        assertEquals("", Benchmark.defaultLink("chrome"))
+    }
+
     @Test fun positionNeedsSteps() {
         assertNull(Benchmark.position(emptyList(), 0))
     }

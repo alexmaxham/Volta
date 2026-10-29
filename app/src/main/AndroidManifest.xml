@@ -10,7 +10,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <!-- Lets the Apps tab show names and icons for launcher apps, and the benchmark find the
-         camera and music apps it opens. -->
+         camera app it opens. -->
     <queries>
         <intent>
             <action android:name="android.intent.action.MAIN" />
@@ -18,9 +18,6 @@
         </intent>
         <intent>
             <action android:name="android.media.action.VIDEO_CAMERA" />
-        </intent>
-        <intent>
-            <action android:name="android.media.action.MEDIA_PLAY_FROM_SEARCH" />
         </intent>
     </queries>
 

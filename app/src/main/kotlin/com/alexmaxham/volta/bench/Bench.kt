@@ -30,14 +30,15 @@ object Bench {
     private fun links(context: Context): JSONObject =
         Db.get(context).get(LINKS)?.let { runCatching { JSONObject(it) }.getOrNull() } ?: JSONObject()
 
+    /** Saves the link a step plays. An empty link goes back to the default. */
     fun setLink(context: Context, stepId: String, link: String) {
         Db.get(context).put(LINKS, links(context).put(stepId, link.trim()).toString())
     }
 
-    /** The default loop with the links chosen on this phone. */
+    /** The default loop, with any links chosen on this phone in place of the defaults. */
     fun steps(context: Context): List<BenchStep> {
         val l = links(context)
-        return Benchmark.DEFAULT.map { it.copy(link = l.optString(it.id)) }
+        return Benchmark.DEFAULT.map { st -> l.optString(st.id).takeIf { it.isNotBlank() }?.let { st.copy(link = it) } ?: st }
     }
 
     /** Whether Volta's benchmark runner is turned on in Accessibility settings. */

@@ -1,6 +1,5 @@
 package com.alexmaxham.volta.bench
 
-import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -8,6 +7,7 @@ import android.net.Uri
 import android.provider.Browser
 import android.provider.MediaStore
 import com.alexmaxham.volta.core.BenchStep
+import com.alexmaxham.volta.core.Benchmark
 
 /** Something the runner does inside an app. Positions are fractions of the screen. */
 sealed interface Move {
@@ -58,9 +58,6 @@ object Workloads {
         "https://www.imdb.com/chart/top/",
     )
 
-    const val YOUTUBE_SEARCH = "4K nature documentary 1 hour"
-    const val MUSIC_SEARCH = "Today's top hits"
-
     /** Chrome tags the tab it opens for this id and reuses it, so pages don't pile up as new tabs. */
     private const val TAB_ID = "com.alexmaxham.volta.bench"
 
@@ -76,12 +73,12 @@ object Workloads {
 
     fun hint(id: String): String = when (id) {
         "chrome" -> "Opens ${PAGES.size} set web pages in turn and scrolls each one"
-        "youtube" -> "Plays your video link, or the first result for “$YOUTUBE_SEARCH”"
+        "youtube" -> "Plays the same video every run"
         "instagram" -> "Scrolls the home feed every 5 seconds"
         "camera" -> "Records video in your camera app. Set it to 4K 60 fps first"
         "tiktok" -> "Swipes to the next video every 10 seconds"
         "x" -> "Scrolls the home timeline every 6 seconds"
-        "ytmusic" -> "Plays your playlist link, or “$MUSIC_SEARCH”, with the screen on"
+        "ytmusic" -> "Plays the same playlist every run, with the screen on"
         "subway" -> "Plays with swipes and taps every second or so"
         else -> ""
     }
@@ -118,7 +115,7 @@ object Workloads {
         val pkgs = packagesFor(context, step.id)
         val pkg = pkgs.firstOrNull() ?: return null
         val launch = context.packageManager.getLaunchIntentForPackage(pkg) ?: Intent()
-        val link = step.link.trim().takeIf { it.startsWith("https://") }
+        val link = (step.link.trim().takeIf { it.startsWith("https://") } ?: Benchmark.defaultLink(step.id)).takeIf { it.isNotBlank() }
         return when (step.id) {
             "chrome" -> Workload(
                 setOf(pkg), view(PAGES.first(), pkg),
@@ -126,11 +123,7 @@ object Workloads {
                 loop = PAGES.drop(1).plus(PAGES.first()).flatMap { List(9) { SCROLL } + Move.Open(it) },
                 every = 6_000,
             )
-            "youtube" -> Workload(
-                setOf(pkg),
-                view(link ?: "https://www.youtube.com/results?search_query=" + Uri.encode(YOUTUBE_SEARCH), pkg),
-                start = if (link == null) listOf(Move.TapLabel(listOf("play video"), 0.5f, 0.3f)) else emptyList(),
-            )
+            "youtube" -> Workload(setOf(pkg), link?.let { view(it, pkg) } ?: launch)
             "instagram" -> Workload(setOf(pkg), launch, loop = listOf(SCROLL), every = 5_000)
             "camera" -> Workload(
                 setOf(pkg),
@@ -140,14 +133,7 @@ object Workloads {
             )
             "tiktok" -> Workload(pkgs.toSet(), launch, loop = listOf(NEXT_VIDEO), every = 10_000)
             "x" -> Workload(setOf(pkg), launch, loop = listOf(SCROLL), every = 6_000)
-            "ytmusic" -> Workload(
-                setOf(pkg),
-                if (link != null) view(link, pkg)
-                else Intent(MediaStore.INTENT_ACTION_MEDIA_PLAY_FROM_SEARCH).setPackage(pkg)
-                    .putExtra(SearchManager.QUERY, MUSIC_SEARCH)
-                    .putExtra(MediaStore.EXTRA_MEDIA_FOCUS, "vnd.android.cursor.item/*")
-                    .takeIf { it.resolveActivity(context.packageManager) != null } ?: launch,
-            )
+            "ytmusic" -> Workload(setOf(pkg), link?.let { view(it, pkg) } ?: launch)
             "subway" -> Workload(
                 setOf(pkg), launch,
                 // A tap starts a run or dismisses the end screen; swipes dodge left, right, up and down.

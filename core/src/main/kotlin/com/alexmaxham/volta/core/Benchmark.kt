@@ -3,7 +3,7 @@ package com.alexmaxham.volta.core
 import java.util.Locale
 import kotlin.math.abs
 
-/** One app in the benchmark loop. [link] is optional content to open, such as a video or playlist. */
+/** One app in the benchmark loop. [link] is content to open, such as a video or playlist, where the app takes one. */
 data class BenchStep(val id: String, val name: String, val minutes: Int = 60, val link: String = "")
 
 /** The apps a benchmark run loops through, in order, and the level it stops at. */
@@ -76,16 +76,19 @@ object Benchmark {
     /** The default loop: an hour in each app, in this order, then round again. */
     val DEFAULT = listOf(
         BenchStep("chrome", "Chrome"),
-        BenchStep("youtube", "YouTube"),
+        BenchStep("youtube", "YouTube", link = "https://www.youtube.com/watch?v=u-dEnJpCGAQ"),
         BenchStep("instagram", "Instagram"),
         BenchStep("camera", "Camera 4K60"),
         BenchStep("tiktok", "TikTok"),
         BenchStep("x", "X (Twitter)"),
-        BenchStep("ytmusic", "YouTube Music"),
+        BenchStep("ytmusic", "YouTube Music", link = "https://music.youtube.com/playlist?list=RDCLAK5uy_mplKe9BIYCO3ZuNWSHZr48bm9DUDzbWnE&playnext=1"),
         BenchStep("subway", "Subway Surfers"),
     )
 
     fun name(stepId: String): String = DEFAULT.firstOrNull { it.id == stepId }?.name ?: stepId
+
+    /** The link a step plays unless the user picks another, or "" for steps without one. */
+    fun defaultLink(stepId: String): String = DEFAULT.firstOrNull { it.id == stepId }?.link.orEmpty()
 
     /** The slot running [elapsed] ms after the start, or null with no steps. */
     fun position(steps: List<BenchStep>, elapsed: Long): BenchPosition? {

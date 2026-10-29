@@ -138,13 +138,14 @@ fun BenchScreen(snap: Snapshot, live: Reading?, vm: VoltaViewModel, go: (String)
                 val link = Workloads.takesLink(st.id)
                 ListRow(
                     st.name,
-                    if (!has) "Not installed · skipped" else Workloads.hint(st.id) + if (link && st.link.isNotBlank()) "\n${st.link}" else "",
+                    if (!has) "Not installed · skipped"
+                    else Workloads.hint(st.id) + if (link) "\n" + (if (st.link == Benchmark.defaultLink(st.id)) "Default: " else "Your link: ") + st.link else "",
                     leading = {
                         Box(Modifier.size(36.dp).clip(CircleShape).background(if (has) c.secondaryContainer else c.surfaceContainerHighest), contentAlignment = Alignment.Center) {
                             Text("${i + 1}", style = MaterialTheme.typography.labelLarge, color = if (has) c.onSecondaryContainer else c.onSurfaceVariant)
                         }
                     },
-                    trailing = { if (link && has) Text(if (st.link.isBlank()) "Add link" else "Edit", style = MaterialTheme.typography.labelLarge, color = c.primary) },
+                    trailing = { if (link && has) Text("Change", style = MaterialTheme.typography.labelLarge, color = c.primary) },
                     onClick = if (link && has) { { editing = st } } else null,
                 )
             }
@@ -198,8 +199,10 @@ private fun Status(ok: Boolean) {
     )
 }
 
+/** Changes the link a step plays. Saving an empty link, or Use default, goes back to the default. */
 @Composable
 private fun LinkDialog(step: BenchStep, onDismiss: () -> Unit, onSave: (String) -> Unit) {
+    val default = Benchmark.defaultLink(step.id)
     var text by remember { mutableStateOf(step.link) }
     val valid = text.isBlank() || (text.trim().startsWith("https://") && text.length <= 500)
     AlertDialog(
@@ -208,8 +211,8 @@ private fun LinkDialog(step: BenchStep, onDismiss: () -> Unit, onSave: (String) 
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
-                    if (step.id == "youtube") "Paste a video at least an hour long, so every phone plays the same thing. Leave empty to play the first result for “${Workloads.YOUTUBE_SEARCH}”."
-                    else "Paste a playlist or album link from YouTube Music. Leave empty to play “${Workloads.MUSIC_SEARCH}”.",
+                    (if (step.id == "youtube") "Paste a video at least an hour long" else "Paste a YouTube Music playlist or album link") +
+                        ". Use the same link on every phone you compare, so each plays the same thing.",
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 OutlinedTextField(
@@ -221,7 +224,12 @@ private fun LinkDialog(step: BenchStep, onDismiss: () -> Unit, onSave: (String) 
                 )
             }
         },
-        confirmButton = { TextButton({ onSave(text) }, enabled = valid) { Text("Save") } },
+        confirmButton = {
+            Row {
+                if (step.link != default) TextButton({ onSave("") }) { Text("Use default") }
+                TextButton({ onSave(text) }, enabled = valid) { Text("Save") }
+            }
+        },
         dismissButton = { TextButton(onDismiss) { Text("Cancel") } },
     )
 }
