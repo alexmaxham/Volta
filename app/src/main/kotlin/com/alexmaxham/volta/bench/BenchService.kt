@@ -2,13 +2,16 @@ package com.alexmaxham.volta.bench
 
 import android.accessibilityservice.AccessibilityService
 import android.accessibilityservice.GestureDescription
+import android.app.ActivityManager
 import android.app.KeyguardManager
 import android.content.Intent
 import android.graphics.Path
 import android.graphics.PixelFormat
 import android.graphics.Rect
+import android.media.AudioManager
 import android.os.Build
 import android.view.Gravity
+import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
 import android.view.accessibility.AccessibilityEvent
@@ -112,6 +115,8 @@ class BenchService : AccessibilityService() {
         var nextMove = 0L
         var awaySince = 0L
         var nextBattery = 0L
+        var nextPlayCheck = 0L
+        var adSince = 0L
 
         suspend fun save(s: BenchSegment) = withContext(Dispatchers.IO) { db.saveSegment(runId, s) }
 
@@ -120,7 +125,7 @@ class BenchService : AccessibilityService() {
             val ended = withContext(Dispatchers.IO) { runCatching { db.runEnded(runId) }.getOrElse { now } }
             if (ended != null) {
                 // Finished from the notification or the app.
-                work?.let { if (front() in it.packages) perform(it.leave) }
+                work?.let { leave(it) }
                 slot?.let { save(it.copy(end = maxOf(it.start, ended))) }
                 withContext(Dispatchers.IO) { Bench.clear(this@BenchService) }
                 return
@@ -129,8 +134,9 @@ class BenchService : AccessibilityService() {
 
             if (opened != pos.index) {
                 val previous = slot
+                val left = work
                 if (previous != null && previous.index != pos.index) {
-                    work?.let { if (front() in it.packages) perform(it.leave) }
+                    left?.let { leave(it) }
                     save(previous.copy(end = now))
                     slot = null
                 }
@@ -139,6 +145,8 @@ class BenchService : AccessibilityService() {
                 if (previous != null && previous.index != pos.index) {
                     performGlobalAction(GLOBAL_ACTION_HOME)
                     delay(1_500)
+                    // Close it, so its next round starts fresh rather than where this one left off.
+                    left?.let { close(it) }
                 }
                 work = Workloads.of(this, pos.step)
                 work?.let { open(it.open) }
@@ -147,7 +155,9 @@ class BenchService : AccessibilityService() {
                 work?.let { queue.addAll(it.start) }
                 loopAt = 0
                 nextMove = System.currentTimeMillis() + OPEN_WAIT
+                nextPlayCheck = nextMove + PLAY_WAIT
                 awaySince = 0L
+                adSince = 0L
             }
 
             val w = work
@@ -163,11 +173,30 @@ class BenchService : AccessibilityService() {
                         queue.clear()
                         queue.addAll(w.start)
                         nextMove = now + OPEN_WAIT
+                        nextPlayCheck = nextMove + PLAY_WAIT
                         awaySince = 0L
                         slot = slot?.let { it.copy(relaunches = it.relaunches + 1) }?.also { save(it) }
                     }
                 }
-                if (now >= nextMove && fg in w.packages) {
+                // Video and music must be playing; start them again if they stopped or never started.
+                if (w.media && now >= nextPlayCheck && fg in w.packages) {
+                    if (!playing()) perform(w.play, PLAY_GAP)
+                    nextPlayCheck = System.currentTimeMillis() + PLAY_CHECK
+                }
+                val ad = if (w.ads.isNotEmpty() && now >= nextMove && fg in w.packages) adOnScreen(w.ads) else AdState.NONE
+                if (ad != AdState.NONE) {
+                    // Close the ad when it offers a way out; otherwise wait it out, then try Back.
+                    when {
+                        ad == AdState.CLOSED -> adSince = 0L
+                        adSince == 0L -> adSince = now
+                        now - adSince > AD_LIMIT -> {
+                            performGlobalAction(GLOBAL_ACTION_BACK)
+                            adSince = 0L
+                        }
+                    }
+                    nextMove = now + AD_GAP
+                } else if (now >= nextMove && fg in w.packages) {
+                    adSince = 0L
                     val m = queue.removeFirstOrNull()
                     if (m != null) {
                         perform(listOf(m))
@@ -190,7 +219,7 @@ class BenchService : AccessibilityService() {
                     else -> null
                 }
                 if (reason != null) {
-                    w?.let { if (front() in it.packages) perform(it.leave) }
+                    w?.let { leave(it) }
                     slot?.let { save(it.copy(end = now)) }
                     finish(runId, started, now, reason)
                     return
@@ -225,9 +254,48 @@ class BenchService : AccessibilityService() {
     /** The app in front: the active window's, or the last one that opened. */
     private fun front(): String? = runCatching { rootInActiveWindow?.packageName?.toString() }.getOrNull() ?: lastPackage
 
-    private suspend fun perform(moves: List<Move>) {
+    /** Stops what a step was doing: its leave moves, and pausing playback so it doesn't carry on in picture-in-picture. */
+    private suspend fun leave(w: Workload) {
+        if (front() in w.packages) perform(w.leave)
+        if (w.media && playing()) {
+            mediaKey(KeyEvent.KEYCODE_MEDIA_PAUSE)
+            delay(1_000)
+        }
+    }
+
+    /** Ends a step's apps once they're in the background. */
+    private fun close(w: Workload) {
+        val am = getSystemService(ActivityManager::class.java) ?: return
+        for (p in w.packages) runCatching { am.killBackgroundProcesses(p) }
+    }
+
+    private fun playing(): Boolean = getSystemService(AudioManager::class.java)?.isMusicActive == true
+
+    /** Sends a media button press to whatever is playing. */
+    private fun mediaKey(code: Int) {
+        val am = getSystemService(AudioManager::class.java) ?: return
+        am.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, code))
+        am.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_UP, code))
+    }
+
+    private enum class AdState { NONE, CLOSED, SHOWING }
+
+    /**
+     * For apps whose own screens have no labelled buttons: taps an ad's close button when one of
+     * [words] is on screen. Any other labelled button means an ad or dialog is still showing.
+     */
+    private fun adOnScreen(words: List<String>): AdState {
+        val nodes = runCatching { rootInActiveWindow?.let { labelled(it) } }.getOrNull().orEmpty()
+        pick(nodes, words, emptyList(), exact = false)?.let {
+            click(it)
+            return AdState.CLOSED
+        }
+        return if (nodes.any { (n, _) -> clickable(n) != null }) AdState.SHOWING else AdState.NONE
+    }
+
+    private suspend fun perform(moves: List<Move>, gap: Long = START_GAP) {
         for ((i, m) in moves.withIndex()) {
-            if (i > 0) delay(START_GAP)
+            if (i > 0) delay(gap)
             when (m) {
                 is Move.Swipe -> stroke(m.x1, m.y1, m.x2, m.y2, m.ms)
                 is Move.Tap -> stroke(m.x, m.y, m.x, m.y, 60)
@@ -265,30 +333,47 @@ class BenchService : AccessibilityService() {
     }
 
     private fun tapLabel(m: Move.TapLabel) {
-        val node = runCatching { rootInActiveWindow?.let { find(it, m.words, m.avoid) } }.getOrNull()
-        if (node != null) {
-            var n: AccessibilityNodeInfo? = node
-            while (n != null && !n.isClickable) n = n.parent
-            if (n?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true) return
-            val r = Rect()
-            node.getBoundsInScreen(r)
-            if (!r.isEmpty) return strokePx(r.exactCenterX(), r.exactCenterY(), r.exactCenterX(), r.exactCenterY(), 60)
-        }
-        stroke(m.x, m.y, m.x, m.y, 60)
+        val node = runCatching { rootInActiveWindow?.let { pick(labelled(it), m.words, m.avoid, m.exact) } }.getOrNull()
+        if (node != null && click(node)) return
+        if (m.x != null && m.y != null) stroke(m.x, m.y, m.x, m.y, 60)
     }
 
-    /** The first visible control labelled with one of [words], trying each word in turn. */
-    private fun find(root: AccessibilityNodeInfo, words: List<String>, avoid: List<String>): AccessibilityNodeInfo? {
-        val nodes = ArrayList<Pair<AccessibilityNodeInfo, String>>()
+    /** Clicks [node], or taps its middle when nothing around it takes clicks. */
+    private fun click(node: AccessibilityNodeInfo): Boolean {
+        if (clickable(node)?.performAction(AccessibilityNodeInfo.ACTION_CLICK) == true) return true
+        val r = Rect()
+        node.getBoundsInScreen(r)
+        if (r.isEmpty) return false
+        strokePx(r.exactCenterX(), r.exactCenterY(), r.exactCenterX(), r.exactCenterY(), 60)
+        return true
+    }
+
+    private fun clickable(node: AccessibilityNodeInfo): AccessibilityNodeInfo? {
+        var n: AccessibilityNodeInfo? = node
+        while (n != null && !n.isClickable) n = n.parent
+        return n
+    }
+
+    /** Visible nodes with a label, each with its content description and text in lower case. */
+    private fun labelled(root: AccessibilityNodeInfo): List<Pair<AccessibilityNodeInfo, List<String>>> {
+        val nodes = ArrayList<Pair<AccessibilityNodeInfo, List<String>>>()
         val todo = ArrayDeque(listOf(root))
-        while (todo.isNotEmpty() && nodes.size < 3000) {
+        var seen = 0
+        while (todo.isNotEmpty() && seen++ < 3000) {
             val n = todo.removeFirst()
-            val label = listOfNotNull(n.contentDescription, n.text).joinToString(" ").lowercase()
-            if (label.isNotBlank() && n.isVisibleToUser) nodes += n to label
+            val labels = listOfNotNull(n.contentDescription, n.text).map { it.toString().trim().lowercase() }.filter { it.isNotEmpty() }
+            if (labels.isNotEmpty() && n.isVisibleToUser) nodes += n to labels
             for (i in 0 until n.childCount) n.getChild(i)?.let { todo += it }
         }
+        return nodes
+    }
+
+    /** The first node labelled with one of [words], trying each word in turn: containing it, or equal to it when [exact]. */
+    private fun pick(nodes: List<Pair<AccessibilityNodeInfo, List<String>>>, words: List<String>, avoid: List<String>, exact: Boolean): AccessibilityNodeInfo? {
         for (w in words) {
-            nodes.firstOrNull { (_, l) -> w in l && avoid.none { it in l } }?.let { return it.first }
+            nodes.firstOrNull { (_, labels) ->
+                labels.any { if (exact) it == w else w in it } && labels.none { l -> avoid.any { it in l } }
+            }?.let { return it.first }
         }
         return null
     }
@@ -322,6 +407,17 @@ class BenchService : AccessibilityService() {
         /** Time for an app to open before the first move. */
         private const val OPEN_WAIT = 5_000L
         private const val START_GAP = 2_500L
+
+        /** Video and music are checked this long after the first moves, then every [PLAY_CHECK]. */
+        private const val PLAY_WAIT = 3_000L
+        private const val PLAY_CHECK = 20_000L
+
+        /** A player's controls hide after a few seconds, so its play moves follow quickly. */
+        private const val PLAY_GAP = 900L
+
+        /** How often to look at an ad, and how long to wait one out before pressing Back. */
+        private const val AD_GAP = 1_500L
+        private const val AD_LIMIT = 60_000L
 
         /** How long another app may stay in front before the step's app is opened again. */
         private const val AWAY_LIMIT = 15_000L

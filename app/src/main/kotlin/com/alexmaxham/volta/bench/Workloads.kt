@@ -15,8 +15,17 @@ sealed interface Move {
 
     data class Tap(val x: Float, val y: Float) : Move
 
-    /** Taps the first control whose label contains one of [words] (in order of preference), or [x], [y] if none does. */
-    data class TapLabel(val words: List<String>, val x: Float, val y: Float, val avoid: List<String> = emptyList()) : Move
+    /**
+     * Taps the first control whose label contains one of [words] (in order of preference), or is
+     * exactly one of them when [exact] is set. Taps [x], [y] if none does, or nothing without them.
+     */
+    data class TapLabel(
+        val words: List<String>,
+        val x: Float? = null,
+        val y: Float? = null,
+        val avoid: List<String> = emptyList(),
+        val exact: Boolean = false,
+    ) : Move
 
     /** Opens [url] in the app, replacing what it showed. */
     data class Open(val url: String) : Move
@@ -26,7 +35,12 @@ sealed interface Move {
  * How the runner drives one app: how to open it, a few [start] moves once it's open, then [loop]
  * moves one at a time every [every] ms, and [leave] moves before switching to the next app.
  * [packages] are the apps the step may show; the runner brings the step back when something else
- * stays in front.
+ * stays in front, and closes them when the step ends so the next round starts fresh.
+ *
+ * For apps that play video or music, [play] moves run whenever nothing is playing, and playback
+ * is paused before leaving. [ads] are labels of buttons that close an ad; for apps whose own
+ * screens have no labelled buttons, like games, the runner taps those instead of its usual moves
+ * and holds off while some other labelled button is on screen.
  */
 class Workload(
     val packages: Set<String>,
@@ -35,7 +49,11 @@ class Workload(
     val loop: List<Move> = emptyList(),
     val every: Long = 0,
     val leave: List<Move> = emptyList(),
-)
+    val play: List<Move> = emptyList(),
+    val ads: List<String> = emptyList(),
+) {
+    val media: Boolean get() = play.isNotEmpty()
+}
 
 object Workloads {
     const val CHROME = "com.android.chrome"
@@ -64,6 +82,12 @@ object Workloads {
     /** A short scroll through a feed, and a full-page swipe for one-video-at-a-time apps. */
     private val SCROLL = Move.Swipe(0.5f, 0.72f, 0.5f, 0.32f, 350)
     private val NEXT_VIDEO = Move.Swipe(0.5f, 0.8f, 0.5f, 0.2f, 250)
+
+    /** The middle of YouTube's player, which sits at the top of the screen in portrait. */
+    private const val PLAYER_Y = 0.16f
+
+    /** Buttons that end an ad in a game, most specific first. */
+    private val SUBWAY_ADS = listOf("reward granted", "close ad", "skip ad", "skip video", "close", "skip", "no thanks")
 
     private val RECORD = listOf("start recording", "start video", "record video", "begin recording", "record", "shutter")
     private val STOP = listOf("stop recording", "stop video", "stop")
@@ -123,7 +147,11 @@ object Workloads {
                 loop = PAGES.drop(1).plus(PAGES.first()).flatMap { List(9) { SCROLL } + Move.Open(it) },
                 every = 6_000,
             )
-            "youtube" -> Workload(setOf(pkg), link?.let { view(it, pkg) } ?: launch)
+            "youtube" -> Workload(
+                setOf(pkg), link?.let { view(it, pkg) } ?: launch,
+                // A tap on the player shows its controls; then press play, in the middle of the player.
+                play = listOf(Move.Tap(0.5f, PLAYER_Y), Move.TapLabel(listOf("play video", "play"), 0.5f, PLAYER_Y, exact = true)),
+            )
             "instagram" -> Workload(setOf(pkg), launch, loop = listOf(SCROLL), every = 5_000)
             "camera" -> Workload(
                 setOf(pkg),
@@ -133,7 +161,10 @@ object Workloads {
             )
             "tiktok" -> Workload(pkgs.toSet(), launch, loop = listOf(NEXT_VIDEO), every = 10_000)
             "x" -> Workload(setOf(pkg), launch, loop = listOf(SCROLL), every = 6_000)
-            "ytmusic" -> Workload(setOf(pkg), link?.let { view(it, pkg) } ?: launch)
+            "ytmusic" -> Workload(
+                setOf(pkg), link?.let { view(it, pkg) } ?: launch,
+                play = listOf(Move.TapLabel(listOf("play", "shuffle", "play all"), exact = true)),
+            )
             "subway" -> Workload(
                 setOf(pkg), launch,
                 // A tap starts a run or dismisses the end screen; swipes dodge left, right, up and down.
@@ -146,6 +177,7 @@ object Workloads {
                     Move.Tap(0.5f, 0.6f),
                 ),
                 every = 1_200,
+                ads = SUBWAY_ADS,
             )
             else -> null
         }
