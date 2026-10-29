@@ -1,0 +1,10 @@
+// Signing for an iPhone. Put your own values in Config/Local.xcconfig (not committed):
+//   DEVELOPMENT_TEAM = ABCDE12345
+//   VOLTA_BUNDLE_ID = com.yourname.volta
+//   VOLTA_APP_GROUP = group.com.yourname.volta
+// Bundle and app group IDs are unique across Apple, so use a prefix you own.
+DEVELOPMENT_TEAM =
+VOLTA_BUNDLE_ID = com.alexmaxham.volta
+VOLTA_APP_GROUP = group.com.alexmaxham.volta
+
+#include? "Local.xcconfig"

@@ -71,7 +71,7 @@ object Apps {
     fun csv(rows: List<Pair<String, AppTime>>): String = buildString {
         appendLine("app,package,foreground_minutes,opens")
         for ((label, a) in rows) {
-            appendLine(listOf(Csv.cell(label), Csv.cell(a.pkg), "%.1f".format(java.util.Locale.US, a.foreground / 60_000.0), a.opens.toString()).joinToString(","))
+            appendLine(listOf(Csv.cell(label), Csv.cell(a.pkg), fixed(a.foreground / 60_000.0, 1), a.opens.toString()).joinToString(","))
         }
     }
 }

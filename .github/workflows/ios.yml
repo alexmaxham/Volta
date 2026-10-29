@@ -1,0 +1,68 @@
+name: iOS
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  ios:
+    runs-on: macos-15
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Test battery logic on iOS
+        run: ./gradlew -p core iosSimulatorArm64Test --console=plain
+
+      - name: Generate the Xcode project
+        run: |
+          brew install xcodegen
+          cd ios && xcodegen generate
+
+      - name: Pick a simulator
+        id: sim
+        run: |
+          udid=$(xcrun simctl list devices available | grep -m1 -E '^\s+iPhone' | sed -E 's/.*\(([0-9A-F-]{36})\).*/\1/')
+          echo "Using $(xcrun simctl list devices available | grep "$udid")"
+          echo "udid=$udid" >> "$GITHUB_OUTPUT"
+
+      - name: Build for iPhone
+        working-directory: ios
+        run: |
+          xcodebuild build-for-testing -project Volta.xcodeproj -scheme Volta -destination generic/platform=iOS \
+            -derivedDataPath build CODE_SIGNING_ALLOWED=NO > ../ios-device.log 2>&1 \
+            || { grep -E "error:|Undefined symbol" -A4 ../ios-device.log | head -150; exit 1; }
+          tail -2 ../ios-device.log
+
+      - name: Build for the simulator
+        working-directory: ios
+        run: |
+          xcodebuild build-for-testing -project Volta.xcodeproj -scheme Volta -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build > ../ios-sim.log 2>&1 \
+            || { grep -E "error:|Undefined symbol" -A4 ../ios-sim.log | head -150; exit 1; }
+          tail -2 ../ios-sim.log
+
+      - name: Run the benchmark smoke test
+        working-directory: ios
+        env:
+          TEST_RUNNER_VOLTA_SMOKE: "1"
+        run: |
+          xcodebuild test-without-building -project Volta.xcodeproj -scheme Volta -destination "id=${{ steps.sim.outputs.udid }}" \
+            -derivedDataPath build -resultBundlePath ../smoke.xcresult -only-testing:VoltaBench/BenchRunner/testBenchmark
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: ios-logs
+          path: |
+            ios-*.log
+            smoke.xcresult
+          if-no-files-found: ignore

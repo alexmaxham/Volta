@@ -4,11 +4,12 @@ import kotlin.math.ceil
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
+import kotlin.math.roundToInt
 
 /** A chart scale with round tick values from [min] to [max]. */
 data class Scale(val min: Float, val max: Float, val step: Float) {
     val ticks: List<Float> get() = (0..intervals).map { min + it * step }
-    val intervals: Int get() = Math.round((max - min) / step)
+    val intervals: Int get() = ((max - min) / step).roundToInt()
 
     /** Position of [v] between 0 (at [min]) and 1 (at [max]). */
     fun fraction(v: Float): Float = if (max > min) (v - min) / (max - min) else 0f

@@ -1,6 +1,5 @@
 package com.alexmaxham.volta.core
 
-import java.util.Locale
 import kotlin.math.abs
 
 /** One app in the benchmark loop. [link] is optional content to open, such as a video or playlist. */
@@ -227,16 +226,16 @@ object Benchmark {
                     (r.round + 1).toString(),
                     Csv.cell(r.name),
                     r.segment.start.toString(),
-                    "%.1f".format(Locale.US, r.duration.toDouble() / Time.MINUTE),
+                    fixed(r.duration.toDouble() / Time.MINUTE, 1),
                     r.startLevel?.toString() ?: "",
                     r.endLevel?.toString() ?: "",
                     r.used?.toString() ?: "",
-                    r.perHour?.let { "%.2f".format(Locale.US, it) } ?: "",
-                    r.mah?.let { "%.0f".format(Locale.US, it) } ?: "",
-                    r.mahPerHour?.let { "%.0f".format(Locale.US, it) } ?: "",
-                    r.avgPowerW?.let { "%.2f".format(Locale.US, it) } ?: "",
-                    r.avgTempC?.let { "%.1f".format(Locale.US, it) } ?: "",
-                    r.peakTempC?.let { "%.1f".format(Locale.US, it) } ?: "",
+                    r.perHour?.let { fixed(it, 2) } ?: "",
+                    r.mah?.let { fixed(it, 0) } ?: "",
+                    r.mahPerHour?.let { fixed(it, 0) } ?: "",
+                    r.avgPowerW?.let { fixed(it, 2) } ?: "",
+                    r.avgTempC?.let { fixed(it, 1) } ?: "",
+                    r.peakTempC?.let { fixed(it, 1) } ?: "",
                     r.segment.relaunches.toString(),
                 ).joinToString(","),
             )

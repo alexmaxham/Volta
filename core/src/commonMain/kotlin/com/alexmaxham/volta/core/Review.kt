@@ -1,6 +1,5 @@
 package com.alexmaxham.volta.core
 
-import java.util.Locale
 
 enum class TestType { DRAIN, CHARGE }
 
@@ -23,7 +22,7 @@ data class Conditions(
     /** Runs with the same key are comparable. Notes and software can still differ. */
     val compareKey: String
         get() = listOf(protocol, type.name, brightness, refreshRate, resolution, network, performance, charger, reviewRecording.toString())
-            .joinToString("|") { it.trim().lowercase(Locale.ROOT) }
+            .joinToString("|") { it.trim().lowercase() }
 }
 
 data class ReviewRun(
@@ -107,7 +106,7 @@ object Review {
         appendLine("# phone,${Csv.cell(c.phone)}")
         appendLine("# software,${Csv.cell(c.software)}")
         appendLine("# protocol,${Csv.cell(c.protocol)}")
-        appendLine("# type,${c.type.name.lowercase(Locale.ROOT)}")
+        appendLine("# type,${c.type.name.lowercase()}")
         appendLine("# brightness,${Csv.cell(c.brightness)}")
         appendLine("# refresh_rate,${Csv.cell(c.refreshRate)}")
         appendLine("# resolution,${Csv.cell(c.resolution)}")
@@ -120,13 +119,13 @@ object Review {
             appendLine(
                 listOf(
                     r.time.toString(),
-                    "%.2f".format(Locale.US, (r.time - run.started).toDouble() / Time.MINUTE),
+                    fixed((r.time - run.started).toDouble() / Time.MINUTE, 2),
                     r.level.toString(),
                     if (r.plugged) "1" else "0",
-                    r.tempC?.let { "%.1f".format(Locale.US, it) } ?: "",
-                    r.voltageV?.let { "%.3f".format(Locale.US, it) } ?: "",
+                    r.tempC?.let { fixed(it, 1) } ?: "",
+                    r.voltageV?.let { fixed(it, 3) } ?: "",
                     r.currentMa?.toString() ?: "",
-                    r.powerW?.let { "%.2f".format(Locale.US, it) } ?: "",
+                    r.powerW?.let { fixed(it, 2) } ?: "",
                 ).joinToString(","),
             )
         }

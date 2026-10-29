@@ -8,3 +8,7 @@ captures/
 .kotlin/
 *.keystore
 *.jks
+ios/Volta.xcodeproj/
+ios/build/
+ios/results/
+ios/Config/Local.xcconfig

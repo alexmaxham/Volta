@@ -24,12 +24,13 @@ Everything stays on the phone. No root required; screen time and apps need Usage
 
 ## Project layout
 
-- `core/` holds the platform-free battery logic (estimates, sessions, capacity, nights, cycles, app usage, review runs, the app benchmark's schedule and per-app results, CSV), with unit tests. It's its own Gradle build so it can be compiled and tested without the Android SDK: `./gradlew -p core test`.
+- `core/` holds the platform-free battery logic (estimates, sessions, capacity, nights, cycles, app usage, review runs, the app benchmark's schedule and per-app results, CSV), with unit tests. It's a Kotlin Multiplatform build of its own, so it can be compiled and tested without the Android SDK (`./gradlew -p core jvmTest`), and it builds `VoltaCore.framework` for iOS on a Mac.
 - `app/` is the Android app (Kotlin, Jetpack Compose, Material 3, graphics-shapes, WorkManager, Glance).
+- `ios/` is the app benchmark for iPhone: a SwiftUI app for setup and results, and an XCUITest runner that drives the apps, started from a Mac over Wi-Fi. See [ios/README.md](ios/README.md).
 
 ## Building
 
-Every push builds on GitHub Actions; the debug and release APKs are attached to the run as the `volta-apks` artifact.
+Every push builds on GitHub Actions; the debug and release APKs are attached to the run as the `volta-apks` artifact. The **iOS** workflow builds the iPhone app and runner on macOS and runs a short benchmark on a simulator.
 
 To publish a release, bump `versionCode` and `versionName` in `app/build.gradle.kts`, add a section for the version to `CHANGELOG.md`, then push a matching tag (for example `git tag v1.2.0 && git push origin v1.2.0`). The release workflow builds the APK and publishes it with that changelog section as the notes.
 
@@ -40,7 +41,7 @@ The **Emulator tour** workflow (run it from the Actions tab) boots an emulator, 
 Locally, with Android Studio or the Android SDK installed:
 
 ```bash
-./gradlew -p core test
+./gradlew -p core jvmTest
 ./gradlew assembleRelease
 ```
 

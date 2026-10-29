@@ -20,7 +20,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
 
       - name: Test battery logic
-        run: ./gradlew -p core test
+        run: ./gradlew -p core jvmTest
 
       - name: Build APKs
         run: |
