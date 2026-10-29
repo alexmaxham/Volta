@@ -33,7 +33,7 @@ object Apps {
             if (b.time <= from || a.time >= to) continue
             for ((pkg, list) in spans) {
                 val inFront = list.sumOf { it.overlap(a.time, b.time) }
-                if (inFront > 0) out.merge(pkg, drop * inFront.toDouble() / dt, Double::plus)
+                if (inFront > 0) out[pkg] = (out[pkg] ?: 0.0) + drop * inFront.toDouble() / dt
             }
         }
         return out
@@ -56,7 +56,7 @@ object Apps {
             if (e.resumed) {
                 if (e.pkg !in openSince) {
                     openSince[e.pkg] = e.time
-                    opens.merge(e.pkg, 1, Int::plus)
+                    opens[e.pkg] = (opens[e.pkg] ?: 0) + 1
                 }
             } else {
                 val since = openSince.remove(e.pkg) ?: if (e.pkg !in seen) from else null
