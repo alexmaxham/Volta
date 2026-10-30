@@ -6,8 +6,6 @@ What's new in each version of Volta. Download any version from [Releases](https:
 
 ### Changed
 - **Temperatures show in °F by default** on new installs, across the app, widget, alerts and exported images. Switch to °C in Settings → Use Fahrenheit. If you've installed Volta before, your current choice is kept.
-
-### Changed
 - **New look in Android Headlines' colors and type:** its red, black and charcoal, with Roboto headlines and numbers and Work Sans titles and labels, in light and true-black dark. It replaces the color scheme picker and its six palettes; the widget and exported images use it too.
 
 ### New
