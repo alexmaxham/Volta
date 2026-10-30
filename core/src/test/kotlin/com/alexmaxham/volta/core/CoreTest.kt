@@ -394,7 +394,7 @@ class BenchmarkTest {
 
     @Test fun videoAndMusicHaveDefaultLinks() {
         assertTrue(Benchmark.defaultLink("youtube").startsWith("https://www.youtube.com/watch?v="))
-        assertTrue(Benchmark.defaultLink("ytmusic").startsWith("https://music.youtube.com/playlist?list="))
+        assertTrue(Benchmark.defaultLink("spotify").startsWith("https://open.spotify.com/playlist/"))
         assertEquals("", Benchmark.defaultLink("chrome"))
     }
 

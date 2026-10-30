@@ -46,7 +46,7 @@ class BenchService : AccessibilityService() {
     private var job: Job? = null
     private var keepOn: View? = null
     private var lastPackage: String? = null
-    private val walker by lazy { MockWalk(this) }
+    private val car by lazy { MockDrive(this) }
 
     override fun onServiceConnected() {
         instance = this
@@ -63,7 +63,7 @@ class BenchService : AccessibilityService() {
         instance = null
         job?.cancel()
         keepScreenOn(false)
-        walker.stop()
+        car.stop()
         return super.onUnbind(intent)
     }
 
@@ -71,7 +71,7 @@ class BenchService : AccessibilityService() {
         instance = null
         scope.cancel()
         keepScreenOn(false)
-        walker.stop()
+        car.stop()
         super.onDestroy()
     }
 
@@ -84,7 +84,7 @@ class BenchService : AccessibilityService() {
                 drive(plan)
             } finally {
                 keepScreenOn(false)
-                walker.stop()
+                car.stop()
             }
         }
     }
@@ -121,8 +121,7 @@ class BenchService : AccessibilityService() {
         var nextBattery = 0L
         var nextPlayCheck = 0L
         var adSince = 0L
-        var nextActiveCheck = 0L
-        var walkFrom = 0L
+        var tripFrom = 0L
 
         suspend fun save(s: BenchSegment) = withContext(Dispatchers.IO) { db.saveSegment(runId, s) }
 
@@ -156,11 +155,11 @@ class BenchService : AccessibilityService() {
                 }
                 work = Workloads.of(this, pos.step)
                 work?.let {
-                    if (it.walk && walker.start()) {
-                        // Stand at Penn Station before navigation starts, so it starts from there.
-                        walker.at(0)
+                    if (it.drive && car.start()) {
+                        // Wait at the World Trade Center before navigation starts, so it starts from there.
+                        car.at(0)
                         delay(3_000)
-                        walkFrom = System.currentTimeMillis() + WALK_WAIT
+                        tripFrom = System.currentTimeMillis() + TRIP_WAIT
                     }
                     open(it.open)
                 }
@@ -170,7 +169,6 @@ class BenchService : AccessibilityService() {
                 loopAt = 0
                 nextMove = System.currentTimeMillis() + OPEN_WAIT
                 nextPlayCheck = nextMove + PLAY_WAIT
-                nextActiveCheck = nextMove + ACTIVE_WAIT
                 awaySince = 0L
                 adSince = 0L
             }
@@ -193,23 +191,15 @@ class BenchService : AccessibilityService() {
                         slot = slot?.let { it.copy(relaunches = it.relaunches + 1) }?.also { save(it) }
                     }
                 }
-                // Walk on, and once at Grand Central and a minute's rest, start again from Penn Station.
-                if (w.walk) {
-                    if (now - walkFrom > MockWalk.DURATION + WALK_REST) {
-                        walker.at(0)
+                // Drive on, and once at Central Park and a minute's stop, start again from the World Trade Center.
+                if (w.drive) {
+                    if (now - tripFrom > MockDrive.DURATION + TRIP_REST) {
+                        car.at(0)
                         open(w.open)
-                        walkFrom = now + WALK_WAIT
+                        tripFrom = now + TRIP_WAIT
                     } else {
-                        walker.at((now - walkFrom).coerceAtLeast(0))
+                        car.at((now - tripFrom).coerceAtLeast(0))
                     }
-                }
-                // A step that dropped out of what it was doing, such as a call, goes through its start again.
-                if (w.active.isNotEmpty() && now >= nextActiveCheck && queue.isEmpty() && fg in w.packages) {
-                    if (!onScreen(w.active)) {
-                        queue.addAll(w.start)
-                        nextMove = now
-                    }
-                    nextActiveCheck = now + ACTIVE_CHECK
                 }
                 // Video and music must be playing; start them again if they stopped or never started.
                 if (w.media && now >= nextPlayCheck && fg in w.packages) {
@@ -288,12 +278,12 @@ class BenchService : AccessibilityService() {
     private fun front(): String? = runCatching { rootInActiveWindow?.packageName?.toString() }.getOrNull() ?: lastPackage
 
     /**
-     * Stops what a step was doing: its leave moves, the walk's test location, and pausing playback
+     * Stops what a step was doing: its leave moves, the drive's test location, and pausing playback
      * so it doesn't carry on in picture-in-picture.
      */
     private suspend fun leave(w: Workload) {
         if (front() in w.packages) perform(w.leave)
-        if (w.walk) walker.stop()
+        if (w.drive) car.stop()
         if (w.media && playing()) {
             mediaKey(KeyEvent.KEYCODE_MEDIA_PAUSE)
             delay(1_000)
@@ -314,9 +304,6 @@ class BenchService : AccessibilityService() {
         am.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_DOWN, code))
         am.dispatchMediaKeyEvent(KeyEvent(KeyEvent.ACTION_UP, code))
     }
-
-    private fun onScreen(words: List<String>): Boolean =
-        runCatching { rootInActiveWindow?.let { pick(labelled(it), words, emptyList(), exact = false) } }.getOrNull() != null
 
     private enum class AdState { NONE, CLOSED, SHOWING }
 
@@ -455,13 +442,9 @@ class BenchService : AccessibilityService() {
         /** A player's controls hide after a few seconds, so its play moves follow quickly. */
         private const val PLAY_GAP = 900L
 
-        /** A step's [Workload.active] labels are first looked for this long after its first moves, then every [ACTIVE_CHECK]. */
-        private const val ACTIVE_WAIT = 20_000L
-        private const val ACTIVE_CHECK = 30_000L
-
-        /** Time for navigation to start before the walk sets off, and the rest at Grand Central before the next walk. */
-        private const val WALK_WAIT = 10_000L
-        private const val WALK_REST = 60_000L
+        /** Time for navigation to start before the drive sets off, and the stop at Central Park before the next trip. */
+        private const val TRIP_WAIT = 10_000L
+        private const val TRIP_REST = 60_000L
 
         /** How often to look at an ad, and how long to wait one out before pressing Back. */
         private const val AD_GAP = 1_500L

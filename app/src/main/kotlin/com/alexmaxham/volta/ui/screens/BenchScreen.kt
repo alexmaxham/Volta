@@ -45,7 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.alexmaxham.volta.bench.Bench
-import com.alexmaxham.volta.bench.MockWalk
+import com.alexmaxham.volta.bench.MockDrive
 import com.alexmaxham.volta.bench.Workloads
 import com.alexmaxham.volta.core.BenchStep
 import com.alexmaxham.volta.core.Benchmark
@@ -69,7 +69,7 @@ fun BenchScreen(snap: Snapshot, live: Reading?, vm: VoltaViewModel, go: (String)
     var steps by remember { mutableStateOf<List<BenchStep>?>(null) }
     var accessibility by remember { mutableStateOf(Bench.enabled(context)) }
     var notify by remember { mutableStateOf(Notifier.canPost(context)) }
-    var mock by remember { mutableStateOf(MockWalk.allowed(context)) }
+    var mock by remember { mutableStateOf(MockDrive.allowed(context)) }
     var installed by remember { mutableStateOf<Set<String>>(emptySet()) }
     var editing by remember { mutableStateOf<BenchStep?>(null) }
     var checklist by remember { mutableStateOf(false) }
@@ -81,7 +81,7 @@ fun BenchScreen(snap: Snapshot, live: Reading?, vm: VoltaViewModel, go: (String)
         while (true) {
             accessibility = Bench.enabled(context)
             notify = Notifier.canPost(context)
-            mock = MockWalk.allowed(context)
+            mock = MockDrive.allowed(context)
             installed = Benchmark.DEFAULT.filter { Workloads.installed(context, it.id) }.map { it.id }.toSet()
             delay(2_000)
         }
@@ -130,8 +130,8 @@ fun BenchScreen(snap: Snapshot, live: Reading?, vm: VoltaViewModel, go: (String)
             if ("maps" in installed) {
                 GroupDivider()
                 ListRow(
-                    "Let Maps walk the route",
-                    "Maps navigates from Penn Station to Grand Central with a test location Volta moves at walking pace. Turn on Developer options, then choose Volta under Select mock location app. Volta hands your real location back when Maps' hour ends. Without it, Maps shows the route instead.",
+                    "Let Maps drive the route",
+                    "Maps navigates a drive from the World Trade Center to Central Park with a test location Volta moves at city traffic speed. Turn on Developer options, then choose Volta under Select mock location app. Volta hands your real location back when Maps' hour ends. Without it, Maps shows the route instead.",
                     onClick = { runCatching { context.startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS)) } },
                     trailing = { Status(mock) },
                 )
@@ -139,7 +139,7 @@ fun BenchScreen(snap: Snapshot, live: Reading?, vm: VoltaViewModel, go: (String)
             GroupDivider()
             ListRow(
                 "Open each app once",
-                "Sign in, allow camera, microphone and location where asked, and close any welcome or update screens, so each app opens straight to its feed. Start one Meet call yourself. Pause Play Store auto-updates for the test.",
+                "Sign in, allow camera and location where asked, and close any welcome or update screens, so each app opens straight to its feed. Pause Play Store auto-updates for the test.",
             )
         }
     }, end = {
@@ -224,7 +224,7 @@ private fun LinkDialog(step: BenchStep, onDismiss: () -> Unit, onSave: (String) 
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                 Text(
-                    (if (step.id == "youtube") "Paste a video at least an hour long" else "Paste a YouTube Music playlist or album link") +
+                    (if (step.id == "youtube") "Paste a video at least an hour long" else "Paste a Spotify playlist or album link") +
                         ". Use the same link on every phone you compare, so each plays the same thing.",
                     style = MaterialTheme.typography.bodyMedium,
                 )

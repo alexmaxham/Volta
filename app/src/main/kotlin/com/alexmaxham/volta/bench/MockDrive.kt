@@ -12,11 +12,12 @@ import kotlin.math.cos
 import kotlin.math.sqrt
 
 /**
- * A walk from Penn Station to Grand Central at walking pace, fed to the phone as a test location,
- * so Google Maps navigates it turn by turn while the phone sits still. It needs Volta chosen as
- * the mock location app in Developer options.
+ * A drive from the World Trade Center to Central Park at city traffic speed, fed to the phone as a
+ * test location, so Google Maps navigates it turn by turn while the phone sits still. The map keeps
+ * moving and loading new streets as it would in a car. It needs Volta chosen as the mock location
+ * app in Developer options.
  */
-class MockWalk(context: Context) {
+class MockDrive(context: Context) {
     private val lm = context.getSystemService(LocationManager::class.java)
     private var started = false
 
@@ -36,11 +37,11 @@ class MockWalk(context: Context) {
         return started
     }
 
-    /** Puts the phone [walked] ms into the walk; past the end it waits at Grand Central. */
-    fun at(walked: Long) {
+    /** Puts the phone [driven] ms into the drive; past the end it waits at Central Park. */
+    fun at(driven: Long) {
         if (!started) return
         val lm = lm ?: return
-        val (lat, lon, bearing) = point(walked * SPEED / 1000.0)
+        val (lat, lon, bearing) = point(driven * SPEED / 1000.0)
         val now = System.currentTimeMillis()
         for (p in PROVIDERS) {
             val loc = Location(p).apply {
@@ -48,7 +49,7 @@ class MockWalk(context: Context) {
                 longitude = lon
                 accuracy = 4f
                 altitude = 15.0
-                speed = if (walked * SPEED / 1000.0 < LENGTH) SPEED.toFloat() else 0f
+                speed = if (driven * SPEED / 1000.0 < LENGTH) SPEED.toFloat() else 0f
                 this.bearing = bearing
                 time = now
                 elapsedRealtimeNanos = SystemClock.elapsedRealtimeNanos()
@@ -65,16 +66,24 @@ class MockWalk(context: Context) {
     }
 
     companion object {
-        /** Walking pace, metres a second. */
-        const val SPEED = 1.4
+        /** City traffic speed, metres a second: 25 km/h. */
+        const val SPEED = 7.0
 
-        /** Penn Station, east along 34th Street, up Fifth Avenue, east along 42nd Street to Grand Central. */
+        /**
+         * The World Trade Center, up West Street and the West Side Highway, east along 57th Street
+         * and up Eighth Avenue to Columbus Circle, at the corner of Central Park.
+         */
         private val ROUTE = listOf(
-            40.7506 to -73.9910,
-            40.7511 to -73.9905,
-            40.7486 to -73.9849,
-            40.7531 to -73.9817,
-            40.7527 to -73.9772,
+            40.7136 to -74.0135,
+            40.7174 to -74.0138,
+            40.7287 to -74.0107,
+            40.7410 to -74.0089,
+            40.7495 to -74.0087,
+            40.7623 to -74.0019,
+            40.7716 to -73.9946,
+            40.7703 to -73.9914,
+            40.7665 to -73.9830,
+            40.7681 to -73.9819,
         )
 
         val PROVIDERS = buildList {
@@ -89,10 +98,10 @@ class MockWalk(context: Context) {
             return sqrt(dx * dx + dy * dy)
         }
 
-        /** The walk's length in metres. */
+        /** The drive's length in metres. */
         val LENGTH: Double = ROUTE.zipWithNext().sumOf { (a, b) -> metres(a, b) }
 
-        /** How long the walk takes, in ms. */
+        /** How long the drive takes, in ms. */
         val DURATION: Long = (LENGTH / SPEED * 1000).toLong()
 
         /** Latitude, longitude and heading [d] metres along the route. */
@@ -109,7 +118,7 @@ class MockWalk(context: Context) {
             return Triple(lat, lon, 0f)
         }
 
-        /** Whether Volta is the mock location app, so Maps can walk the route. */
+        /** Whether Volta is the mock location app, so Maps can drive the route. */
         fun allowed(context: Context): Boolean = runCatching {
             val ops = context.getSystemService(AppOpsManager::class.java)
             ops.unsafeCheckOpNoThrow(AppOpsManager.OPSTR_MOCK_LOCATION, Process.myUid(), context.packageName) == AppOpsManager.MODE_ALLOWED

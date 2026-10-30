@@ -5,8 +5,8 @@
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE_SPECIAL_USE" />
-    <!-- Lets Volta be chosen as the mock location app, so the app benchmark can walk Google Maps
-         from Penn Station to Grand Central. -->
+    <!-- Lets Volta be chosen as the mock location app, so the app benchmark can drive Google Maps
+         from the World Trade Center to Central Park. -->
     <uses-permission
         android:name="android.permission.ACCESS_MOCK_LOCATION"
         tools:ignore="MockLocation,ProtectedPermissions" />
