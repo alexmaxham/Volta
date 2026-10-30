@@ -1,0 +1,90 @@
+screen 1080x2400
+screenshot 01-welcome
+tap 'Get started'
+screenshot 02-today
+screenshot 03-today-after-drain
+screenshot 04-today-scroll-1
+screenshot 04-today-scroll-2
+screenshot 04-today-scroll-3
+screenshot 04-today-scroll-4
+screenshot 05-today-charging
+screenshot 06-today-unplugged
+tap 'History'
+screenshot 07-history-level
+screenshot 07-history-level-scroll-1
+screenshot 07-history-level-scroll-2
+tap 'Charging'
+screenshot 08-history-charging
+NOT FOUND '82% → 100%'
+tap '% → 100%'
+screenshot 09-charging-detail-1
+screenshot 09-charging-detail-2
+tap 'Export session image'
+screenshot 09-export-square
+tap '16:9'
+screenshot 09-export-wide
+tap 'Nights'
+screenshot 10-history-nights
+tap '→'
+screenshot 11-night-detail-1
+screenshot 11-night-detail-2
+tap 'Cycles'
+screenshot 12-history-cycles
+tap 'Apps'
+screenshot 13-apps
+tap 'Settings'
+tap 'Lab'
+screenshot 14-lab-empty
+tap 'New test'
+screenshot 15-new-test-sheet
+tap 'Test protocol / workload'
+screenshot 16-new-test-filled
+tap 'Start test'
+screenshot 17-lab-running
+tap 'RUN IN PROGRESS'
+screenshot 18-run-detail-1
+screenshot 18-run-detail-2
+screenshot 18-run-detail-3
+tap 'Finish and save run'
+screenshot 19-run-finished
+screenshot 20-lab-saved
+tap 'App benchmark'
+screenshot 28-benchmark-setup-1
+screenshot 28-benchmark-setup-2
+screenshot 28-benchmark-setup-3
+tap 'Start benchmark'
+screenshot 29-benchmark-checklist
+tap 'Open white screen to calibrate'
+screenshot 30-white-screen
+tap 'Tap to close'
+screenshot 29-benchmark-checklist-measured
+tap 'Cancel'
+NOT FOUND 'Today'
+screenshot notfound-Today
+NOT FOUND 'Share battery stats'
+screenshot notfound-Share_battery_stats
+screenshot 21-stats-image
+NOT FOUND '16:9'
+screenshot notfound-16_9
+screenshot 21-stats-image-wide
+NOT FOUND 'Portrait'
+screenshot notfound-Portrait
+screenshot 21-stats-image-portrait
+NOT FOUND 'Settings'
+screenshot notfound-Settings
+screenshot 22-settings-1
+screenshot 22-settings-2
+screenshot 22-settings-3
+screenshot 22-settings-4
+screenshot 22-settings-5
+NOT FOUND 'Dark'
+screenshot notfound-Dark
+screenshot 24-settings-dark
+tap 'Lab'
+screenshot 27-lab-dark
+tap 'App benchmark'
+screenshot 31-benchmark-dark
+tap 'Today'
+screenshot 25-today-dark
+tap 'History'
+screenshot 26-history-dark

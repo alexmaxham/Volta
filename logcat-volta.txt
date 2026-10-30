@@ -1,0 +1,547 @@
+10-30 12:33:08.043 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:09.049 I/ActivityTaskManager(  558): START u0 {flg=0x10000000 cmp=com.alexmaxham.volta/.MainActivity} with LAUNCH_MULTIPLE from uid 2000 (BAL_ALLOW_PERMISSION) result code=0
+10-30 12:33:09.094 D/CoreBackPreview(  558): Window{cc52de5 u0 Splash Screen com.alexmaxham.volta}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@fb06d12, mPriority=0, mIsAnimationCallback=false}
+10-30 12:33:09.402 I/ActivityManager(  558): Start proc 2088:com.alexmaxham.volta/u0a209 for next-top-activity {com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}
+10-30 12:33:09.416 I/lexmaxham.volta( 2088): Late-enabling -Xcheck:jni
+10-30 12:33:09.445 I/lexmaxham.volta( 2088): Using CollectorTypeCMC GC.
+10-30 12:33:09.445 W/lexmaxham.volta( 2088): Unexpected CPU variant for x86: x86_64.
+10-30 12:33:09.445 W/lexmaxham.volta( 2088): Known variants: atom, sandybridge, silvermont, goldmont, goldmont-plus, goldmont-without-sha-xsaves, tremont, kabylake, default
+10-30 12:33:09.545 W/ziparchive( 2088): Unable to open '/data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.dm': No such file or directory
+10-30 12:33:09.545 W/ziparchive( 2088): Unable to open '/data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.dm': No such file or directory
+10-30 12:33:09.567 I/AppsFilter(  558): interaction: PackageSetting{6a1b367 com.android.microdroid.empty_payload/10189} -> PackageSetting{2cf514 com.alexmaxham.volta/10209} BLOCKED
+10-30 12:33:09.691 V/WindowManager(  558):         {WCT{RemoteToken{a6a3c22 Task{7495567 #8 type=standard A=10209:com.alexmaxham.volta}}} m=OPEN f=MOVE_TO_TOP leash=Surface(name=Task=8)/@0xc595b3c sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0 taskParent=-1}
+10-30 12:33:09.693 E/AppHibernationService(  558): Package com.alexmaxham.volta is not installed for user 0
+10-30 12:33:09.693 E/AppHibernationService(  558): Package com.alexmaxham.volta is not installed for any user
+10-30 12:33:09.693 E/AppHibernationService(  558): Package com.alexmaxham.volta is not installed for user 0
+10-30 12:33:09.693 E/AppHibernationService(  558): Package com.alexmaxham.volta is not installed for any user
+10-30 12:33:09.864 D/nativeloader( 2088): Configuring clns-7 for other apk /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/lib/x86_64:/data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk!/lib/x86_64, permitted_path=/data:/mnt/expand:/data/user/0/com.alexmaxham.volta
+10-30 12:33:10.068 V/ActivityThread( 2088): getPackageInfo() caused update to cached ApplicationInfo for package com.alexmaxham.volta
+10-30 12:33:10.586 I/TopTaskTracker( 1216): onTaskMovedToFront: (moved taskInfo to front) taskId=8, baseIntent=Intent { flg=0x10000000 cmp=com.alexmaxham.volta/.MainActivity }
+10-30 12:33:10.820 W/lexmaxham.volta( 2088): Accessing hidden method Landroid/os/SystemProperties;->addChangeCallback(Ljava/lang/Runnable;)V (unsupported, reflection, allowed)
+10-30 12:33:10.899 D/CoreBackPreview(  558): Window{143c228 u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@3035144, mPriority=0, mIsAnimationCallback=false}
+10-30 12:33:11.410 W/ziparchive(  558): Unable to open '/data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.dm': No such file or directory
+10-30 12:33:11.453 I/ActivityTaskManager(  558): Displayed com.alexmaxham.volta/.MainActivity for user 0: +2s646ms
+10-30 12:33:11.526 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{d46c909 com.google.android.settings.intelligence/10140} BLOCKED
+10-30 12:33:12.016 D/WM-WorkerWrapper( 2088): Starting work for com.alexmaxham.volta.work.SamplingWorker
+10-30 12:33:12.442 I/SdkSandboxManager(  558): No SDKs used. Skipping SDK data reconcilation for CallingInfo{mUid=10209, mPackageName='com.alexmaxham.volta, mAppProcessToken='null'}
+10-30 12:33:12.466 I/AppWidgetServiceImpl(  558): Updating package stopped masked state for uid 10209 package com.alexmaxham.volta isStopped false
+10-30 12:33:12.889 I/ImeTracker(  558): com.alexmaxham.volta:21efce78: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:33:12.889 I/ImeTracker(  558): com.alexmaxham.volta:21efce78: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:33:12.900 D/CoreBackPreview(  558): Window{cc52de5 u0 Splash Screen com.alexmaxham.volta EXITING}: Setting back callback null
+10-30 12:33:12.948 W/InputManager-JNI(  558): Input channel object 'cc52de5 Splash Screen com.alexmaxham.volta (client)' was disposed without first being removed with the input manager!
+10-30 12:33:12.959 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:33:12.997 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:33:13.002 I/WM-WorkerWrapper( 2088): Worker result SUCCESS for Work [ id=fd15b169-a6a9-4fd1-affd-78b939860b65, tags={ com.alexmaxham.volta.work.SamplingWorker } ]
+10-30 12:33:13.834 I/lexmaxham.volta( 2088): Compiler allocated 5174KB to compile void android.view.ViewRootImpl.performTraversals()
+10-30 12:33:14.045 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:14.084 I/SafetyLabelChangedBroadcastReceiver(  907): received broadcast packageName: com.alexmaxham.volta, current user: UserHandle{0}, packageChangeEvent: NEW_INSTALL, intent user: UserHandle{0}
+10-30 12:33:14.089 I/AppsFilter(  558): interaction: PackageSetting{aaddb5a com.android.microdroid.empty_payload/10189} -> PackageSetting{9713a10 com.alexmaxham.volta/10209} BLOCKED
+10-30 12:33:14.104 D/CarrierSvcBindHelper( 1069): onPackageAdded: com.alexmaxham.volta
+10-30 12:33:14.281 D/ImsResolver( 1069): maybeAddedImsService, packageName: com.alexmaxham.volta
+10-30 12:33:14.419 D/ShortcutService(  558): adding package: com.alexmaxham.volta userId0
+10-30 12:33:14.419 D/ShortcutService(  558): handlePackageAdded: com.alexmaxham.volta user=0
+10-30 12:33:14.420 D/ShortcutService(  558): rescanPackageIfNeeded 0@com.alexmaxham.volta, forceRescan=true , isNewApp=true
+10-30 12:33:14.420 D/ShortcutService(  558): Package com.alexmaxham.volta has 0 manifest shortcut(s), and 0 share target(s)
+10-30 12:33:14.681 D/ShortcutService(  558): changing package: com.alexmaxham.volta userId0
+10-30 12:33:14.681 D/ShortcutService(  558): handlePackageChanged: com.alexmaxham.volta user=0
+10-30 12:33:14.681 D/ShortcutService(  558): rescanPackageIfNeeded 0@com.alexmaxham.volta, forceRescan=true , isNewApp=true
+10-30 12:33:14.681 D/ShortcutService(  558): Package com.alexmaxham.volta has 0 manifest shortcut(s), and 0 share target(s)
+10-30 12:33:14.694 D/CarrierSvcBindHelper( 1069): onPackageModified: com.alexmaxham.volta
+10-30 12:33:15.006 D/ImsResolver( 1069): maybeAddedImsService, packageName: com.alexmaxham.volta
+10-30 12:33:15.377 I/AiAiEcho( 1424): AppFetcherImpl onPackageChanged com.alexmaxham.volta.
+10-30 12:33:15.427 I/AiAiEcho( 1424): AppIndexer Package:[com.alexmaxham.volta] UserProfile:[0] Enabled:[true].
+10-30 12:33:15.427 I/AiAiEcho( 1424): AppFetcherImplV2 updateApps package:[com.alexmaxham.volta], userId:[0], reason:[package is updated.].
+10-30 12:33:15.507 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{21e9cae com.google.android.as/10136} BLOCKED
+10-30 12:33:15.507 I/AppsFilter(  558): interaction: PackageSetting{aaddb5a com.android.microdroid.empty_payload/10189} -> PackageSetting{9713a10 com.alexmaxham.volta/10209} BLOCKED
+10-30 12:33:15.691 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=92), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:33:16.003 D/ProfileInstaller( 2088): Installing profile for com.alexmaxham.volta
+10-30 12:33:16.282 D/ShortcutService(  558): changing package: com.alexmaxham.volta userId0
+10-30 12:33:16.282 D/ShortcutService(  558): handlePackageChanged: com.alexmaxham.volta user=0
+10-30 12:33:16.282 D/ShortcutService(  558): rescanPackageIfNeeded 0@com.alexmaxham.volta, forceRescan=true , isNewApp=true
+10-30 12:33:16.282 D/ShortcutService(  558): Package com.alexmaxham.volta has 0 manifest shortcut(s), and 0 share target(s)
+10-30 12:33:16.294 I/Launcher.IconCache( 1216): Database bulk icon loading failed, using fallback bulk icon loading for: ComponentInfo{com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}
+10-30 12:33:16.455 D/CarrierSvcBindHelper( 1069): onPackageModified: com.alexmaxham.volta
+10-30 12:33:16.557 D/ImsResolver( 1069): maybeAddedImsService, packageName: com.alexmaxham.volta
+10-30 12:33:16.887 I/AiAiEcho( 1424): AppFetcherImpl onPackageChanged com.alexmaxham.volta.
+10-30 12:33:16.888 I/AiAiEcho( 1424): AppIndexer Package:[com.alexmaxham.volta] UserProfile:[0] Enabled:[true].
+10-30 12:33:16.888 I/AiAiEcho( 1424): AppFetcherImplV2 updateApps package:[com.alexmaxham.volta], userId:[0], reason:[package is updated.].
+10-30 12:33:17.355 W/ogle.android.as( 1424): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:17.758 W/s.nexuslauncher( 1216): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:17.989 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:19.421 D/AndroidRuntime( 2718): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:33:19.440 I/AndroidRuntime( 2718): Using default boot image
+10-30 12:33:19.440 I/AndroidRuntime( 2718): Leaving lock profiling enabled
+10-30 12:33:19.715 D/AndroidRuntime( 2718): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:33:21.264 I/lexmaxham.volta( 2088): Background concurrent mark compact GC freed 3790KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 4559KB/9118KB, paused 146us,1.648ms total 158.767ms
+10-30 12:33:21.573 D/AndroidRuntime( 2718): Shutting down VM
+10-30 12:33:21.573 D/PackageUpdatedTask( 1216): Package updated: mOp=UPDATE packages=[com.alexmaxham.volta]
+10-30 12:33:23.212 W/s.nexuslauncher( 1216): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:23.601 D/PackageUpdatedTask( 1216): Package updated: mOp=UPDATE packages=[com.alexmaxham.volta]
+10-30 12:33:24.299 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:24.368 D/WM-RescheduleReceiver( 2088): Received intent Intent { act=android.intent.action.BOOT_COMPLETED flg=0x89000010 cmp=com.alexmaxham.volta/androidx.work.impl.background.systemalarm.RescheduleReceiver (has extras) }
+10-30 12:33:25.543 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{9b20caa com.google.android.partnersetup/10132} BLOCKED
+10-30 12:33:25.543 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{627609b com.google.android.settings.intelligence/10140} BLOCKED
+10-30 12:33:27.126 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{e85ee89 com.google.android.devicelockcontroller/10208} BLOCKED
+10-30 12:33:27.230 W/lexmaxham.volta( 2088): Accessing hidden method Landroid/view/ViewTreeObserver;->dispatchOnScrollChanged()V (unsupported, reflection, allowed)
+10-30 12:33:27.419 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=90), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:33:27.421 I/Blockstore( 1382): [DataStoreImpl] Clearing Blockstore Data for package com.alexmaxham.volta [CONTEXT service_id=258 ]
+10-30 12:33:27.455 W/s.nexuslauncher( 1216): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:27.594 I/FontLog ( 1186): Package com.alexmaxham.volta has no metadata [CONTEXT service_id=132 ]
+10-30 12:33:27.775 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{661d0e0 com.google.android.healthconnect.controller/10204} BLOCKED
+10-30 12:33:27.921 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:28.382 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{5663f1e com.google.android.settings.intelligence/10140} BLOCKED
+10-30 12:33:28.384 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{2f833ff com.google.android.settings.intelligence/10140} BLOCKED
+10-30 12:33:29.224 W/gle.android.gms( 1382): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:30.488 W/ndroid.systemui(  905): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:30.815 W/ndroid.settings( 1071): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:30.839 W/s.nexuslauncher( 1216): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:32.011 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:32.096 W/gle.android.gms( 1382): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:32.514 W/ndroid.settings( 1071): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:34.290 W/s.nexuslauncher( 1216): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:36.190 W/gle.android.gms( 1382): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:36.653 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{cb6077c com.google.android.as/10136} BLOCKED
+10-30 12:33:36.654 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{5b12805 com.google.android.rkpdapp/10207} BLOCKED
+10-30 12:33:36.654 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{f7dc05a com.google.android.settings.intelligence/10140} BLOCKED
+10-30 12:33:37.710 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:41.696 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{2ca16ee com.google.android.settings.intelligence/10140} BLOCKED
+10-30 12:33:42.053 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:42.097 W/ndroid.settings( 1071): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:46.644 I/AppsFilter(  558): interaction: PackageSetting{9713a10 com.alexmaxham.volta/10209} -> PackageSetting{1bbe14f com.google.android.as/10136} BLOCKED
+10-30 12:33:48.474 W/.apps.wellbeing( 1349): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:50.874 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:33:59.636 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:34:25.679 W/gle.android.gms( 1382): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:34:29.335 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=88), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:34:36.486 W/ndroid.settings( 1071): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:35:31.552 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=86), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:36:33.788 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=84), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:37:10.580 I/lexmaxham.volta( 2088): Waiting for a blocking GC ProfileSaver
+10-30 12:37:36.041 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=83), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:38:01.216 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:38:38.299 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=81), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:39:55.563 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=81), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:39:55.925 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=81), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:39:56.079 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=82), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:39:56.100 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=82), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:40:00.057 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=86), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:40:00.196 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=86), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:41:02.302 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=91), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:41:08.595 I/lexmaxham.volta( 2088): Background concurrent mark compact GC freed 5840KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 5980KB/11MB, paused 118us,1.633ms total 244.067ms
+10-30 12:42:04.489 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=96), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:42:18.841 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:43:06.765 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=100), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=2), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:44:08.843 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=1), batteryScale=EventData(value=100), batteryLevel=EventData(value=100), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=5), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:45:10.873 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=100), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=5), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:45:10.930 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=100), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:45:11.015 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=99), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:45:11.071 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=99), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:46:13.047 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=98), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:46:16.338 D/AndroidRuntime( 4752): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:16.353 I/AndroidRuntime( 4752): Using default boot image
+10-30 12:46:16.353 I/AndroidRuntime( 4752): Leaving lock profiling enabled
+10-30 12:46:16.501 D/AndroidRuntime( 4752): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:17.536 D/AndroidRuntime( 4752): Shutting down VM
+10-30 12:46:27.637 D/AndroidRuntime( 4802): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:27.639 I/AndroidRuntime( 4802): Using default boot image
+10-30 12:46:27.639 I/AndroidRuntime( 4802): Leaving lock profiling enabled
+10-30 12:46:27.703 D/AndroidRuntime( 4802): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:28.733 D/AndroidRuntime( 4802): Shutting down VM
+10-30 12:46:32.538 D/AndroidRuntime( 4828): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:32.542 I/AndroidRuntime( 4828): Using default boot image
+10-30 12:46:32.542 I/AndroidRuntime( 4828): Leaving lock profiling enabled
+10-30 12:46:32.603 D/AndroidRuntime( 4828): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:33.622 D/AndroidRuntime( 4828): Shutting down VM
+10-30 12:46:35.631 D/AndroidRuntime( 4849): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:35.634 I/AndroidRuntime( 4849): Using default boot image
+10-30 12:46:35.634 I/AndroidRuntime( 4849): Leaving lock profiling enabled
+10-30 12:46:35.697 D/AndroidRuntime( 4849): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:36.711 D/AndroidRuntime( 4849): Shutting down VM
+10-30 12:46:38.715 D/AndroidRuntime( 4870): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:38.718 I/AndroidRuntime( 4870): Using default boot image
+10-30 12:46:38.718 I/AndroidRuntime( 4870): Leaving lock profiling enabled
+10-30 12:46:38.780 D/AndroidRuntime( 4870): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:39.797 D/AndroidRuntime( 4870): Shutting down VM
+10-30 12:46:41.798 D/AndroidRuntime( 4891): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:41.800 I/AndroidRuntime( 4891): Using default boot image
+10-30 12:46:41.800 I/AndroidRuntime( 4891): Leaving lock profiling enabled
+10-30 12:46:41.860 D/AndroidRuntime( 4891): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:42.877 D/AndroidRuntime( 4891): Shutting down VM
+10-30 12:46:44.882 D/AndroidRuntime( 4912): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:44.885 I/AndroidRuntime( 4912): Using default boot image
+10-30 12:46:44.885 I/AndroidRuntime( 4912): Leaving lock profiling enabled
+10-30 12:46:44.948 D/AndroidRuntime( 4912): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:45.963 D/AndroidRuntime( 4912): Shutting down VM
+10-30 12:46:54.439 D/AndroidRuntime( 4976): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:54.442 I/AndroidRuntime( 4976): Using default boot image
+10-30 12:46:54.442 I/AndroidRuntime( 4976): Leaving lock profiling enabled
+10-30 12:46:54.505 D/AndroidRuntime( 4976): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:46:55.539 D/AndroidRuntime( 4976): Shutting down VM
+10-30 12:46:56.678 D/CoreBackPreview(  558): Window{bc901d0 u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@b2b3ae8, mPriority=0, mIsAnimationCallback=false}
+10-30 12:46:57.049 I/ImeTracker(  558): com.alexmaxham.volta:63f9bc89: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:46:57.049 I/ImeTracker(  558): com.alexmaxham.volta:63f9bc89: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:46:57.063 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:46:57.549 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:46:59.862 D/AndroidRuntime( 5007): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:46:59.865 I/AndroidRuntime( 5007): Using default boot image
+10-30 12:46:59.865 I/AndroidRuntime( 5007): Leaving lock profiling enabled
+10-30 12:46:59.928 D/AndroidRuntime( 5007): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:00.950 D/AndroidRuntime( 5007): Shutting down VM
+10-30 12:47:05.260 D/CoreBackPreview(  558): Window{bc901d0 u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback null
+10-30 12:47:05.265 W/InputManager-JNI(  558): Input channel object 'bc901d0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity (client)' was disposed without first being removed with the input manager!
+10-30 12:47:05.300 I/ImeTracker(  558): com.alexmaxham.volta:325c52be: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:47:05.304 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:47:05.306 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:47:05.306 I/ImeTracker( 2088): com.alexmaxham.volta:325c52be: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+10-30 12:47:06.499 D/AndroidRuntime( 5037): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:06.501 I/AndroidRuntime( 5037): Using default boot image
+10-30 12:47:06.501 I/AndroidRuntime( 5037): Leaving lock profiling enabled
+10-30 12:47:06.566 D/AndroidRuntime( 5037): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:07.581 D/AndroidRuntime( 5037): Shutting down VM
+10-30 12:47:09.686 D/AndroidRuntime( 5057): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:09.689 I/AndroidRuntime( 5057): Using default boot image
+10-30 12:47:09.689 I/AndroidRuntime( 5057): Leaving lock profiling enabled
+10-30 12:47:09.756 D/AndroidRuntime( 5057): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:10.780 D/AndroidRuntime( 5057): Shutting down VM
+10-30 12:47:14.593 D/AndroidRuntime( 5083): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:14.596 I/AndroidRuntime( 5083): Using default boot image
+10-30 12:47:14.596 I/AndroidRuntime( 5083): Leaving lock profiling enabled
+10-30 12:47:14.662 D/AndroidRuntime( 5083): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:15.692 D/AndroidRuntime( 5083): Shutting down VM
+10-30 12:47:23.865 D/AndroidRuntime( 5128): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:23.867 I/AndroidRuntime( 5128): Using default boot image
+10-30 12:47:23.867 I/AndroidRuntime( 5128): Leaving lock profiling enabled
+10-30 12:47:23.933 D/AndroidRuntime( 5128): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:24.950 D/AndroidRuntime( 5128): Shutting down VM
+10-30 12:47:27.045 D/AndroidRuntime( 5148): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:27.047 I/AndroidRuntime( 5148): Using default boot image
+10-30 12:47:27.047 I/AndroidRuntime( 5148): Leaving lock profiling enabled
+10-30 12:47:27.112 D/AndroidRuntime( 5148): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:28.143 D/AndroidRuntime( 5148): Shutting down VM
+10-30 12:47:31.949 D/AndroidRuntime( 5174): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:31.951 I/AndroidRuntime( 5174): Using default boot image
+10-30 12:47:31.951 I/AndroidRuntime( 5174): Leaving lock profiling enabled
+10-30 12:47:32.013 D/AndroidRuntime( 5174): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:33.028 D/AndroidRuntime( 5174): Shutting down VM
+10-30 12:47:36.834 D/AndroidRuntime( 5198): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:36.837 I/AndroidRuntime( 5198): Using default boot image
+10-30 12:47:36.837 I/AndroidRuntime( 5198): Leaving lock profiling enabled
+10-30 12:47:36.903 D/AndroidRuntime( 5198): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:37.923 D/AndroidRuntime( 5198): Shutting down VM
+10-30 12:47:40.019 D/AndroidRuntime( 5218): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:40.022 I/AndroidRuntime( 5218): Using default boot image
+10-30 12:47:40.022 I/AndroidRuntime( 5218): Leaving lock profiling enabled
+10-30 12:47:40.083 D/AndroidRuntime( 5218): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:41.110 D/AndroidRuntime( 5218): Shutting down VM
+10-30 12:47:43.231 D/AndroidRuntime( 5240): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:43.234 I/AndroidRuntime( 5240): Using default boot image
+10-30 12:47:43.234 I/AndroidRuntime( 5240): Leaving lock profiling enabled
+10-30 12:47:43.297 D/AndroidRuntime( 5240): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:44.317 D/AndroidRuntime( 5240): Shutting down VM
+10-30 12:47:46.414 D/AndroidRuntime( 5262): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:46.416 I/AndroidRuntime( 5262): Using default boot image
+10-30 12:47:46.416 I/AndroidRuntime( 5262): Leaving lock profiling enabled
+10-30 12:47:46.478 D/AndroidRuntime( 5262): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:47.498 D/AndroidRuntime( 5262): Shutting down VM
+10-30 12:47:49.676 V/WindowManager(  558):         {WCT{RemoteToken{a6a3c22 Task{7495567 #8 type=standard A=10209:com.alexmaxham.volta}}} m=TO_BACK f=NONE leash=Surface(name=Task=8)/@0xc595b3c sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0 taskParent=-1}
+10-30 12:47:50.132 I/TopTaskTracker( 1216): onTaskMovedToFront: (moved taskInfo to front) taskId=8, baseIntent=Intent { flg=0x10000000 cmp=com.alexmaxham.volta/.MainActivity }
+10-30 12:47:50.173 V/WindowManager(  558):         {WCT{RemoteToken{a6a3c22 Task{7495567 #8 type=standard A=10209:com.alexmaxham.volta}}} m=CHANGE f=MOVE_TO_TOP leash=Surface(name=Task=8)/@0xc595b3c sb=Rect(0, 0 - 1080, 2400) eb=Rect(0, 0 - 1080, 2400) d=0 taskParent=-1},
+10-30 12:47:50.310 I/ImeTracker(  558): com.alexmaxham.volta:d125226f: onRequestHide at ORIGIN_SERVER reason HIDE_SAME_WINDOW_FOCUSED_WITHOUT_EDITOR fromUser false
+10-30 12:47:50.311 I/ImeTracker(  558): com.alexmaxham.volta:d125226f: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:47:50.313 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:47:50.315 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:47:51.352 D/AndroidRuntime( 5417): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:51.355 I/AndroidRuntime( 5417): Using default boot image
+10-30 12:47:51.356 I/AndroidRuntime( 5417): Leaving lock profiling enabled
+10-30 12:47:51.430 D/AndroidRuntime( 5417): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:52.451 D/AndroidRuntime( 5417): Shutting down VM
+10-30 12:47:53.757 D/CoreBackPreview(  558): Window{e88fe2a u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@dd69964, mPriority=0, mIsAnimationCallback=false}
+10-30 12:47:53.889 I/lexmaxham.volta( 2088): Background concurrent mark compact GC freed 5784KB AllocSpace bytes, 4(116KB) LOS objects, 49% free, 6984KB/13MB, paused 585us,1.985ms total 134.113ms
+10-30 12:47:54.277 I/ImeTracker(  558): com.alexmaxham.volta:7d56a280: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:47:54.282 I/ImeTracker(  558): com.alexmaxham.volta:7d56a280: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:47:54.289 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:47:54.297 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:47:56.268 D/AndroidRuntime( 5452): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:47:56.271 I/AndroidRuntime( 5452): Using default boot image
+10-30 12:47:56.271 I/AndroidRuntime( 5452): Leaving lock profiling enabled
+10-30 12:47:56.337 D/AndroidRuntime( 5452): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:47:57.379 D/AndroidRuntime( 5452): Shutting down VM
+10-30 12:47:58.256 I/ImeTracker( 2088): com.alexmaxham.volta:244a2a31: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT_BY_INSETS_API fromUser false
+10-30 12:47:58.261 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=8001, inputTypeString=Normal, enableLearning=true, autoCorrection=true, autoComplete=true, imeOptions=2000006, privateImeOptions=null, actionName=DONE, actionLabel=null, initialSelStart=0, initialSelEnd=0, initialCapsMode=0, label=null, fieldId=-1, fieldName=null, extras=Bundle[mParcelledData.dataSize=404], hintText=null, hintLocales=[]}}, false)
+10-30 12:47:58.262 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:47:58.263 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=8001, inputTypeString=Normal, enableLearning=true, autoCorrection=true, autoComplete=true, imeOptions=2000006, privateImeOptions=null, actionName=DONE, actionLabel=null, initialSelStart=0, initialSelEnd=0, initialCapsMode=0, label=null, fieldId=-1, fieldName=null, extras=Bundle[mParcelledData.dataSize=404], hintText=null, hintLocales=[]}}, true)
+10-30 12:47:58.263 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:47:58.264 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInputView():2098 onStartInputView(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=8001, inputTypeString=Normal, enableLearning=true, autoCorrection=true, autoComplete=true, imeOptions=2000006, privateImeOptions=null, actionName=DONE, actionLabel=null, initialSelStart=0, initialSelEnd=0, initialCapsMode=0, label=null, fieldId=-1, fieldName=null, extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}], hintText=null, hintLocales=[]}}, false)
+10-30 12:47:58.284 D/ContentCapturePerUserService(  558): Notified activity assist data for activity: Token{6e8ef14 ActivityRecord{3054d5a u0 com.alexmaxham.volta/.MainActivity t8}} without a session Id
+10-30 12:47:58.288 I/ImeTracker( 2088): com.alexmaxham.volta:a8c9be3e: onRequestShow at ORIGIN_CLIENT reason SHOW_SOFT_INPUT fromUser false
+10-30 12:47:58.447 I/AndroidIME( 1328): AbstractIme.onActivate():89 LatinIme.onActivate() : EditorInfo = EditorInfo{packageName=com.alexmaxham.volta, inputType=8001, inputTypeString=Normal, enableLearning=true, autoCorrection=true, autoComplete=true, imeOptions=2000006, privateImeOptions=null, actionName=DONE, actionLabel=null, initialSelStart=0, initialSelEnd=0, initialCapsMode=0, label=null, fieldId=-1, fieldName=null, extras=Bundle[{android.support.text.emoji.emojiCompat_metadataVersion=9, androidx.core.view.inputmethod.EditorInfoCompat.STYLUS_HANDWRITING_ENABLED=true, android.support.text.emoji.emojiCompat_replaceAll=false}], hintText=null, hintLocales=[]}, IncognitoMode = false, DeviceLocked = false
+10-30 12:47:59.679 W/InteractionJankMonitor( 2088): Initializing without READ_DEVICE_CONFIG permission. enabled=true, interval=1, missedFrameThreshold=3, frameTimeThreshold=64, package=com.alexmaxham.volta
+10-30 12:47:59.758 I/ImeTracker( 2088): com.alexmaxham.volta:a8c9be3e: onCancelled at PHASE_CLIENT_APPLY_ANIMATION
+10-30 12:48:00.028 I/ImeTracker( 2088): com.alexmaxham.volta:244a2a31: onShown
+10-30 12:48:02.398 I/ImeTracker( 2088): com.alexmaxham.volta:20137595: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT_ON_ANIMATION_STATE_CHANGED fromUser false
+10-30 12:48:02.405 I/ImeTracker(  558): com.alexmaxham.volta:20137595: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:48:03.811 D/AndroidRuntime( 5546): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:48:03.814 I/AndroidRuntime( 5546): Using default boot image
+10-30 12:48:03.814 I/AndroidRuntime( 5546): Leaving lock profiling enabled
+10-30 12:48:03.897 D/AndroidRuntime( 5546): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:48:04.935 D/AndroidRuntime( 5546): Shutting down VM
+10-30 12:48:07.025 D/AndroidRuntime( 5571): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:48:07.028 I/AndroidRuntime( 5571): Using default boot image
+10-30 12:48:07.028 I/AndroidRuntime( 5571): Leaving lock profiling enabled
+10-30 12:48:07.092 D/AndroidRuntime( 5571): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:48:08.124 D/AndroidRuntime( 5571): Shutting down VM
+10-30 12:48:09.013 D/CoreBackPreview(  558): Window{e88fe2a u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback null
+10-30 12:48:09.021 W/InputManager-JNI(  558): Input channel object 'e88fe2a com.alexmaxham.volta/com.alexmaxham.volta.MainActivity (client)' was disposed without first being removed with the input manager!
+10-30 12:48:09.022 I/ActivityManager(  558): Background started FGS: Allowed [callingPackage: com.alexmaxham.volta; callingUid: 10209; uidState: TOP ; uidBFSL: [BFSL]; intent: Intent { cmp=com.alexmaxham.volta/.work.ReviewService }; code:PROC_STATE_TOP; tempAllowListReason:<null>; targetSdkVersion:36; callerTargetSdkVersion:36; startForegroundCount:0; bindFromPackage:null: isBindService:false]
+10-30 12:48:09.034 I/ImeTracker( 2088): com.alexmaxham.volta:3639826e: onRequestHide at ORIGIN_CLIENT reason HIDE_SOFT_INPUT fromUser false
+10-30 12:48:09.034 I/ImeTracker( 2088): com.alexmaxham.volta:3639826e: onFailed at PHASE_CLIENT_VIEW_SERVED
+10-30 12:48:09.049 I/ImeTracker(  558): com.alexmaxham.volta:c0e6f58c: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:48:09.050 I/ImeTracker(  558): com.alexmaxham.volta:c0e6f58c: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:48:09.054 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:48:09.057 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:48:11.311 E/FrameTracker( 2088): force finish cuj, time out: J<IME_INSETS_SHOW_ANIMATION::0@1@com.alexmaxham.volta>
+10-30 12:48:12.790 E/FrameTracker( 2088): force finish cuj, time out: J<IME_INSETS_HIDE_ANIMATION::1@1@com.alexmaxham.volta>
+10-30 12:48:13.005 D/WM-WorkerWrapper( 2088): Starting work for com.alexmaxham.volta.work.SamplingWorker
+10-30 12:48:13.011 I/WM-WorkerWrapper( 2088): Worker result SUCCESS for Work [ id=fd15b169-a6a9-4fd1-affd-78b939860b65, tags={ com.alexmaxham.volta.work.SamplingWorker } ]
+10-30 12:48:13.437 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=97), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:48:18.771 W/.apps.wellbeing( 5302): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:48:33.486 D/AndroidRuntime( 5610): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:48:33.489 I/AndroidRuntime( 5610): Using default boot image
+10-30 12:48:33.489 I/AndroidRuntime( 5610): Leaving lock profiling enabled
+10-30 12:48:33.555 D/AndroidRuntime( 5610): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:48:34.582 D/AndroidRuntime( 5610): Shutting down VM
+10-30 12:48:46.430 D/AndroidRuntime( 5672): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:48:46.432 I/AndroidRuntime( 5672): Using default boot image
+10-30 12:48:46.432 I/AndroidRuntime( 5672): Leaving lock profiling enabled
+10-30 12:48:46.496 D/AndroidRuntime( 5672): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:48:47.511 D/AndroidRuntime( 5672): Shutting down VM
+10-30 12:48:54.303 D/SystemEventDataSource(  905): updatedEventData: SystemEventData(intentAction=android.intent.action.BATTERY_CHANGED, plugged=EventData(value=0), batteryScale=EventData(value=100), batteryLevel=EventData(value=100), chargingStatus=EventData(value=0), maxChargingCurrent=EventData(value=5000000), maxChargingVoltage=EventData(value=5000000), batteryStatus=EventData(value=3), halEventData=HalEventData(dockDefendStatus=EventData(value=-3), tempDefendEventData=EventData(value=false), dwellDefendEventData=EventData(value=false)), settingsEventData=SettingsEventData(dockDefenderBypass=EventData(value=0), chargingLimitSettings=EventData(value=0)), frameworkApiEventData=FrameworkApiEventData(batterySaverState=EventData(value=false), extremeBatterySaverState=EventData(value=false)))
+10-30 12:48:54.370 D/AndroidRuntime( 5730): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:48:54.373 I/AndroidRuntime( 5730): Using default boot image
+10-30 12:48:54.373 I/AndroidRuntime( 5730): Leaving lock profiling enabled
+10-30 12:48:54.435 D/AndroidRuntime( 5730): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:48:55.457 D/AndroidRuntime( 5730): Shutting down VM
+10-30 12:48:56.549 W/lexmaxham.volta( 2088): Cleared Reference was only reachable from finalizer (only reported once)
+10-30 12:48:56.602 I/lexmaxham.volta( 2088): Background concurrent mark compact GC freed 6685KB AllocSpace bytes, 1(44KB) LOS objects, 49% free, 7681KB/15MB, paused 508us,3.653ms total 251.594ms
+10-30 12:49:07.299 D/AndroidRuntime( 5791): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:07.302 I/AndroidRuntime( 5791): Using default boot image
+10-30 12:49:07.302 I/AndroidRuntime( 5791): Leaving lock profiling enabled
+10-30 12:49:07.364 D/AndroidRuntime( 5791): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:08.379 D/AndroidRuntime( 5791): Shutting down VM
+10-30 12:49:10.399 D/AndroidRuntime( 5811): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:10.401 I/AndroidRuntime( 5811): Using default boot image
+10-30 12:49:10.401 I/AndroidRuntime( 5811): Leaving lock profiling enabled
+10-30 12:49:10.465 D/AndroidRuntime( 5811): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:11.479 D/AndroidRuntime( 5811): Shutting down VM
+10-30 12:49:13.531 D/AndroidRuntime( 5831): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:13.533 I/AndroidRuntime( 5831): Using default boot image
+10-30 12:49:13.533 I/AndroidRuntime( 5831): Leaving lock profiling enabled
+10-30 12:49:13.597 D/AndroidRuntime( 5831): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:14.615 D/AndroidRuntime( 5831): Shutting down VM
+10-30 12:49:16.695 D/AndroidRuntime( 5851): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:16.698 I/AndroidRuntime( 5851): Using default boot image
+10-30 12:49:16.698 I/AndroidRuntime( 5851): Leaving lock profiling enabled
+10-30 12:49:16.761 D/AndroidRuntime( 5851): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:17.776 D/AndroidRuntime( 5851): Shutting down VM
+10-30 12:49:18.671 D/CoreBackPreview(  558): Window{d2fefdb u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@cb81342, mPriority=0, mIsAnimationCallback=false}
+10-30 12:49:19.217 I/ImeTracker(  558): com.alexmaxham.volta:8111d10f: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:49:19.217 I/ImeTracker(  558): com.alexmaxham.volta:8111d10f: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:49:19.245 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:49:19.254 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:49:21.586 D/AndroidRuntime( 5877): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:21.588 I/AndroidRuntime( 5877): Using default boot image
+10-30 12:49:21.588 I/AndroidRuntime( 5877): Leaving lock profiling enabled
+10-30 12:49:21.649 D/AndroidRuntime( 5877): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:22.663 D/AndroidRuntime( 5877): Shutting down VM
+10-30 12:49:23.688 D/CoreBackPreview(  558): Window{8121e6d u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback OnBackInvokedCallbackInfo{mCallback=android.window.IOnBackInvokedCallback$Stub$Proxy@70dae25, mPriority=0, mIsAnimationCallback=false}
+10-30 12:49:24.443 I/ImeTracker(  558): com.alexmaxham.volta:8d5ae114: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:49:24.443 I/ImeTracker(  558): com.alexmaxham.volta:8d5ae114: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:49:24.503 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:49:24.504 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:49:26.466 D/AndroidRuntime( 5903): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:26.468 I/AndroidRuntime( 5903): Using default boot image
+10-30 12:49:26.468 I/AndroidRuntime( 5903): Leaving lock profiling enabled
+10-30 12:49:26.531 D/AndroidRuntime( 5903): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:27.544 D/AndroidRuntime( 5903): Shutting down VM
+10-30 12:49:28.393 D/CoreBackPreview(  558): Window{8121e6d u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback null
+10-30 12:49:28.395 W/InputManager-JNI(  558): Input channel object '8121e6d com.alexmaxham.volta/com.alexmaxham.volta.MainActivity (client)' was disposed without first being removed with the input manager!
+10-30 12:49:28.434 I/ImeTracker(  558): com.alexmaxham.volta:ebcb9b43: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:49:28.434 I/ImeTracker(  558): com.alexmaxham.volta:ebcb9b43: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:49:28.438 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:49:28.439 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:49:31.361 D/AndroidRuntime( 5928): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:31.363 I/AndroidRuntime( 5928): Using default boot image
+10-30 12:49:31.363 I/AndroidRuntime( 5928): Leaving lock profiling enabled
+10-30 12:49:31.429 D/AndroidRuntime( 5928): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:32.441 D/AndroidRuntime( 5928): Shutting down VM
+10-30 12:49:33.293 D/CoreBackPreview(  558): Window{d2fefdb u0 com.alexmaxham.volta/com.alexmaxham.volta.MainActivity}: Setting back callback null
+10-30 12:49:33.296 W/InputManager-JNI(  558): Input channel object 'd2fefdb com.alexmaxham.volta/com.alexmaxham.volta.MainActivity (client)' was disposed without first being removed with the input manager!
+10-30 12:49:33.332 I/ImeTracker(  558): com.alexmaxham.volta:1893aa0b: onRequestHide at ORIGIN_SERVER reason HIDE_UNSPECIFIED_WINDOW fromUser false
+10-30 12:49:33.332 I/ImeTracker(  558): com.alexmaxham.volta:1893aa0b: onCancelled at PHASE_SERVER_SHOULD_HIDE
+10-30 12:49:33.335 I/GoogleInputMethodService( 1328): GoogleInputMethodService.onStartInput():1986 onStartInput(EditorInfo{EditorInfo{packageName=com.alexmaxham.volta, inputType=0, inputTypeString=NULL, enableLearning=false, autoCorrection=false, autoComplete=false, imeOptions=0, privateImeOptions=null, actionName=UNSPECIFIED, actionLabel=null, initialSelStart=-1, initialSelEnd=-1, initialCapsMode=0, label=null, fieldId=0, fieldName=null, extras=null, hintText=null, hintLocales=[]}}, false)
+10-30 12:49:33.335 W/PackageConfigPersister(  558): App-specific configuration not found for packageName: com.alexmaxham.volta and userId: 0
+10-30 12:49:34.539 D/AndroidRuntime( 5949): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:34.542 I/AndroidRuntime( 5949): Using default boot image
+10-30 12:49:34.542 I/AndroidRuntime( 5949): Leaving lock profiling enabled
+10-30 12:49:34.621 D/AndroidRuntime( 5949): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:35.636 D/AndroidRuntime( 5949): Shutting down VM
+10-30 12:49:36.518 D/AndroidRuntime( 5965): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:36.522 I/AndroidRuntime( 5965): Using default boot image
+10-30 12:49:36.522 I/AndroidRuntime( 5965): Leaving lock profiling enabled
+10-30 12:49:36.590 D/AndroidRuntime( 5965): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:37.608 D/AndroidRuntime( 5965): Shutting down VM
+10-30 12:49:38.499 D/AndroidRuntime( 5980): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:38.502 I/AndroidRuntime( 5980): Using default boot image
+10-30 12:49:38.502 I/AndroidRuntime( 5980): Leaving lock profiling enabled
+10-30 12:49:38.567 D/AndroidRuntime( 5980): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:39.586 D/AndroidRuntime( 5980): Shutting down VM
+10-30 12:49:41.785 D/AndroidRuntime( 6001): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:41.788 I/AndroidRuntime( 6001): Using default boot image
+10-30 12:49:41.788 I/AndroidRuntime( 6001): Leaving lock profiling enabled
+10-30 12:49:41.849 D/AndroidRuntime( 6001): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:42.868 D/AndroidRuntime( 6001): Shutting down VM
+10-30 12:49:45.028 D/AndroidRuntime( 6022): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:45.031 I/AndroidRuntime( 6022): Using default boot image
+10-30 12:49:45.031 I/AndroidRuntime( 6022): Leaving lock profiling enabled
+10-30 12:49:45.095 D/AndroidRuntime( 6022): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:45.138 I/lexmaxham.volta( 2088): Background concurrent mark compact GC freed 7912KB AllocSpace bytes, 0(0B) LOS objects, 49% free, 6949KB/13MB, paused 69us,6.166ms total 38.579ms
+10-30 12:49:46.114 D/AndroidRuntime( 6022): Shutting down VM
+10-30 12:49:48.160 D/AndroidRuntime( 6043): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:48.162 I/AndroidRuntime( 6043): Using default boot image
+10-30 12:49:48.162 I/AndroidRuntime( 6043): Leaving lock profiling enabled
+10-30 12:49:48.227 D/AndroidRuntime( 6043): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:49.245 D/AndroidRuntime( 6043): Shutting down VM
+10-30 12:49:53.020 D/AndroidRuntime( 6068): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:53.023 I/AndroidRuntime( 6068): Using default boot image
+10-30 12:49:53.023 I/AndroidRuntime( 6068): Leaving lock profiling enabled
+10-30 12:49:53.086 D/AndroidRuntime( 6068): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:54.104 D/AndroidRuntime( 6068): Shutting down VM
+10-30 12:49:56.242 D/AndroidRuntime( 6089): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:56.245 I/AndroidRuntime( 6089): Using default boot image
+10-30 12:49:56.245 I/AndroidRuntime( 6089): Leaving lock profiling enabled
+10-30 12:49:56.309 D/AndroidRuntime( 6089): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:49:57.328 D/AndroidRuntime( 6089): Shutting down VM
+10-30 12:49:59.461 D/AndroidRuntime( 6111): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:49:59.463 I/AndroidRuntime( 6111): Using default boot image
+10-30 12:49:59.463 I/AndroidRuntime( 6111): Leaving lock profiling enabled
+10-30 12:49:59.528 D/AndroidRuntime( 6111): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:00.543 D/AndroidRuntime( 6111): Shutting down VM
+10-30 12:50:02.695 D/AndroidRuntime( 6131): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:02.697 I/AndroidRuntime( 6131): Using default boot image
+10-30 12:50:02.697 I/AndroidRuntime( 6131): Leaving lock profiling enabled
+10-30 12:50:02.760 D/AndroidRuntime( 6131): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:03.778 D/AndroidRuntime( 6131): Shutting down VM
+10-30 12:50:09.895 D/AndroidRuntime( 6160): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:09.898 I/AndroidRuntime( 6160): Using default boot image
+10-30 12:50:09.898 I/AndroidRuntime( 6160): Leaving lock profiling enabled
+10-30 12:50:09.962 D/AndroidRuntime( 6160): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:10.978 D/AndroidRuntime( 6160): Shutting down VM
+10-30 12:50:13.101 D/AndroidRuntime( 6180): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:13.104 I/AndroidRuntime( 6180): Using default boot image
+10-30 12:50:13.104 I/AndroidRuntime( 6180): Leaving lock profiling enabled
+10-30 12:50:13.166 D/AndroidRuntime( 6180): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:14.180 D/AndroidRuntime( 6180): Shutting down VM
+10-30 12:50:16.362 D/AndroidRuntime( 6200): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:16.364 I/AndroidRuntime( 6200): Using default boot image
+10-30 12:50:16.364 I/AndroidRuntime( 6200): Leaving lock profiling enabled
+10-30 12:50:16.427 D/AndroidRuntime( 6200): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:17.445 D/AndroidRuntime( 6200): Shutting down VM
+10-30 12:50:19.620 D/AndroidRuntime( 6221): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:19.623 I/AndroidRuntime( 6221): Using default boot image
+10-30 12:50:19.623 I/AndroidRuntime( 6221): Leaving lock profiling enabled
+10-30 12:50:19.687 D/AndroidRuntime( 6221): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:20.712 D/AndroidRuntime( 6221): Shutting down VM
+10-30 12:50:26.756 D/AndroidRuntime( 6250): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:26.758 I/AndroidRuntime( 6250): Using default boot image
+10-30 12:50:26.758 I/AndroidRuntime( 6250): Leaving lock profiling enabled
+10-30 12:50:26.821 D/AndroidRuntime( 6250): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:27.838 D/AndroidRuntime( 6250): Shutting down VM
+10-30 12:50:29.992 D/AndroidRuntime( 6271): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:29.995 I/AndroidRuntime( 6271): Using default boot image
+10-30 12:50:29.995 I/AndroidRuntime( 6271): Leaving lock profiling enabled
+10-30 12:50:30.056 D/AndroidRuntime( 6271): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:31.074 D/AndroidRuntime( 6271): Shutting down VM
+10-30 12:50:33.133 D/AndroidRuntime( 6292): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:33.135 I/AndroidRuntime( 6292): Using default boot image
+10-30 12:50:33.135 I/AndroidRuntime( 6292): Leaving lock profiling enabled
+10-30 12:50:33.196 D/AndroidRuntime( 6292): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:34.215 D/AndroidRuntime( 6292): Shutting down VM
+10-30 12:50:36.402 D/AndroidRuntime( 6313): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:36.404 I/AndroidRuntime( 6313): Using default boot image
+10-30 12:50:36.404 I/AndroidRuntime( 6313): Leaving lock profiling enabled
+10-30 12:50:36.471 D/AndroidRuntime( 6313): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:37.488 D/AndroidRuntime( 6313): Shutting down VM
+10-30 12:50:44.755 D/AndroidRuntime( 6347): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:44.757 I/AndroidRuntime( 6347): Using default boot image
+10-30 12:50:44.757 I/AndroidRuntime( 6347): Leaving lock profiling enabled
+10-30 12:50:44.822 D/AndroidRuntime( 6347): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:45.840 D/AndroidRuntime( 6347): Shutting down VM
+10-30 12:50:47.847 D/AndroidRuntime( 6369): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:47.850 I/AndroidRuntime( 6369): Using default boot image
+10-30 12:50:47.850 I/AndroidRuntime( 6369): Leaving lock profiling enabled
+10-30 12:50:47.912 D/AndroidRuntime( 6369): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:48.923 D/AndroidRuntime( 6369): Shutting down VM
+10-30 12:50:50.932 D/AndroidRuntime( 6389): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:50.934 I/AndroidRuntime( 6389): Using default boot image
+10-30 12:50:50.934 I/AndroidRuntime( 6389): Leaving lock profiling enabled
+10-30 12:50:51.001 D/AndroidRuntime( 6389): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:52.013 D/AndroidRuntime( 6389): Shutting down VM
+10-30 12:50:54.015 D/AndroidRuntime( 6409): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:50:54.018 I/AndroidRuntime( 6409): Using default boot image
+10-30 12:50:54.018 I/AndroidRuntime( 6409): Leaving lock profiling enabled
+10-30 12:50:54.083 D/AndroidRuntime( 6409): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:50:55.096 D/AndroidRuntime( 6409): Shutting down VM
+10-30 12:51:14.670 D/AndroidRuntime( 6548): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:14.672 I/AndroidRuntime( 6548): Using default boot image
+10-30 12:51:14.672 I/AndroidRuntime( 6548): Leaving lock profiling enabled
+10-30 12:51:14.741 D/AndroidRuntime( 6548): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:14.956 W/ssioncontroller(  907): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:51:15.761 D/AndroidRuntime( 6548): Shutting down VM
+10-30 12:51:17.763 D/AndroidRuntime( 6606): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:17.766 I/AndroidRuntime( 6606): Using default boot image
+10-30 12:51:17.766 I/AndroidRuntime( 6606): Leaving lock profiling enabled
+10-30 12:51:17.826 D/AndroidRuntime( 6606): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:18.838 D/AndroidRuntime( 6606): Shutting down VM
+10-30 12:51:20.832 D/AndroidRuntime( 6626): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:20.834 I/AndroidRuntime( 6626): Using default boot image
+10-30 12:51:20.834 I/AndroidRuntime( 6626): Leaving lock profiling enabled
+10-30 12:51:20.897 D/AndroidRuntime( 6626): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:21.912 D/AndroidRuntime( 6626): Shutting down VM
+10-30 12:51:22.011 W/system_server(  558): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:51:23.916 D/AndroidRuntime( 6651): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:23.918 I/AndroidRuntime( 6651): Using default boot image
+10-30 12:51:23.918 I/AndroidRuntime( 6651): Leaving lock profiling enabled
+10-30 12:51:23.987 D/AndroidRuntime( 6651): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:24.807 W/ssioncontroller(  907): ApkAssets: Deleting an ApkAssets object '<empty> and /data/app/~~Eo4oK-CiwI-REny-WY5_nw==/com.alexmaxham.volta-weNYyAJVZ-636PUVZ8M9jw==/base.apk' with 1 weak references
+10-30 12:51:25.010 D/AndroidRuntime( 6651): Shutting down VM
+10-30 12:51:30.451 D/AndroidRuntime( 6705): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:30.454 I/AndroidRuntime( 6705): Using default boot image
+10-30 12:51:30.454 I/AndroidRuntime( 6705): Leaving lock profiling enabled
+10-30 12:51:30.518 D/AndroidRuntime( 6705): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:31.529 D/AndroidRuntime( 6705): Shutting down VM
+10-30 12:51:35.339 D/AndroidRuntime( 6729): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:35.342 I/AndroidRuntime( 6729): Using default boot image
+10-30 12:51:35.342 I/AndroidRuntime( 6729): Leaving lock profiling enabled
+10-30 12:51:35.409 D/AndroidRuntime( 6729): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:36.420 D/AndroidRuntime( 6729): Shutting down VM
+10-30 12:51:40.239 D/AndroidRuntime( 6754): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:40.242 I/AndroidRuntime( 6754): Using default boot image
+10-30 12:51:40.242 I/AndroidRuntime( 6754): Leaving lock profiling enabled
+10-30 12:51:40.306 D/AndroidRuntime( 6754): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:41.319 D/AndroidRuntime( 6754): Shutting down VM
+10-30 12:51:43.412 D/AndroidRuntime( 6774): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:43.415 I/AndroidRuntime( 6774): Using default boot image
+10-30 12:51:43.415 I/AndroidRuntime( 6774): Leaving lock profiling enabled
+10-30 12:51:43.476 D/AndroidRuntime( 6774): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:44.489 D/AndroidRuntime( 6774): Shutting down VM
+10-30 12:51:46.595 D/AndroidRuntime( 6795): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:46.597 I/AndroidRuntime( 6795): Using default boot image
+10-30 12:51:46.597 I/AndroidRuntime( 6795): Leaving lock profiling enabled
+10-30 12:51:46.660 D/AndroidRuntime( 6795): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:47.680 D/AndroidRuntime( 6795): Shutting down VM
+10-30 12:51:49.022 I/lexmaxham.volta( 2088): Background concurrent mark compact GC freed 6588KB AllocSpace bytes, 4(116KB) LOS objects, 49% free, 6800KB/13MB, paused 351us,5.163ms total 197.568ms
+10-30 12:51:51.993 D/AndroidRuntime( 6821): >>>>>> START com.android.internal.os.RuntimeInit uid 2000 <<<<<<
+10-30 12:51:51.996 I/AndroidRuntime( 6821): Using default boot image
+10-30 12:51:51.996 I/AndroidRuntime( 6821): Leaving lock profiling enabled
+10-30 12:51:52.061 D/AndroidRuntime( 6821): Calling main entry com.android.commands.uiautomator.Launcher
+10-30 12:51:53.081 D/AndroidRuntime( 6821): Shutting down VM
