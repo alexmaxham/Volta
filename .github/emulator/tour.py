@@ -208,6 +208,23 @@ def main():
                 shot("19-run-finished")
             back()
         shot("20-lab-saved")
+
+    # App benchmark: setup, then the checklist before a run, with the runner turned on and a full,
+    # unplugged battery so Volta's own checks pass.
+    sh(f"settings put secure enabled_accessibility_services {PKG}/{PKG}.bench.BenchService")
+    sh("settings put secure accessibility_enabled 1")
+    sh("settings put system screen_brightness_mode 0")
+    battery(ac=0, status=3, level=100)
+    if tap("App benchmark", scrolls=4):
+        scroll_shots("28-benchmark-setup", 3)
+        if tap("Start benchmark", required=False, scrolls=6):
+            shot("29-benchmark-checklist")
+            if tap("Open white screen to calibrate", required=False):
+                shot("30-white-screen")
+                tap("Tap to close", required=False)
+                shot("29-benchmark-checklist-measured")
+            tap("Cancel", required=False)
+        back_from_detail()
     back_from_detail()  # Lab opens from Settings, so go back to it first.
 
     tap("Today")
@@ -225,6 +242,9 @@ def main():
     shot("24-settings-dark")
     tap("Lab", scrolls=8)
     shot("27-lab-dark")
+    if tap("App benchmark", required=False, scrolls=4):
+        shot("31-benchmark-dark")
+        back_from_detail()
     back_from_detail()
     tap("Today")
     shot("25-today-dark", wait=2)
